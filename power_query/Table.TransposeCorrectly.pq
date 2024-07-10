@@ -1,11 +1,11 @@
-(tb as table, optional columns as nullable list, optional firstColumnName as nullable text) as table =>
+(tbl as table, optional columns as nullable list, optional firstColumnName as nullable text) as table =>
 let 
-    ColumnNames = if columns = null then Table.ColumnNames(tb) else columns,
+    ColumnNames = if columns = null then Table.ColumnNames(tbl) else columns,
     #"Transposed Table" =
         if columns = null then
-            Table.Transpose(tb) 
+            Table.Transpose(tbl) 
         else let 
-            SelectedColumns = Table.SelectColumns(tb, ColumnNames),
+            SelectedColumns = Table.SelectColumns(tbl, ColumnNames),
             TransposedTable = Table.Transpose(SelectedColumns)
         in
             TransposedTable
