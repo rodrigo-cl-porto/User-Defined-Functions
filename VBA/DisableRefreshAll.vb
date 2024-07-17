@@ -1,8 +1,8 @@
-Public Sub DisableRefreshAll()
+Public Sub DisableRefreshAll(ByRef wb as Workbook)
    
     Dim i As Long
 
-    With ThisWorkbook
+    With wb
         For i = 1 To .Connections.Count
           'Excludes PowerPivot and other connections
           If .Connections(i).Type = xlConnectionTypeOLEDB Then
