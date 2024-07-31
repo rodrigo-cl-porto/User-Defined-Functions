@@ -39,7 +39,7 @@ let
         "seu", "sua", "seus", "suas",
         "nosso", "nossa", "nossos", "nossas",
         "qual", "quais", "qualquer", "quaisquer",
-        "que", "quê", "quem", "como", "quando", "porque", "porquê",
+        "que", "quê", "quem", "como", "quando", "onde", "porque",
         "haver", "há", "houve", "haverá", "hão",
         "se", "sê", "então", "logo", "portanto",
         "seja", "sejas", "sejamos", "sejais", "sejam",
