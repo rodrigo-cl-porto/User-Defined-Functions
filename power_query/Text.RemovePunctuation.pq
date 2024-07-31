@@ -1,6 +1,6 @@
 (myText as text, optional replacer as nullable text) as text =>
 let
-    Punctuations = Text.ToList("!""#$%&'()*+,-./:;<=>?@[\]^_`{|}~ºª°§"),
+    Punctuations = Text.ToList("!""#$%&'()*+,-./:;<=>?@[]\^_`´{|}~ºª°§"),
     myListText = Text.ToList(myText),
     ListWithoutPunctuation = List.Transform(
         myListText,
