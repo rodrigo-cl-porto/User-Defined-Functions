@@ -1,7 +1,7 @@
 (romanToConvert as text) as number =>
 let
     Chars = Text.ToList(Text.Upper(romanToConvert))
-in if List.Contains() then
+in if not List.MatchesAll(Chars, each List.Contains({"I", "V", "X", "L", "C", "D", "M"}, _)) then
     null
 else let
     ListNumbers = List.Transform(
