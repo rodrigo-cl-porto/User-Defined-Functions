@@ -1,5 +1,7 @@
-(textToRemove as text, optional UndesirableWords as nullable list) as text =>
-let
+(textToRemove as nullable text, optional UndesirableWords as nullable list) as text =>
+if textToRemove = null or textToRemove = "" then
+    ""
+else let
     LowerText = Text.Lower(textToRemove),
     SplittedText = Text.Split(LowerText, " "),
     Stopwords = {
