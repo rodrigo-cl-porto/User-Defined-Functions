@@ -1,4 +1,4 @@
-(X as list, Y as list) as number =>
+(X as list, Y as list) as nullable number =>
 let
     N = List.Count(X)
 in if N > 0 and List.Count(Y) = N then
