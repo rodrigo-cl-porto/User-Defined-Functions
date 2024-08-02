@@ -1,8 +1,12 @@
-(romanToConvert as text) as number =>
+= (romanToConvert as text) as number =>
 let
     Chars = Text.ToList(Text.Upper(romanToConvert))
 in if not List.MatchesAll(Chars, each List.Contains({"I", "V", "X", "L", "C", "D", "M"}, _)) then
-    null
+    error Error.Record(
+        "Expresion.Error",
+        "Text is not a Roman numeral.",
+        "The text has characters other than ""I"", ""V"", ""X"", ""L"", ""C"", ""D"" or ""M""."
+    )
 else let
     ListNumbers = List.Transform(
         Chars,
@@ -27,5 +31,6 @@ else let
             state + ReversedListNumbers{i}
         else
             state - ReversedListNumbers{i}
+    )
 in
     ConvertedToNumber
