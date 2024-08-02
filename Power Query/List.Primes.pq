@@ -1,5 +1,5 @@
-(n as number) as list =>
-if n < 2 then
+(n as nullable number) as list => // Returns the list of prime numbers equals or less than n
+if (n = null) or (n < 2) then
     {}
 else let
     N = Number.RoundDown(n),
