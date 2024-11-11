@@ -1,4 +1,4 @@
-Public Function StringEndsWith(String1 As String, String2 As String, Optional CaseSensitive As Boolean = False) As Boolean
+Function StringEndsWith(String1 As String, String2 As String, Optional CaseSensitive As Boolean = False) As Boolean
     
     If CaseSensitive Then
     
