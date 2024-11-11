@@ -12,7 +12,7 @@ Public Function FileNameIsValid(FileName As String) As Boolean
     
         FileNameIsValid = False 'Invalid
         Exit Function
-      
+    
     Else
       
         'Loop through each "Bad Character" and test for an instance
