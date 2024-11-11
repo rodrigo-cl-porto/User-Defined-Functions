@@ -1,4 +1,4 @@
-Public Function RangeIsHidden(rng As Range) As Boolean
+Function RangeIsHidden(rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
