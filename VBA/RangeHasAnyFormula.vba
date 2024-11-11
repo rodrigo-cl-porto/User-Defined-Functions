@@ -1,4 +1,4 @@
-Public Function RangeHasAnyFormula(ByVal rng As Range) As Boolean
+Function RangeHasAnyFormula(ByVal rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
