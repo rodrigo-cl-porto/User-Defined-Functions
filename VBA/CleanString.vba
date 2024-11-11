@@ -7,7 +7,6 @@ Public Function CleanString(ByVal myString As String, Optional ReplaceBySpace As
   
     If ConvertNonBreakingSpace Then myString = Replace(myString, Chr(160), " ")
     
-    
     For i = LBound(CharsToClean) To UBound(CharsToClean)
         If InStr(myString, Chr(CharsToClean(i))) Then
             If ReplaceBySpace Then
