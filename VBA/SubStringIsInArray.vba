@@ -1,4 +1,4 @@
-Public Function SubStringIsInArray(SubString As String, SourceArray As Variant, Optional CaseSensitive As Boolean = False) As Boolean
+Function SubStringIsInArray(SubString As String, SourceArray As Variant, Optional CaseSensitive As Boolean = False) As Boolean
 
     Dim i As Long
     
