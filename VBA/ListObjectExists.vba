@@ -1,4 +1,4 @@
-Public Function ListObjectExists(ByRef wb As Workbook, ByVal loName As String) As Boolean
+Function ListObjectExists(ByRef wb As Workbook, ByVal loName As String) As Boolean
     
     Dim lo As ListObject
     Dim ws As Worksheet
