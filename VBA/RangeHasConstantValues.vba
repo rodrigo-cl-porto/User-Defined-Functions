@@ -1,4 +1,4 @@
-Public Function RangeHasConstantValues(rng As Range) As Boolean
+Function RangeHasConstantValues(rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
