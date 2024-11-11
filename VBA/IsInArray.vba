@@ -1,4 +1,4 @@
-Public Function IsInArray(ValueToBeFound As Variant, SourceArray As Variant) As Boolean
+Function IsInArray(ValueToBeFound As Variant, SourceArray As Variant) As Boolean
     
     Dim i As Long
     
