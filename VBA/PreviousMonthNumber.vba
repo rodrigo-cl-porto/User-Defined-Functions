@@ -1,4 +1,4 @@
-Public Function PreviousMonthNumber(dt As Date) As Integer
+Function PreviousMonthNumber(dt As Date) As Integer
 
     Dim MonthNumber As Integer: MonthNumber = Month(dt)
     
