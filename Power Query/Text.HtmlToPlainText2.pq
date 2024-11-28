@@ -1,4 +1,7 @@
 (HtmlText as text) as text =>
+
+// This function is a good workaraound since Html.Table() is not available on Excel Power Query.
+
 let
     RemoveHtmlTags = 
         each let
