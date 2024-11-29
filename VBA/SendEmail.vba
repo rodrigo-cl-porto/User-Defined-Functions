@@ -3,7 +3,7 @@ Sub SendEmail(Sender As String, Recipient As String, Subject As String, Message 
     Dim Email         As Object: Set Email = CreateObject("CDO.Message")
     Dim EmailSettings As Object: Set EmailSettings = CreateObject("CDO.Configuration")
 
-    CDO_Config.Load -1
+    EmailSettings.Load -1
     With EmailSettings.Fields
         .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
         .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "mailhost.subsea7.net"
@@ -22,8 +22,11 @@ Sub SendEmail(Sender As String, Recipient As String, Subject As String, Message 
         .CC = CarbonCopy
         .BCC = BlindCarbonCopy
         .Subject = Subject
-        .htmlBody = Message
+        .HtmlBody = Message
         .Send
     End With
+    
+    Set EmailSettings = Nothing
+    Set Email = Nothing
     
 End Sub
