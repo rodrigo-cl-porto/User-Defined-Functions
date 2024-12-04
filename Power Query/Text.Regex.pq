@@ -4,7 +4,7 @@ let
         "var regex = " & regex & ";" &
         "var str = """ & str & """;" &
         "var res = str.match(regex);" &
-        "document.write(res);" &
+        "document.write(res)" &
     "</script>",
     ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0}
 in 
