@@ -2,7 +2,7 @@
 let 
     Script = "<script>" &
         "var str = """ & str & """;" &
-        "var regex = /" & regex & "/;" &
+        "var regex = " & regex & ";" &
         "var res = str.match(regex);" &
         "document.write(res)" &
     "</script>",
