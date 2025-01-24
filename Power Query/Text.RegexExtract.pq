@@ -3,8 +3,8 @@ let
     Script = "<script type='text/javascript'>" &
         "var str = '" & str & "';" &
         "var regex = " & regex & ";" &
-        "var res = str.match(regex);" &
-        "document.write(res)" &
+        "var result = str.match(regex);" &
+        "document.write(result)" &
     "</script>",
     ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0}
 in try
