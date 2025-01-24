@@ -1,7 +1,7 @@
 (str as text, regex as text) as nullable text =>
 let 
-    Script = "<script>" &
-        "var str = """ & str & """;" &
+    Script = "<script type='text/javascript'>" &
+        "var str = '" & str & "';" &
         "var regex = " & regex & ";" &
         "var res = str.match(regex);" &
         "document.write(res)" &
