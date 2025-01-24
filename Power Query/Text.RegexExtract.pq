@@ -1,4 +1,7 @@
 (textToExtract as text, regex as text) as any =>
+// The Power Query's JavaScript parser doesn't support some reserved words like 'let'.
+// It also doesn't support some Regex patterns like lookbehind '(?<= )'.
+// It also doens't seem to support some Regex flags like 's', 'u', 'v', 'd' and 'y'.
 let 
     NonPrintableChars = {
         {"\", "\\"},
@@ -26,7 +29,7 @@ let
         "} else {" &
             "var result = matches[0];" &
         "}" &
-	    "document.write(result);" &
+	"document.write(result);" &
     "</script>",
     ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0},
     SplittedText = Text.Split(ExtractedText, Separator)
