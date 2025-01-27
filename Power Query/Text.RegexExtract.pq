@@ -38,8 +38,6 @@ in
     try 
         if SplittedText{0} = "null" then
             null
-        else if List.Count(SplittedText) = 1 then
-            SplittedText{0}
         else 
             SplittedText
     otherwise
