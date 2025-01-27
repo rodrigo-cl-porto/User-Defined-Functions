@@ -1,4 +1,4 @@
-(textToExtract as text, regex as text) as any =>
+(textToExtract as text, regex as text) as list =>
 // The Power Query's JavaScript parser doesn't support some reserved words like 'let'.
 // It also doesn't support some Regex patterns like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)'.
 // It also doens't seem to support some Regex flags like 's', 'u', 'v', 'd' and 'y'.
