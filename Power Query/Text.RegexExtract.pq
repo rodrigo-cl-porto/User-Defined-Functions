@@ -46,7 +46,7 @@ let
     "</script>",
     ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0},
     ReplacedBreakRows = Text.Replace(ExtractedText, "<br>", "#(lf)"),
-    SplitText = Text.Split(ReplacedHtmlChars, Separator),
+    SplitText = Text.Split(ReplacedBreakRows, Separator),
     ExtractedMatches = 
     try
         if SplitText{0} = "null" then
