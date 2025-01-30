@@ -1,4 +1,4 @@
-(textToReplace as text, regexPattern as text, replacer as text, optional global as nullable logical, optional caseSensitive as nullable logical, optional multiline as nullable logical) as nullable text =>
+(textToReplace as text, regexPattern as text, replacer as text, optional global as nullable logical, optional caseInsensitive as nullable logical, optional multiline as nullable logical) as nullable text =>
 // The Power Query's JavaScript parser doesn't support some reserved words like 'let'.
 // It also doesn't support some Regex patterns like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)'.
 // It also doens't seem to support some Regex flags like 's', 'u', 'v', 'd' and 'y'.
@@ -17,7 +17,7 @@ let
         (state as text, chars as list) as text => Text.Replace(state, chars{0}, chars{1})
     ),
     RegexFlags = List.Accumulate(
-        {{global, "g"}, {caseSensitive, "i"}, {multiline, "m"}},
+        {{global, "g"}, {caseInsensitive, "i"}, {multiline, "m"}},
         "",
         (flags as text, flag as list) as text => if flag{0} = true then flags & flag{1} else flags
     ),
