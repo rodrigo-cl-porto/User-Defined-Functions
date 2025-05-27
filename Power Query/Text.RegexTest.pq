@@ -1,4 +1,4 @@
-(textToTest as text, regexPattern as text, optional caseInsensitive as nullable logical, optional multiline as nullable logical) as nullable logical =>
+(textToTest as nullable text, regexPattern as text, optional caseInsensitive as logical, optional multiline as logical) as logical =>
 let
     ReplacedUnprintableChars = List.Accumulate(
         {
@@ -25,6 +25,6 @@ let
         "document.write(result);" &
     "</script>",
     ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0},
-    Result = try Expression.Evaluate(ExtractedText) otherwise null
+    Result = try Expression.Evaluate(ExtractedText) otherwise false
 in
     Result
