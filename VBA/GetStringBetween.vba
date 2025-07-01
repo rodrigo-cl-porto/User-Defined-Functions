@@ -1,23 +1,25 @@
 Function GetStringBetween(str As String, startStr As String, endStr As String) As String
 
-    Dim regex As Object
-    Dim matches As Object
-    Dim pattern As String
-
-    pattern = "(?<=" & startStr & "\s*).*?(?=\s*" & endStr & ")"
-
-    Set regex = CreateObject("VBScript.RegExp")
-    With regex
-      .Pattern = pattern
-      .IgnoreCase = True
-      .Global = False
-
-      If .Test(str) Then
-          Set matches = .Execute(str)
-          GetStringBetween = matches(0).Value
-      Else
-          GetStringBetween = ""
-      End If
+    Dim match   As String
+    Dim matches As Object
+    Dim re      As Object: Set re = CreateObject("vbscript.regexp")
+    
+    With re
+        .pattern = startStr & ".*?" & endStr
+        .IgnoreCase = True
+        .Global = False
+        
+        Set matches = .Execute(str)
+        
+        If matches.Count > 0 Then
+            match = matches(0).value
+            match = Replace(match, startStr, "")
+            match = Replace(match, endStr, "")
+        Else
+            match = ""
+        End If
     End With
+    
+    GetStringBetween = match
 
 End Function
