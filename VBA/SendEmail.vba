@@ -1,17 +1,19 @@
 Sub SendEmail(Sender As String, Recipient As String, Subject As String, Message As String, Optional CarbonCopy As String, Optional BlindCarbonCopy As String)
-    
+
+    Const LOAD_DEFAULT_CONFIGURATION As Long = -1
+    Const cdoNtlmAuthentication as Integer = 2 'Integrated Windows Authentication (NTLM). Used in corporate environments with Exchange Server.
+    Const cdoSendUsingPort      as Integer = 2 'Send email directly via SMTP port
+    Const cdoServerPort         as Integer = 587 'Authenticated sending with STARTTLS
     Dim Email         As Object: Set Email = CreateObject("CDO.Message")
     Dim EmailSettings As Object: Set EmailSettings = CreateObject("CDO.Configuration")
 
-    EmailSettings.Load -1
+    EmailSettings.Load LOAD_DEFAULT_CONFIGURATION
     With EmailSettings.Fields
-        .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
-        .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "mailhost.subsea7.net"
-        .Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 1
-        '.Item("http://schemas.microsoft.com/cdo/configuration/sendusername") = "xxxx"
-        '.Item("http://schemas.microsoft.com/cdo/configuration/sendpassword") = "xxxx"
-        .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25
-        .Item("http://schemas.microsoft.com/cdo/configuration/smtpusessl") = False
+        .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = cdoSendUsingPort
+        .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "mailhost.yourdomain.net"
+        .Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = cdoNtlmAuthentication
+        .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = cdoServerPort
+        '.Item("http://schemas.microsoft.com/cdo/configuration/smtpusessl") = True
         .Update
     End With
     
@@ -25,8 +27,5 @@ Sub SendEmail(Sender As String, Recipient As String, Subject As String, Message 
         .HtmlBody = Message
         .Send
     End With
-    
-    Set EmailSettings = Nothing
-    Set Email = Nothing
     
 End Sub
