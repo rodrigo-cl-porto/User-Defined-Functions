@@ -83,7 +83,7 @@ let
         Documentation.LongDescription = 
             "This function applies a regular expression to a given text and returns the matched result. "
             & "It supports optional flags for global matching, case insensitivity, and multiline mode. "
-            & "Due to Power Query's JavaScript parser limitations, some advanced regex features like the 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 ""(?<=)"" and certain flags (𝚜, 𝚞, 𝚟, 𝚍, 𝚢) are not supported. "
+            & "Due to Power Query's JavaScript parser limitations, some advanced regex features like 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<=pattern)' and negative 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<!pattern)' and certain flags (𝚜, 𝚞, 𝚟, 𝚍, 𝚢) are not supported. "
             & "Only the flags 𝚐, 𝚒, 𝚖 are available.",
         Documentation.Category = "Text",
         Documentation.Version = "1.0.0",
