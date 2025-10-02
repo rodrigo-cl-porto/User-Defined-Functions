@@ -24,7 +24,7 @@ let
         ])
       ) as nullable number meta [
         Documentation.Name = "List.Slope",
-        Documentation.Description = "Calculates the slope of the linear regression between two numerical lists X and Y.",
+        Documentation.Description = "Calculates the slope of the linear regression between two numerical lists 𝚇 and 𝚈.",
         Documentation.LongDescription = 
             "This function returns the slope (coefficient) of the simple linear regression line between two lists of numbers."
             & "It is useful for statistical analysis and predictive modeling. "
@@ -39,7 +39,7 @@ let
             Code = "List.Slope({1, 2, 3}, {4, 5, 6})",
             Result = "1"
         ], [ 
-            Description = "Returns null when the lists have different lengths.",
+            Description = "Returns 𝚗𝚞𝚕𝚕 when the lists have different lengths.",
             Code = "List.Slope({1, 2}, {3})",
             Result = "null"
         ]}
