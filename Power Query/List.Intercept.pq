@@ -12,7 +12,7 @@ let
                 (SumY * SumX2 - SumX * SumXY) / (N * SumX2 - Number.Power(SumX, 2))
         else
             null,
-    documentedType = type function(
+    documentation = type function(
         X as (type {number} meta [
             Documentation.FieldCaption = "X",
             Documentation.FieldDescription = "Numerical list for independent values"
@@ -41,6 +41,6 @@ let
             Result = "null"
         ]}
     ],
-    documentedFunction = Value.ReplaceType(func, documentedType)
+    documentedFunction = Value.ReplaceType(func, documentation)
 in 
     documentedFunction
