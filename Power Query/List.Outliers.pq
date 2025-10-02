@@ -11,7 +11,7 @@ let
             Outliers = List.Select(NumValues, each _ > upperFence or _ < lowerFence)
         in  
             Outliers,
-    documentedType = type function(
+    documentation = type function(
         values as (type {number} meta [
             Documentation.FieldCaption = "values",
             Documentation.FieldDescription = "A numerical sample"
@@ -39,6 +39,6 @@ let
                 Result = "{100}"
             ]}
         ],
-    documentedFunction = Value.ReplaceType(func, documentedType)
+    documentedFunction = Value.ReplaceType(func, documentation)
 in 
     documentedFunction
