@@ -21,7 +21,7 @@ let
             Documentation.FieldCaption = "Y",
             Documentation.FieldDescription = "Numerical list for dependent values" 
         ])
-    ) as number meta [
+    ) as nullable number meta [
         Documentation.Name = "List.Intercept",
         Documentation.Description = "Calculates the intercept of the linear regression line between two numerical lists 𝚇 and 𝚈.",
         Documentation.LongDescription = 
