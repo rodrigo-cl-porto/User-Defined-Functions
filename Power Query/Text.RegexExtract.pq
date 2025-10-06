@@ -1,5 +1,5 @@
 let
-    func = (textToExtract as nullable text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any =>
+    func = (textToExtract as text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any =>
     let
         ReplacedUnprintableChars = List.Accumulate(
             {
@@ -57,7 +57,7 @@ let
         ExtractedMatches,
 
     documentedType = type function (
-        textToExtract as (type nullable text meta [
+        textToExtract as (type text meta [
             Documentation.FieldCaption = "textToExtract",
             Documentation.FieldDescription = "The input text to apply the regular expression on"
         ]),
@@ -65,15 +65,15 @@ let
             Documentation.FieldCaption = "regexPattern",
             Documentation.FieldDescription = "The regular expression pattern to match"
         ]),
-        optional global as (type logical meta [
+        optional global as (type nullable logical meta [
             Documentation.FieldCaption = "global",
             Documentation.FieldDescription = "If true, returns all matches; otherwise, returns only the first match"
         ]),
-        optional caseInsensitive as (type logical meta [
+        optional caseInsensitive as (type nullable logical meta [
             Documentation.FieldCaption = "caseInsensitive",
             Documentation.FieldDescription = "If true, performs case-insensitive matching"
         ]),
-        optional multiline as (type logical meta [
+        optional multiline as (type nullable logical meta [
             Documentation.FieldCaption = "multiline",
             Documentation.FieldDescription = "If true, enables multiline mode"
         ])
