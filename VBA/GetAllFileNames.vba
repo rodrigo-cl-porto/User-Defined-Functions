@@ -1,4 +1,4 @@
-Public Function GetAllFiles(FolderPath As String, Optional fileExt As String) As String()
+Public Function GetAllFileNames(FolderPath As String, Optional fileExt As String) As String()
 
     'Get all file names of a given extension in a folder and in its subfolders
 
@@ -44,6 +44,6 @@ Public Function GetAllFiles(FolderPath As String, Optional fileExt As String) As
     Next i
     
     'Return array of file names
-    GetAllFiles = arrFiles
+    GetAllFileNames = arrFiles
 
 End Function

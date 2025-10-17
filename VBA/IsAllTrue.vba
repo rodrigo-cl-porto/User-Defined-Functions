@@ -1,6 +1,4 @@
 Public Function IsAllTrue(blnArray As Variant) As Boolean
-
-    'PURPOSE: Check if a boolean Array has all its values as True
     
     Dim blnValue As Variant
     

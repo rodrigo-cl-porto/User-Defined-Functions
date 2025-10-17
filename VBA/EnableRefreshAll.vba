@@ -1,5 +1,5 @@
 Public Sub EnableRefreshAll(ByRef wb As Workbook)
-   
+
     Dim i As Long
     
     With wb
@@ -9,5 +9,5 @@ Public Sub EnableRefreshAll(ByRef wb As Workbook)
           End If
         Next i
     End With
-    
+
 End Sub

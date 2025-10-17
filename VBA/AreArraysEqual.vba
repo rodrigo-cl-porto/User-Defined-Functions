@@ -1,6 +1,6 @@
 Public Function AreArraysEqual(Array1 As Variant, Array2 As Variant) As Boolean
 
-    Dim i As Long
+    Dim i      As Long
     Dim Return as Boolean
     
     Return = True

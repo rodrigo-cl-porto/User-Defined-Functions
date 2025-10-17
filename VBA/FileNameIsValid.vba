@@ -1,9 +1,5 @@
 Public Function FileNameIsValid(FileName As String) As Boolean
 
-    'PURPOSE: Determine If A Given File Name Is Valid
-    'SOURCE: www.TheSpreadsheetGuru.com/the-code-vault
-    'AUTHOR: Jon Peltier
-
     Const strBadChar As String = "\/:*?<>|[]"""
     Dim i            As Long
 
@@ -14,7 +10,7 @@ Public Function FileNameIsValid(FileName As String) As Boolean
         Exit Function
     
     Else
-      
+    
         'Loop through each "Bad Character" and test for an instance
         For i = 1 To Len(strBadChar)
             If InStr(FileName, Mid$(strBadChar, i, 1)) > 0 Then
