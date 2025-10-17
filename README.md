@@ -42,12 +42,12 @@ This repo contains custom functions I've developed throughout my experience as a
 
 ## Power Query (M Code)
 
-### `Binary.Unzip`
+### [`Binary.Unzip`](/Power%20Query/Binary.Unzip.pq)
 
 Extracts files from a ZIP archive and returns a table of entries with file names and decompressed content.
 
 #### **Syntax**
-```m
+```powerquery-m
 Binary.Unzip(ZIPFile as binary) as table
 ```
 
@@ -86,7 +86,7 @@ in
 - Author: Ignacio Barrau
 - Source: [ExtractZIP.pq](https://github.com/ibarrau/PowerBi-code/blob/master/PowerQuery/ExtractZIP.pq)
 
-### `DateTime.ToUnixTime`
+### [`DateTime.ToUnixTime`](/Power%20Query/DateTime.ToUnixTime.pq)
 
 Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:00:00).
 
@@ -120,7 +120,7 @@ in
 
 ## VBA
 
-### [`AreArraysEquals`](VBA/AreArraysEqual.vba)
+### [`AreArraysEquals`](/VBA/AreArraysEqual.vba)
 
 Compares two arrays to check if they are equal, meaning they have the same size and identical elements in the same order.
 
@@ -161,7 +161,7 @@ Else
 End If
 ```
 
-### [`AutoFillFormulas`](VBA/AutoFillFormulas.vba)
+### [`AutoFillFormulas`](/VBA/AutoFillFormulas.vba)
 
 Automatically fills formulas across a range using a reference cell's formula. The reference cell can be either the first or last cell containing a formula in the range.
 
@@ -201,7 +201,7 @@ AutoFillFormulas rng 'Uses first formula cell as reference
 AutoFillFormulas rng, True
 ```
 
-### `CleanString`
+### [`CleanString`](/VBA/CleanString.vba)
 
 Cleans a string by removing or replacing special characters and control characters with spaces.
 
@@ -250,7 +250,7 @@ cleanedStr = CleanString("Hello" & Chr(160) & "World", True, False)
 Debug.Print cleanedStr ' Result: Original string unchanged
 ```
 
-### `DisableRefreshAll`
+### [`DisableRefreshAll`](/VBA/DisableRefreshAll.vba)
 
 Disables the "Refresh All" functionality for OLEDB connections in a specified workbook.
 
@@ -286,7 +286,7 @@ Set wb = ThisWorkbook
 DisableRefreshAll wb
 ```
 
-### `EnableRefreshAll`
+### [`EnableRefreshAll`](/VBA/EnableRefreshAll.vba)
 
 Enables the "Refresh All" functionality for OLEDB connections in a specified workbook.
 
@@ -323,7 +323,7 @@ Set wb = ThisWorkbook
 EnableRefreshAll wb
 ```
 
-### `FileExists`
+### [`FileExists`](/VBA/FileExists.vba)
 
 Checks if a file exists at the specified file path.
 
@@ -366,7 +366,7 @@ End If
 - Original source: [www.TheSpreadsheetGuru.com/The-Code-Vault](www.TheSpreadsheetGuru.com/The-Code-Vault)
 - Resource: [http://www.rondebruin.nl/win/s9/win003.htm](http://www.rondebruin.nl/win/s9/win003.htm)
 
-### `FileNameIsValid`
+### [`FileNameIsValid`](/VBA/FileNameIsValid.vba)
 
 Validates if a given string can be used as a valid file name by checking for illegal characters.
 
@@ -412,7 +412,7 @@ Debug.Print isValid  ' False
 - Author: Jon Peltier
 - Source: [www.TheSpreadsheetGuru.com/the-code-vault](www.TheSpreadsheetGuru.com/the-code-vault)
 
-### `GetAllFileNames`
+### [`GetAllFileNames`](/VBA/GetAllFileNames.vba)
 
 Retrieves an array of all file names from a specified folder and its subfolders, with optional file extension filtering.
 
@@ -463,7 +463,7 @@ For i = 0 To UBound(files)
 Next i
 ```
 
-### `GetLettersOnly`
+### [`GetLettersOnly`](/VBA/GetLettersOnly.vba)
 
 Extracts only ASCII letters (a–z) from a string and returns them in lowercase.
 
@@ -501,7 +501,7 @@ result = GetLettersOnly("Ábç Def")
 Debug.Print result ' "def" (accented letters removed)
 ```
 
-### `GetMonthNumberFromName`
+### [`GetMonthNumberFromName`](/VBA/GetMonthNumberFromName.vba)
 
 Converts a month name to its corresponding numeric value (1-12).
 
@@ -544,7 +544,7 @@ monthNum = GetMonthNumberFromName("Janvier")
 Debug.Print monthNum ' Returns 1 (French)
 ```
 
-### `GetStringBetween`
+### [`GetStringBetween`](/VBA/GetStringBetween.vba)
 
 Extracts a substring between two specified delimiter strings.
 
@@ -588,7 +588,7 @@ result = GetStringBetween("No delimiters here", "[", "]")
 Debug.Print result  ' Returns ""
 ```
 
-### `GetStringWithSubstringInArray`
+### [`GetStringWithSubstringInArray`](/VBA/GetStringWithSubstringInArray.vba)
 
 Searches through an array of strings and returns the first string that contains a specified substring.
 
@@ -638,7 +638,7 @@ result = GetStringWithSubstringInArray("none", testArray)
 Debug.Print result  ' Returns ""
 ```
 
-### `GetTableColumnNames`
+### [`GetTableColumnNames`](/VBA/GetTableColumnNames.vba)
 
 Returns the header names of an Excel ListObject (table) as a zero-based string array.
 
@@ -674,7 +674,7 @@ For i = 0 To UBound(colNames)
 Next i
 ```
 
-### `IsAllTrue`
+### [`IsAllTrue`](/VBA/IsAllTrue.vba)
 
 Checks if all elements in a boolean array are `True`.
 
@@ -721,7 +721,7 @@ testArray = Array(True, "True", True)
 Debug.Print IsAllTrue(testArray) ' Returns False (non-boolean element)
 ```
 
-### `IsInArray`
+### [`IsInArray`](/VBA/IsInArray.vba)
 
 Checks whether a value exists in a one-dimensional array.
 
@@ -757,7 +757,7 @@ Else
 End If
 ```
 
-### `ListObjectExists`
+### [`ListObjectExists`](/VBA/ListObjectExists.vba)
 
 Checks whether a ListObject (Excel table) with a given name exists in a workbook.
 
@@ -793,7 +793,7 @@ Else
 End If
 ```
 
-### `PreviousMonthNumber`
+### [`PreviousMonthNumber`](/VBA/PreviousMonthNumber.vba)
 
 Returns the numeric month (1–12) that precedes the month of a given date.
 
@@ -823,7 +823,7 @@ prev = PreviousMonthNumber(DateSerial(2025, 1, 10))
 Debug.Print prev ' returns 12 (December)
 ```
 
-### `RangeHasAnyFormula`
+### [`RangeHasAnyFormula`](/VBA/RangeHasAnyFormula.vba)
 
 Checks if a given range contains any cells with formulas.
 
@@ -866,7 +866,7 @@ End If
 - Displays a message box with error details if an unexpected error occurs
 - Properly handles the "No cells were found" error which indicates no formulas are present
 
-### `RangeHasConstantValues`
+### [`RangeHasConstantValues`](/VBA/RangeHasConstantValues.vba)
 
 Checks whether a given range contains any constant (non-formula) cells.
 
@@ -897,7 +897,7 @@ Else
 End If
 ```
 
-### `RangeIsHidden`
+### [`RangeIsHidden`](/VBA/RangeIsHidden.vba)
 
 Determines whether a given range is entirely hidden (no visible cells).
 
@@ -928,7 +928,7 @@ Else
 End If
 ```
 
-### `RangeToHtml`
+### [`RangeToHtml`](/VBA/RangeToHtml.vba)
 
 Converts an Excel Range into an HTML string by copying the range to a temporary workbook, publishing that sheet as an HTML file, and returning the file contents.
 
@@ -962,7 +962,7 @@ html = RangeToHtml(ThisWorkbook.Worksheets("Sheet1").Range("A1:D10"))
 ' html now contains the HTML representation of the range
 ```
 
-### `SendEmail`
+### [`SendEmail`](/VBA/SendEmail.vba)
 
 Sends an HTML email using CDO (Collaboration Data Objects) with NTLM authentication, typically used in corporate environments with Exchange Server.
 
@@ -1021,7 +1021,7 @@ Call SendEmail( _
     "bcc@company.com")
 ```
 
-### `SetQueryFormula`
+### [`SetQueryFormula`](/VBA/SetQueryFormula.vba)
 
 Modifies a Power Query formula in the current workbook based on a given value, handling different data types appropriately.
 
@@ -1055,7 +1055,7 @@ byteArr = Array(1, 2, 3)
 SetQueryFormula "MyQuery", byteArr  ' Results in: {1,2,3}
 ```
 
-### `StringContains`
+### [`StringContains`](/VBA/StringContains.vba)
 
 Checks if a string contains another string as a substring, with optional case sensitivity.
 
@@ -1100,7 +1100,7 @@ result = StringContains("Test", "xyz")
 Debug.Print result ' Returns False
 ```
 
-### `StringEndsWith`
+### [`StringEndsWith`](/VBA/StringEndsWith.vba)
 
 Checks if a string ends with another string, with optional case sensitivity.
 
@@ -1145,7 +1145,7 @@ result = StringEndsWith("Test", "xyz")
 Debug.Print result ' Returns False
 ```
 
-### `StringStartsWith`
+### [`StringStartsWith`](/VBA/StringStartsWith.vba)
 
 Checks whether a string starts with a specified substring, with optional case sensitivity.
 
@@ -1183,7 +1183,7 @@ result = StringStartsWith("Test", "LongPrefix")
 Debug.Print result ' False
 ```
 
-### `SubstringIsInArray`
+### [`SubstringIsInArray`](/VBA/SubstringIsInArray.vba)
 
 Searches a one-dimensional array for any string element that contains a specified substring and returns `True` on the first match.
 
@@ -1221,7 +1221,7 @@ Debug.Print SubstringIsInArray("world", arr)        ' True (case-insensitive)
 Debug.Print SubstringIsInArray("WORLD", arr, True) ' False (case-sensitive)
 ```
 
-### `Summation`
+### [`Summation`](/VBA/Summation.vba)
 
 Computes the numeric summation of a mathematical expression over an integer index range.
 
@@ -1257,7 +1257,7 @@ Debug.Print Summation("1/x^2", 1, 1000000) ' ≈ 1.64 (approaches π²/6)
 Debug.Print Summation("n^2", 1, 5) ' prints 55
 ```
 
-### `TableHasQuery`
+### [`TableHasQuery`](/VBA/TableHasQuery.vba)
 
 Checks whether a ListObject (Excel table) has an associated QueryTable.
 
@@ -1291,7 +1291,7 @@ Else
 End If
 ```
 
-### `WorksheetHasListObject`
+### [`WorksheetHasListObject`](/VBA/WorksheetHasListObject.vba)
 
 Checks whether a worksheet contains at least one ListObject (table).
 
