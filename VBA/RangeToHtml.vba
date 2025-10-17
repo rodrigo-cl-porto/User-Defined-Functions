@@ -35,10 +35,10 @@ Function RangeToHtml(rng As Range) As String
     'Publish the sheet to a htm file
     With TempWB.PublishObjects.Add( _
         SourceType:=xlSourceRange, _
-         Filename:=TempFile, _
-         Sheet:=TempWB.Sheets(1).Name, _
-         Source:=TempWB.Sheets(1).UsedRange.Address, _
-         HtmlType:=xlHtmlStatic)
+            Filename:=TempFile, _
+            Sheet:=TempWB.Sheets(1).Name, _
+            Source:=TempWB.Sheets(1).UsedRange.Address, _
+            HtmlType:=xlHtmlStatic)
         .Publish (True)
     End With
 
@@ -53,11 +53,11 @@ Err:
     'Close TempWB
     TempWB.Close SaveChanges:=False
 
-    'Delete the htm file we used in this function
+    'Delete the html file we used in this function
     Kill TempFile
 
     Set ts = Nothing
     Set fso = Nothing
     Set TempWB = Nothing
-    
+
 End Function

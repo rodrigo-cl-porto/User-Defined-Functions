@@ -2,7 +2,9 @@ Function GetStringBetween(str As String, startStr As String, endStr As String) A
 
     Dim match   As String
     Dim matches As Object
-    Dim re      As Object: Set re = CreateObject("vbscript.regexp")
+    Dim re      As Object
+    
+    Set re = CreateObject("vbscript.regexp")
     
     With re
         .pattern = startStr & ".*?" & endStr

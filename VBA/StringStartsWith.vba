@@ -1,21 +1,25 @@
-Function StringStartsWith(String1 As String, String2 As String, Optional CaseSensitive As Boolean = False) As Boolean
+Function StringStartsWith(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
 
-    If CaseSensitive Then
+    Dim Result As Boolean
+
+    If caseSensitive Then
     
-        If InStr(String1, String2) = 1 Then
-            StringStartsWith = True
+        If InStr(str1, str2) = 1 Then
+            Result = True
         Else
-            StringStartsWith = False
+            Result = False
         End If
         
     Else
     
-        If InStr(1, String1, String2, vbTextCompare) = 1 Then
-            StringStartsWith = True
+        If InStr(1, str1, str2, vbTextCompare) = 1 Then
+            Result = True
         Else
-            StringStartsWith = False
+            Result = False
         End If
         
     End If
+
+    StringStartsWith = Result
 
 End Function

@@ -1,21 +1,25 @@
-Function StringContains(String1 As String, String2 As String, Optional CaseSensitive As Boolean = False) As Boolean
+Function StringContains(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
     
-    If CaseSensitive Then
+    Dim Return as String
+
+    If caseSensitive Then
     
-        If InStr(String1, String2) > 0 Then
-            StringContains = True
+        If InStr(str1, str2) > 0 Then
+            Return = True
         Else
-            StringContains = False
+            Return = False
         End If
         
     Else
     
-        If InStr(1, String1, String2, vbTextCompare) > 0 Then
-            StringContains = True
+        If InStr(1, str1, str2, vbTextCompare) > 0 Then
+            Return = True
         Else
-            StringContains = False
+            Return = False
         End If
         
     End If
+
+    StringContains = Return
 
 End Function

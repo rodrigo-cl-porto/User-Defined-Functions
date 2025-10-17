@@ -2,11 +2,9 @@ Function RangeHasConstantValues(rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
+    Dim Result    As Boolean
 
-    If rng Is Nothing Then
-        RangeHasConstantValues = False
-        Exit Function
-    End If
+    If rng Is Nothing Then Exit Function
 
     On Error Resume Next
     rng.SpecialCells (xlCellTypeConstants)
@@ -15,11 +13,13 @@ Function RangeHasConstantValues(rng As Range) As Boolean
     On Error GoTo 0
     
     If ErrNumber = 0 Then
-        RangeHasConstantValues = True
+        Result = True
     ElseIf ErrText = "No cells were found." Then
-        RangeHasConstantValues = False
+        Result = False
     Else
         MsgBox "The following error occured: " & ErrNumber & vbLf & vbLf & ErrText, vbCritical + vbOKOnly, "Message Error"
     End If
+
+    RangeHasConstantValues = Result
 
 End Function

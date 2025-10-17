@@ -1,21 +1,25 @@
-Function StringEndsWith(String1 As String, String2 As String, Optional CaseSensitive As Boolean = False) As Boolean
+Function StringEndsWith(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
     
-    If CaseSensitive Then
+    Dim Result As Boolean
+
+    If caseSensitive Then
     
-        If InStr(String1, String2) = Len(String1) - Len(String2) + 1 Then
-            StringEndsWith = True
+        If InStr(str1, str2) = Len(str1) - Len(str2) + 1 Then
+            Result = True
         Else
-            StringEndsWith = False
+            Result = False
         End If
         
     Else
     
-        If InStr(1, String1, String2, vbTextCompare) = Len(String1) - Len(String2) + 1 Then
-            StringEndsWith = True
+        If InStr(1, str1, str2, vbTextCompare) = Len(str1) - Len(str2) + 1 Then
+            Result = True
         Else
-            StringEndsWith = False
+            Result = False
         End If
         
     End If
+
+    StringEndsWith = Result
 
 End Function

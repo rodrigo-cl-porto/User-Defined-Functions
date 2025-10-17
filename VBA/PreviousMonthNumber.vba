@@ -1,6 +1,7 @@
 Function PreviousMonthNumber(dt As Date) As Integer
 
-    Dim MonthNumber As Integer: MonthNumber = Month(dt)
+    Dim MonthNumber As Integer
+    MonthNumber = Month(dt)
     
     If MonthNumber = 1 Then
         PreviousMonthNumber = 12

@@ -1,9 +1,13 @@
 Function WorksheetHasListObject(ws As Worksheet) As Boolean
 
+    Dim result As Boolean
+
     If ws.ListObjects.Count >= 1 Then
-        WorksheetHasListObject = True
+        result = True
     Else
-        WorksheetHasListObject = False
+        result = False
     End If
-    
+
+    WorksheetHasListObject = result
+
 End Function

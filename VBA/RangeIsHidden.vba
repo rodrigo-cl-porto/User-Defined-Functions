@@ -2,11 +2,9 @@ Function RangeIsHidden(rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
+    Dim Result    As Boolean
     
-    If rng Is Nothing Then
-        RangeIsHidden = True
-        Exit Function
-    End If
+    If rng Is Nothing Then Exit Function
     
     On Error Resume Next
     rng.SpecialCells (xlCellTypeVisible)
@@ -15,11 +13,13 @@ Function RangeIsHidden(rng As Range) As Boolean
     On Error GoTo 0
     
     If ErrNumber = 0 Then
-        RangeIsHidden = False
+        Result  = False
     ElseIf ErrText = "No cells were found." Then
-        RangeIsHidden = True
+        Result  = True
     Else
         MsgBox "The following error occured: " & ErrNumber & vbLf & vbLf & ErrText, vbCritical + vbOKOnly, "Message Error"
     End If
+
+    RangeIsHidden = Result
 
 End Function

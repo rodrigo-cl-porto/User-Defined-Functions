@@ -1,9 +1,6 @@
 Public Function TableHasQuery(tbl As ListObject) As Boolean
 
-    If tbl Is Nothing Then
-       TableHasQuery = False
-       Exit Function
-    End If
+    If tbl Is Nothing Then Exit Function
 
     On Error GoTo ErrHandler
     If Not (tbl.QueryTable Is Nothing) Then

@@ -2,7 +2,7 @@ Function GetStringWithSubstringInArray(SubString As String, SourceArray As Varia
 
     Dim i As Long
     
-    For i = 0 To UBound(SourceArray)
+    For i = LBound(SourceArray) To UBound(SourceArray)
         If VarType(SourceArray(i)) = vbString Then
             If StringContains(SourceString, SubString, CaseSensitive) Then
                 GetStringWithSubstringInArray = SourceArray(i)
