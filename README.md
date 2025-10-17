@@ -47,7 +47,7 @@ This repo contains custom functions I've developed throughout my experience as a
 Extracts files from a ZIP archive and returns a table of entries with file names and decompressed content.
 
 #### **Syntax**
-```powerquery-m
+```fs
 Binary.Unzip(ZIPFile as binary) as table
 ```
 
@@ -63,7 +63,7 @@ A table with the following columns:
 
 #### **Example**
 
-```m
+```fs
 let
     Source = Binary.Unzip(File.Contents("C:\Temp\archive.zip"))
 in
@@ -72,7 +72,7 @@ in
 
 This yields a table you can expand or transform. To read the content of the first file as text:
 
-```m
+```fs
 let
     Files = Binary.Unzip(File.Contents("C:\Temp\archive.zip")),
     FirstBinary = Files{0}[Content],
@@ -91,7 +91,7 @@ in
 Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:00:00).
 
 #### Syntax
-```m
+```fs
 DateTime.ToUnixTime(datetimeToConvert as datetime) as number
 ```
 
@@ -101,7 +101,7 @@ DateTime.ToUnixTime(datetimeToConvert as datetime) as number
 
 #### Return Value
 
-Returns a number representing the total seconds (can be fractional) between `datetimeToConvert` and the Unix epoch (1970-01-01 00:00:00). Values are negative for datetimes before the epoch.
+Converts `datetime` to Unixtime, which consists of a number representing the total seconds between `datetimeToConvert` and the Unix epoch (1970-01-01 00:00:00). Values are negative for datetimes before the epoch.
 
 #### Remarks
 
@@ -109,7 +109,7 @@ Returns a number representing the total seconds (can be fractional) between `dat
 
 #### Example
 
-```m
+```fs
 let
     UnixSeconds = DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0))
 in
