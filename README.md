@@ -120,7 +120,7 @@ in
 
 ## VBA
 
-### `AreArraysEquals`
+### [`AreArraysEquals`](vba/AreArraysEqual.vba)
 
 Compares two arrays to check if they are equal, meaning they have the same size and identical elements in the same order.
 
