@@ -120,7 +120,7 @@ in
 
 ## VBA
 
-### [`AreArraysEquals`](VBA\AreArraysEqual.vba)
+### [`AreArraysEquals`](VBA/AreArraysEqual.vba)
 
 Compares two arrays to check if they are equal, meaning they have the same size and identical elements in the same order.
 
@@ -161,7 +161,7 @@ Else
 End If
 ```
 
-### [`AutoFillFormulas`](VBA\AutoFillFormulas.vba)
+### [`AutoFillFormulas`](VBA/AutoFillFormulas.vba)
 
 Automatically fills formulas across a range using a reference cell's formula. The reference cell can be either the first or last cell containing a formula in the range.
 
