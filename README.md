@@ -8,6 +8,32 @@ This repo contains custom functions I've developed throughout my experience as a
     - [`Binary.Unzip`](#binaryunzip)
     - [`DateTime.ToUnixTime`](#datetimetounixtime)
     - [`List.Correlation`](#listcorrelation)
+    - [`List.Rank`](#listrank)
+    - [`List.Intercept`](#listintercept)
+    - [`List.Outliers`](#listoutliers)
+    - [`List.Slope`](#listslope)
+    - [`List.PopulationStdDev`](#listpopulationstddev)
+    - [`List.Variance`](#listvariance)
+    - [`List.WeightedAverage`](#listweightedaverage)
+    - [`Number.FromRoman`](#numberfromroman)
+    - [`Number.IsInteger`](#numberisinteger)
+    - [`Number.IsPrime`](#numberisprime)
+    - [`Number.ToRoman`](#numbertoroman)
+    - [`Table.FixColumnNames`](#tablefixcolumnnames)
+    - [`Text.CountChar`](#textcountchar)
+    - [`Text.ExtractNumbers`](#textextractnumbers)
+    - [`Text.HtmlToPlainText.pq`](#texthtmltoplaintextpq)
+    - [`Text.RegexExtract`](#textregexextract)
+    - [`Text.RegexReplace`](#textregexreplace)
+    - [`Text.RegexSplit`](#textregexsplit)
+    - [`Text.RegexTest`](#textregextest)
+    - [`Text.RemoveAccents`](#textremoveaccents)
+    - [`Text.RemoveDoubleSpaces`](#textremovedoublespaces)
+    - [`Text.RemoveLetters`](#textremoveletters)
+    - [`Text.RemoveNumerals`](#textremovenumerals)
+    - [`Text.RemovePunctuations`](#textremovepunctuations)
+    - [`Text.RemoveStopwords`](#textremovestopwords)
+    - [`Text.RemoveWeirdChars`](#textremoveweirdchars)
 - [VBA](#vba)
     - [`AreArraysEquals`](#arearraysequals)
     - [`AutoFillFormulas`](#autofillformulas)
@@ -90,33 +116,853 @@ in
 
 Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:00:00).
 
-#### Syntax
+#### **Syntax**
 ```fs
 DateTime.ToUnixTime(datetimeToConvert as datetime) as number
 ```
 
-#### Parameters
+#### **Parameters**
 
 - `datetimeToConvert`: A datetime value to convert.
 
-#### Return Value
+#### **Return Value**
 
 Converts `datetime` to Unixtime, which consists of a number representing the total seconds between `datetimeToConvert` and the Unix epoch (1970-01-01 00:00:00). Values are negative for datetimes before the epoch.
 
-#### Remarks
+#### **Remarks**
 
 - No timezone conversion is performed — treat the input as UTC if you need UTC-based Unix time.
+
+#### **Example**
+
+```fs
+DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0)) // -> returns 1672531200
+```
+
+### [`List.Correlation`](/Power%20Query/List.Correlation.pq)
+
+Calculates the correlation coefficient between two lists of numeric values. Supports Pearson (linear) and Spearman (rank-based) correlation.
+
+#### **Syntax**
+
+```fs
+List.Correlation(list1 as list, list2 as list, optional typeCorrelation as text) as number
+```
+
+#### **Parameters**
+
+- `list1`: list of numeric values (nulls and non-numeric values are treated as 0).
+- `list2`: list of numeric values (nulls and non-numeric values are treated as 0).
+- `typeCorrelation` (optional): "Pearson" (default) or "Spearman". Case-insensitive.
+
+#### **Return value**
+
+A number representing the correlation coefficient:
+
+- Pearson: standard Pearson correlation (linear relationship).
+- Spearman: Spearman rank correlation (uses dense ranking; tied values receive the same rank).
+
+#### **Remarks**
+
+- Input lists must be the same length; otherwise, an error is raised.
+- Null, empty string, or non-numeric entries are converted to 0 before calculation.
+- Result is returned as a decimal number (can be negative, positive, or `NaN` if degenerate).
+
+#### **Examples**
+
+```fs
+List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30})
+// -> 0.858575902776297  (Pearson, default)
+
+List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30}, "Spearman")
+// -> 1  (Spearman: monotonic/rank-perfect relationship)
+
+List.Correlation({0, null, 3, "a", 4}, {4, 5, null, 10, 30})
+// -> 0.556720639738652  (non-numeric values are treated as 0)
+```
+
+### [`List.Rank`](/Power%20Query/List.Rank.pq)
+
+Returns a list of ranks for a given list of values. Tied values receive the same rank (dense ranking). The output list preserves the input order.
+
+#### **Syntax**
+```fs
+List.Rank(values as list, optional order as nullable number) as list
+```
+
+#### **Parameters**
+- `values`: A list of values to rank. Values must be comparable (numbers, texts, dates, etc.).
+- `order` (optional): Use `Order.Ascending` or `Order.Descending`. If omitted, the function treats the ordering as descending (i.e., highest value gets rank 1).
+
+#### **Return value**
+A list of integers with the same length as `values`, where each element is the rank (1-based) of the corresponding input value.
+
+#### **Remarks**
+- Ranks are "dense": equal values receive the same rank and the next distinct value's rank increases by 1.
+  - Example (descending default): values {3,1,2,3} → ranks {1,3,2,1}
+- The function returns ranks in the original input order.
+- Comparison uses Power Query's Value.Compare, so mixed-type comparisons follow Power Query rules.
+
+#### **Examples**
+```fs
+List.Rank({10, 10, 5, 7}) // {1, 1, 3, 2} (default: descending)
+List.Rank({31, 11, 27, 31}, Order.Ascending) // {3, 1, 2, 3}
+List.Rank({10, 10, 30, 30, 2}) // {2, 2, 1, 1, 3}
+```
+
+### [`List.Intercept`](/Power%20Query/List.Intercept.pq)
+
+Calculates the intercept of the linear regression line between two numerical lists X and Y.
+
+#### Syntax
+
+```fs
+List.Intercept(X as list, Y as list) as number
+```
+
+#### Parameters
+
+- `X`: A list of numerical values representing the independent variable.
+- `Y`: A list of numerical values representing the dependent variable.
+
+#### Return Value
+
+Returns a number representing the intercept of the linear regression line calculated using the least squares method. If the lists have different lengths, the function returns `null`.
+
+##### Remarks
+
+- Both input lists must have the same length; otherwise, the function returns `null`.
+- The function uses the least squares method to calculate the intercept.
+- Non-numeric values in the lists will cause an error during calculation.
 
 #### Example
 
 ```fs
-let
-    UnixSeconds = DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0))
-in
-    UnixSeconds \\ Returns 1672531200
+List.Intercept({1, 2, 3}, {4, 5, 6})
+// -> -1 (example intercept value)
+
+List.Intercept({1, 2}, {3})
+// -> null (different lengths)
 ```
 
-### `List.Correlation`
+### [`List.Outliers`](/Power%20Query/List.Outliers.pq)
+
+Identifies outliers in a list of numerical values using the Interquartile Range (IQR) method.
+
+#### Syntax
+
+```fs
+List.Outliers(values as list, optional multiplier as number) as list
+```
+
+#### Parameters
+
+- `values`: A list of numerical values to analyze for outliers.
+- `multiplier` (optional): A number to adjust the IQR threshold for defining outliers. Default is 1.5.
+
+#### Return Value
+
+Returns a list of outlier values identified in the input list based on the IQR method. If no outliers are found, the function returns an empty list.
+
+#### Remarks
+
+- The function first removes nulls, empty strings, and whitespace entries, then selects only valid numeric values.
+- Outliers are defined as values below Q₁ - 1.5×IQR or above Q₃ + 1.5×IQR, where Q₁ and Q₃ are the first and third quartiles respectively.
+
+##### Examples
+
+```fs
+List.Outliers({1, 2, 3, 4, 100})
+// -> {100} (100 is an outlier)
+List.Outliers({10, 12, 14, 15, 16, 18, 20})
+// -> {} (no outliers)
+List.Outliers({1, 2, 3, 4, 50, 100}, 2)
+// -> {100} (100 is an outlier with a higher multiplier)
+```
+
+### [`List.Slope`](/Power%20Query/List.Slope.pq)
+
+Calculates the slope of the linear regression between two numerical lists X and Y.
+
+#### Syntax
+
+```fs
+List.Slope(X as list, Y as list) as nullable number
+```
+
+#### Parameters
+
+- `X`: A list of numerical values representing the independent variable.
+- `Y`: A list of numerical values representing the dependent variable.
+
+#### Return Value
+
+Returns a number representing the slope of the linear regression line calculated using the least squares method. If the lists have different lengths, the function returns `null`.
+
+#### Remarks
+
+- Both input lists must have the same length; otherwise, the function returns `null`.
+- The function uses the least squares method to calculate the slope.
+- Non-numeric values in the lists will cause an error during calculation.
+
+#### Example
+
+```fs
+List.Slope({1, 2, 3}, {4, 5, 6})
+// -> 1 (example slope value)
+
+List.Slope({1, 2}, {3})
+// -> null (different lengths)
+```
+
+### [`List.PopulationStdDev`](/Power%20Query/List.PopulationStdDev.pq)
+
+Calculates the population standard deviation of a list of numerical values.
+
+#### Syntax
+
+```fs
+List.PopulationStdDev(values as list) as nullable number
+```
+
+#### Parameters
+
+- `values`: A list of numerical values to calculate the population standard deviation.
+
+#### Return Value
+
+Returns a number representing the population standard deviation of the input list. If the list is empty or contains no numeric values, the function returns `null`.
+
+#### Remarks
+
+- The function calculates the population standard deviation using the formula: $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$
+    - $N$ is the number of values
+    - $x_i$ are the individual values
+    - $\mu$ is the mean of the values
+- Non-numeric values, nulls, and empty strings are ignored in the calculation.
+
+#### Example
+
+```fs
+List.PopulationStdDev({2, 4, 4, 4, 5, 5, 7, 9})
+// -> 2.8284271247461903 (example population standard deviation value)
+
+List.PopulationStdDev({})
+// -> null (empty list)
+```
+
+### [`List.Variance`](/Power%20Query/List.Variance.pq)
+
+Calculates the population variance of a list of numerical values.
+
+#### Syntax
+
+```fs
+List.Variance(values as list) as nullable number
+```
+
+#### Parameters
+
+- `values`: A list of numerical values to calculate the population variance.
+
+#### Return Value
+
+Returns a number representing the population variance of the input list. If the list is empty or contains no numeric values, the function returns `null`.
+
+#### Remarks
+
+- The function calculates the population variance using the formula: $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$
+    - $N$ is the number of values
+    - $x_i$ are the individual values
+    - $\mu$ is the mean of the values
+- Non-numeric values, nulls, and empty strings are ignored in the calculation.
+
+#### Example
+
+```fs
+List.Variance({1, 2, 3, 4, 5})
+// -> 2.5 (sample variance value)
+
+List.Variance({1, 2, 3, 4, 5}, true)
+// -> 2 (population variance value)
+
+List.Variance({})
+// -> null (empty list)
+```
+
+### [`List.WeightedAverage`](/Power%20Query/List.WeightedAverage.pq)
+
+Calculates the weighted average of a list of values given a corresponding list of weights.
+
+#### **Syntax**
+
+```fs
+List.WeightedAverage(values as list, weights as list) as nullable number
+```
+
+#### **Parameters**
+
+- `values`: A list of numerical values to calculate the weighted average.
+- `weights`: A list of numerical weights corresponding to each value.
+
+#### **Return Value**
+
+Returns a number representing the weighted average of the input values. If the lists have different lengths or if the sum of weights is zero, the function returns `null`.
+
+#### **Remarks**
+
+- The function calculates the weighted average using the formula: $WeightedAverage = \frac{\sum (x_i \times w_i)}{\sum w_i}$
+    - $x_i$ are the individual values
+    - $w_i$ are the corresponding weights
+
+#### **Example**
+
+```fs
+List.WeightedAverage({1, 2, 3}, {4, 5, 6})
+// -> 2.3333333333333335 (example weighted average value)
+```
+
+### [`Number.FromRoman`](/Power%20Query/Number.FromRoman.pq)
+
+Converts a Roman numeral (text) to a number.
+
+#### **Syntax**
+
+```fs
+Number.FromRoman(romanText as text) as number
+```
+
+#### **Parameters**
+
+- `romanText`: A text string representing a Roman numeral.
+
+#### **Return Value**
+
+Returns a number corresponding to the Roman numeral. If the input contains invalid characters, an error is raised.
+
+#### **Remarks**
+
+- Supports standard Roman numeral characters: I, V, X, L, C, D, M (case-insensitive).
+
+#### **Examples**
+
+```fs
+Number.FromRoman("XII") // -> 12
+Number.FromRoman("invalid") // -> Error
+```
+
+### [`Number.IsInteger`](/Power%20Query/Number.IsInteger.pq)
+
+Checks if a given number is an integer.
+
+#### **Syntax**
+
+```fs
+Number.IsInteger(value as number) as logical
+```
+
+#### **Parameters**
+
+- `value`: A number to check.
+
+#### **Return Value**
+
+Returns `true` if the number is an integer, `false` otherwise.
+
+#### **Examples**
+
+```fs
+Number.IsInteger(10) // -> true
+Number.IsInteger(10.5) // -> false
+```
+
+### [`Number.IsPrime`](/Power%20Query/Number.IsPrime.pq)
+
+Checks if a given number is a prime number.
+
+#### **Syntax**
+
+```fs
+Number.IsPrime(value as number) as logical
+```
+
+#### **Parameters**
+
+- `value`: A number to check.
+
+#### **Return Value**
+
+Returns `true` if the number is prime, `false` otherwise.
+
+#### **Examples**
+
+```fs
+Number.IsPrime(7) // -> true
+Number.IsPrime(10) // -> false
+```
+
+### [`Number.ToRoman`](/Power%20Query/Number.ToRoman.pq)
+
+Converts an integer number to a Roman numeral (between 1 and 3999).
+
+#### **Syntax**
+
+```fs
+Number.ToRoman(numberToConvert as number) as text
+```
+
+#### **Parameters**
+
+- `numberToConvert`: The integer number to be converted to a Roman numeral.
+
+#### **Return Value**
+
+Returns a text string representing the Roman numeral equivalent of the input integer. If the input number is outside the range of 1 to 3999, an error is raised.
+
+#### **Examples**
+
+```fs
+Number.ToRoman(12) // -> "XII"
+Number.ToRoman(0) // -> Error
+```
+
+### [`Table.FixColumnNames`](/Power%20Query/Table.FixColumnNames.pq)
+
+Cleans and standardizes column names in a table by removing unwanted characters, trimming spaces, and applying specified text formatting (Proper, Lower, Upper). It also removes columns with default names like 'Column1', 'Column2', etc.
+
+#### **Syntax**
+
+```fs
+Table.FixColumnNames(tbl as table, optional textFormat as text) as table
+```
+
+#### **Parameters**
+
+- `tbl`: The input table whose column names need to be fixed.
+- `textFormat` (optional): The desired text format for the column names. Accepts 'Proper', 'Lower', or 'Upper'. If not specified, no formatting is applied.
+
+#### **Return Value**
+
+A table with cleaned and standardized column names.
+
+#### **Remarks**
+
+- The function processes the column names of the provided table to ensure they are clean and standardized. It removes non-printable characters, trims leading and trailing spaces, replaces non-breaking spaces with regular spaces, eliminates duplicated spaces, and applies the specified text formatting (Proper, Lower, Upper). Additionally, it removes any columns that have default names such as 'Column1', 'Column2', etc., ensuring that only relevant columns remain in the output table.
+- If the `textFormat` parameter is not provided, the function will only clean the column names without applying any specific text formatting.
+
+#### **Examples**
+
+```fs
+Table.FixColumnNames(SourceTable, "Proper") // Cleans and formats column names to Proper case.
+Table.FixColumnNames(SourceTable, "Lower") // Cleans and formats column names to Lower case.
+Table.FixColumnNames(SourceTable, "Upper") // Cleans and formats column names to Upper case.
+Table.FixColumnNames(SourceTable) // Cleans column names without applying any specific text formatting.
+```
+
+### [`Text.CountChar`](/Power%20Query/Text.CountChar.pq)
+
+Counts the occurrences of a specific character in a given text string.
+
+#### **Syntax**
+
+```fs
+Text.CountChar(textToCount as nullable text, charToCount as text) as number
+```
+
+#### **Parameters**
+
+- `textToCount`: The text string in which to count occurrences of the character.
+- `charToCount`: The character to count within the text string.
+
+#### **Return Value**
+
+Returns a number representing the count of occurrences of the specified character in the input text. If the input text is null, returns 0.
+
+#### **Remarks**
+
+- The function is case-sensitive; 'a' and 'A' are considered different characters.
+- If `charToCount` is an empty string, the function returns 0.
+
+#### **Examples**
+
+```fs
+Text.CountChar("hello world", "o") // -> 2
+Text.CountChar(null, "a") // -> 0
+```
+
+### [`Text.ExtractNumbers`](/Power%20Query/Text.ExtractNumbers.pq)
+
+Extracts all numeric values from a given text string and returns them as a list of numbers.
+
+#### **Syntax**
+
+```fs
+Text.ExtractNumbers(inputText as text) as list
+```
+
+#### **Parameters**
+
+- `inputText`: The text string from which to extract numeric values.
+
+#### **Return Value**
+
+Returns a list of numbers extracted from the input text. If no numbers are found, returns an empty list.
+
+#### **Examples**
+
+```fs
+Text.ExtractNumbers("The price is 45.67 and the tax is 3.21") // -> {45.67, 3.21}
+Text.ExtractNumbers("No numbers here!") // -> {}
+```
+
+### [`Text.HtmlToPlainText.pq`](/Power%20Query/Text.HtmlToPlainText.pq)
+
+Converts HTML content to plain text by stripping HTML tags.
+
+#### **Syntax**
+
+```fs
+Text.HtmlToPlainText(htmlText as text) as text
+```
+
+#### **Parameters**
+
+- `htmlText`: The HTML text to be converted to plain text.
+
+#### **Return Value**
+
+Returns the plain text content extracted from the HTML input.
+
+#### **Example**
+
+```fs
+Text.HtmlToPlainText("<p>Hello <b>World</b>!</p>") // -> "Hello World!"
+```
+
+### [`Text.RegexExtract`](/Power%20Query/Text.RegexExtract.pq)
+
+Extracts a substring from a text using a regular expression pattern.
+
+#### **Syntax**
+
+```fs
+Text.RegexExtract(textToExtract as text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any
+```
+
+#### **Parameters**
+
+- `textToExtract`: The input text from which to extract the substring.
+- `regexPattern`: The regular expression pattern to use for extraction.
+- `global` (optional): A logical value indicating whether to extract all matches (`true`) or just the first match (`false`). Default is `false`.
+- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+
+#### **Return Value**
+
+Returns the extracted substring(s) based on the regex pattern. If `global` is `true`, returns a list of all matches; otherwise, returns the first match or `null` if no match is found.
+
+#### **Remarks**
+
+- Uses .NET regular expressions for pattern matching.
+- If `global` is `true`, returns a list of all matches; otherwise, returns the first match or `null` if no match is found.
+- Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
+- Only the flags `g`, `i`, `m` are available.
+
+#### **Examples**
+
+```fs
+Text.RegexExtract("Hello World", "W.*d") // -> "World"
+Text.RegexExtract("abc 123 def 456", "\d+", true) // -> {"123", "456"}
+Text.RegexExtract("Hello\nWorld", "^W.*d", false, false, true) // -> "World"
+```
+
+### [`Text.RegexReplace`](/Power%20Query/Text.RegexReplace.pq)
+
+Replaces substrings in a text that match a regular expression pattern with a specified replacement string.
+
+#### **Syntax**
+
+```fs
+Text.RegexReplace(textToModify as text, regexPattern as text, replacer as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as nullable text
+```
+
+#### **Parameters**
+
+- `textToModify`: The input text in which to perform the replacements.
+- `regexPattern`: The regular expression pattern to match substrings for replacement.
+- `replacer`: The string to replace matched substrings with.
+- `global` (optional): A logical value indicating whether to replace all occurrences (`true`) or just the first occurrence (`false`). Default is `false`.
+- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+
+#### **Return Value**
+
+Returns the modified text with the specified replacements. If no matches are found, returns the original text.
+
+#### **Remarks**
+
+- Uses .NET regular expressions for pattern matching and replacement.
+- If `global` is `true`, replaces all matches; otherwise, replaces only the first match.
+- Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
+- Only the flags `g`, `i`, `m` are available.
+
+#### **Examples**
+
+```fs
+Text.RegexReplace("Hello World", "World", "Universe") // -> "Hello Universe"
+Text.RegexReplace("abc 123 def 456", "\d+", "number", true) // -> "abc number def number"
+Text.RegexReplace("Hello\nWorld", "^W.*d", "Everyone", false, false, true) // -> "Hello\nEveryone"
+```
+
+### [`Text.RegexSplit`](/Power%20Query/Text.RegexSplit.pq)
+
+Splits a text into a list of substrings based on a regular expression pattern.
+
+#### **Syntax**
+
+```fs
+Text.RegexSplit(textToSplit as text, regexPattern as text, optional caseInsensitive as logical, optional multiline as logical) as list
+```
+
+#### **Parameters**
+
+- `textToSplit`: The input text to be split.
+- `regexPattern`: The regular expression pattern to use as the delimiter for splitting.
+- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+
+#### **Return Value**
+
+Returns a list of substrings obtained by splitting the input text at each match of the regex pattern.
+
+#### **Remarks**
+
+- Uses .NET regular expressions for pattern matching.
+- Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
+- Only the flags `i`, `m` are available.
+
+#### **Examples**
+
+```fs
+Text.RegexSplit("apple,banana,cherry", ",") // -> {"apple", "banana", "cherry"}
+Text.RegexSplit("one1two2three3", "\d") // -> {"one", "two", "three", ""}
+Text.RegexSplit("Hello\nWorld", "\n", false, true) // -> {"Hello", "World"}
+```
+
+### [`Text.RegexTest`](/Power%20Query/Text.RegexTest.pq)
+
+Tests whether a text matches a regular expression pattern.
+
+#### **Syntax**
+
+```fs
+Text.RegexTest(textToTest as text, regexPattern as text, optional caseInsensitive as logical, optional multiline as logical) as logical
+```
+
+#### **Parameters**
+
+- `textToTest`: The input text to be tested against the regex pattern.
+- `regexPattern`: The regular expression pattern to test.
+- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+
+#### **Return Value**
+
+Returns `true` if the input text matches the regex pattern, `false` otherwise.
+
+#### **Remarks**
+
+- Uses .NET regular expressions for pattern matching.
+- Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
+- Only the flags `i`, `m` are available.
+
+#### **Examples**
+
+```fs
+Text.RegexTest("Hello World", "World") // -> true
+Text.RegexTest("abc 123", "^\d+$") // -> false
+Text.RegexTest("Hello\nWorld", "^W.*d", false, true) // -> true
+```
+
+### [`Text.RemoveAccents`](/Power%20Query/Text.RemoveAccents.pq)
+
+Removes accents from characters in a text string.
+
+#### **Syntax**
+
+```fs
+Text.RemoveAccents(inputText as text) as text
+```
+
+#### **Parameters**
+
+- `inputText`: The text string from which to remove accents.
+
+#### **Return Value**
+
+Returns the input text with all accented characters replaced by their unaccented equivalents.
+
+#### **Examples**
+
+```fs
+Text.RemoveAccents("Café") // -> "Cafe"
+Text.RemoveAccents("naïve") // -> "naive"
+```
+
+### [`Text.RemoveDoubleSpaces`](/Power%20Query/Text.RemoveDoubleSpaces.pq)
+
+Removes consecutive double spaces from a text string, replacing them with single spaces.
+
+#### **Syntax**
+
+```fs
+Text.RemoveDoubleSpaces(inputText as text) as text
+```
+
+#### **Parameters**
+
+- `inputText`: The text string from which to remove double spaces.
+
+#### **Return Value**
+
+Returns the input text with all consecutive double spaces replaced by single spaces.
+
+#### **Example**
+
+```fs
+Text.RemoveDoubleSpaces("This  is   a    test.") // -> "This is a test."
+```
+
+### [`Text.RemoveLetters`](/Power%20Query/Text.RemoveLetters.pq)
+
+Removes all alphabetic characters from a text string, leaving only non-letter characters.
+
+#### **Syntax**
+
+```fs
+Text.RemoveLetters(inputText as text) as text
+```
+
+#### **Parameters**
+
+- `inputText`: The text string from which to remove alphabetic characters.
+
+#### **Return Value**
+
+Returns the input text with all alphabetic characters removed.
+
+#### **Example**
+
+```fs
+Text.RemoveLetters("Hello123 World!") // -> "123 !"
+```
+
+### [`Text.RemoveNumerals`](/Power%20Query/Text.RemoveNumerals.pq)
+
+Removes all numeric characters from a text string, with an option to also remove Roman numerals.
+
+#### **Syntax**
+
+```fs
+Text.RemoveNumerals(textToRemove as nullable text, optional removeRomanNumerals as logical) as text
+```
+
+#### **Parameters**
+
+- `textToRemove`: The text string from which to remove numeric characters.
+- `removeRomanNumerals` (optional): A logical value indicating whether to also remove Roman numeral characters (I, V, X, L, C, D, M). Default is `false`.
+
+#### **Return Value**
+
+Returns the input text with all numeric characters (and optionally Roman numerals) removed.
+
+#### **Example**
+
+```fs
+Text.RemoveNumerals("Room 101 IV") // -> "Room  IV"
+Text.RemoveNumerals("Room 101 IV", true) // -> "Room  "
+```
+
+### [`Text.RemovePunctuations`](/Power%20Query/Text.RemovePunctuations.pq)
+
+Removes all punctuation characters from a text string.
+
+#### **Syntax**
+
+```fs
+Text.RemovePunctuations(textToRemove as nullable text, optional replacer as text) as text
+```
+
+#### **Parameters**
+
+- `textToRemove`: The text string from which to remove punctuation characters.
+- `replacer` (optional): A text string to replace punctuation characters with. If omitted, punctuation characters are removed without replacement.
+
+#### **Return Value**
+
+Returns the input text with all punctuation characters removed or replaced by the specified replacer.
+
+#### **Example**
+
+```fs
+Text.RemovePunctuations("Hello, World!") // -> "Hello World"
+Text.RemovePunctuations("Hello, World!", " ") // -> "Hello  World "
+```
+
+### [`Text.RemoveStopwords`](/Power%20Query/Text.RemoveStopwords.pq)
+
+Removes common Portuguese stopwords from a text string to enhance text analysis.
+
+#### **Syntax**
+
+```fs
+Text.RemoveStopwords(textToModify as nullable text, optional undesirableWords as {text}) as text
+```
+
+#### **Parameters**
+
+- `textToModify`: The text string from which to remove stopwords.
+- `undesirableWords` (optional): A list of additional words to remove from the text. Default is an empty list.
+
+#### **Return Value**
+
+Returns the input text with all Portuguese stopwords and any additional specified words removed.
+
+#### **Examples**
+
+```fs
+Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns.")
+// -> "exemplo texto remover palavras comuns."
+
+Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns.", {"exemplo", "texto"})
+// -> "remover palavras comuns."
+```
+
+### [`Text.RemoveWeirdChars`](/Power%20Query/Text.RemoveWeirdChars.pq)
+
+Removes special and non-printable characters from a text string, with an option to replace them with spaces.
+
+#### **Syntax**
+
+```fs
+Text.RemoveWeirdChars(textToClean as text, optional replacer as text) as text
+```
+
+#### **Parameters**
+
+- `textToClean`: The text string to be cleaned.
+- `replacer` (optional): A text string to replace special characters with. If omitted, special characters are replaced by an white space.
+
+#### **Return Value**
+
+Returns the cleaned text with special characters either removed or replaced by the specified replacer.
+
+#### **Examples**
+
+```fs
+Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!") // -> "Hello World!"
+Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!", "_") // -> "Hello_World!"
+```
 
 ## VBA
 

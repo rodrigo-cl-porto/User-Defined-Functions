@@ -1,7 +1,6 @@
 let 
-    func = (X as list, Y as list) as number =>
-        let 
-            N = List.Count(X)
+    func = (X as list, Y as list) as number => let 
+        N = List.Count(X)
         in if N > 0 and List.Count(Y) = N then
             let
                 SumX = List.Sum(X),
@@ -12,6 +11,7 @@ let
                 (SumY * SumX2 - SumX * SumXY) / (N * SumX2 - Number.Power(SumX, 2))
         else
             null,
+    
     documentation = type function(
         X as (type {number} meta [
             Documentation.FieldCaption = "X",
@@ -23,11 +23,11 @@ let
         ])
     ) as nullable number meta [
         Documentation.Name = "List.Intercept",
-        Documentation.Description = "Calculates the intercept of the linear regression line between two numerical lists 𝚇 and 𝚈.",
+        Documentation.Description = "Calculates the intercept of the linear regression line between two numerical lists X and Y.",
         Documentation.LongDescription = 
             "This function returns the intercept of the simple linear regression line between two lists of numbers. "
             & "It is useful for statistical analysis and predictive modeling. "
-            & "The intercept represents the expected value of 𝚈 when 𝚇 is zero, based on the least squares method.",
+            & "The intercept represents the expected value of Y when X is zero, based on the least squares method.",
         Documentation.Category = "Statistics",
         Documentation.Version = "1.0.0",
         Documentation.Author = "Rodrigo Celso de Lima Porto",
@@ -36,7 +36,7 @@ let
             Code = "List.Intercept({1, 2, 3}, {4, 5, 6})",
             Result = "3"
         ], [
-            Description = "Returns 𝚗𝚞𝚕𝚕 when the lists have different lengths.",
+            Description = "Returns null when the lists have different lengths.",
             Code = "List.Intercept({1, 2}, {3})",
             Result = "null"
         ]}

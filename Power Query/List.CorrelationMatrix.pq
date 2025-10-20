@@ -12,8 +12,8 @@ let
         each List.Transform(
             _, 
             each let
-                column1 = Table.Column(tbBuffer, _{0}),
-                column2 = Table.Column(tbBuffer, _{1})
+                column1 = Table.Column(tblBuffer, _{0}),
+                column2 = Table.Column(tblBuffer, _{1})
             in 
                 fxCorrelation(column1, column2)
         )

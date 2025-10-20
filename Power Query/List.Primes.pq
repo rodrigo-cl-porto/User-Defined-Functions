@@ -2,7 +2,7 @@
 if n < 2 then
   {}
 else if Text.Upper(method) = "ERATOSTHENES" then
- 
+
   List.Accumulate(
     {3..n},
     {2} & List.Numbers(3, n/2 - 1, 2),

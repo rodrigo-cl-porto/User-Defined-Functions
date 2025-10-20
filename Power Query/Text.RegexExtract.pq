@@ -1,6 +1,5 @@
 let
-    func = (textToExtract as text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any =>
-    let
+    func = (textToExtract as text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any => let
         ReplacedUnprintableChars = List.Accumulate(
             {
                 {"\", "\\"},
@@ -53,10 +52,9 @@ let
                 SplitText{0}
         otherwise 
             if global=true then {} else ""
-    in 
-        ExtractedMatches,
+        in ExtractedMatches,
 
-    documentedType = type function (
+    documentation = type function (
         textToExtract as (type text meta [
             Documentation.FieldCaption = "textToExtract",
             Documentation.FieldDescription = "The input text to apply the regular expression on"
@@ -65,47 +63,53 @@ let
             Documentation.FieldCaption = "regexPattern",
             Documentation.FieldDescription = "The regular expression pattern to match"
         ]),
-        optional global as (type nullable logical meta [
+        optional global as (type logical meta [
             Documentation.FieldCaption = "global",
-            Documentation.FieldDescription = "If true, returns all matches; otherwise, returns only the first match"
+            Documentation.FieldDescription = "If true, returns all matches; otherwise, returns only the first match",
+            Documentation.AllowedValues = {true, false},
+            Documentation.DefaultValue = false
         ]),
-        optional caseInsensitive as (type nullable logical meta [
+        optional caseInsensitive as (type logical meta [
             Documentation.FieldCaption = "caseInsensitive",
-            Documentation.FieldDescription = "If true, performs case-insensitive matching"
+            Documentation.FieldDescription = "If true, performs case-insensitive matching",
+            Documentation.AllowedValues = {true, false},
+            Documentation.DefaultValue = false
         ]),
-        optional multiline as (type nullable logical meta [
+        optional multiline as (type logical meta [
             Documentation.FieldCaption = "multiline",
-            Documentation.FieldDescription = "If true, enables multiline mode"
-        ])
-    ) as any meta [
-        Documentation.Name = "Text.RegexExtract",
-        Documentation.Description = "Extracts text from a string using a regular expression pattern.",
-        Documentation.LongDescription = 
-            "This function applies a regular expression to a given text and returns the matched result. "
-            & "It supports optional flags for global matching, case insensitivity, and multiline mode. "
-            & "Due to Power Query's JavaScript parser limitations, some advanced regex features like 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<=pattern)' and negative 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<!pattern)' and certain flags (𝚜, 𝚞, 𝚟, 𝚍, 𝚢) are not supported. "
-            & "Only the flags 𝚐, 𝚒, 𝚖 are available.",
-        Documentation.Category = "Text",
-        Documentation.Version = "1.0.0",
-        Documentation.Author = "Rodrigo Celso de Lima Porto",
-        Documentation.Examples = {[
-            Description = "Extracts the first number from a string.",
-            Code = "Text.RegexExtract(""Order #12345"", ""\d+"")",
-            Result = "12345"
-        ], [
-            Description = "Extracts all words using global flag.",
-            Code = "Text.RegexExtract(""Hello world!"", ""\w+"", true)",
-            Result = "{""Hello"", ""world""}"
-        ], [
-            Description = "Returns empty text when no match is found.",
-            Code = "Text.RegexExtract(""abc"", ""\d+"")",
-            Result = """"""
-        ], [
-            Description = "Returns empty list when no global match is found.",
-            Code = "Text.RegexExtract(""abc"", ""\d+"", true)",
-            Result = "{}"
-        ]}
-    ],
-    documentedFunction = Value.ReplaceType(func, documentedType)
+            Documentation.FieldDescription = "If true, enables multiline mode",
+            Documentation.AllowedValues = {true, false},
+            Documentation.DefaultValue = false
+        ])) as any meta [
+            Documentation.Name = "Text.RegexExtract",
+            Documentation.Description = "Extracts text from a string using a regular expression pattern.",
+            Documentation.LongDescription = 
+                "This function applies a regular expression to a given text and returns the matched result. "
+                & "It supports optional flags for global matching, case insensitivity, and multiline mode. "
+                & "Due to Power Query's JavaScript parser limitations, some advanced regex features like 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<=pattern)' and negative 𝚕𝚘𝚘𝚔𝚋𝚎𝚑𝚒𝚗𝚍 '(?<!pattern)' and certain flags (𝚜, 𝚞, 𝚟, 𝚍, 𝚢) are not supported. "
+                & "Only the flags 𝚐, 𝚒, 𝚖 are available.",
+            Documentation.Category = "Text",
+            Documentation.Version = "1.0.0",
+            Documentation.Author = "Rodrigo Celso de Lima Porto",
+            Documentation.Examples = {[
+                Description = "Extracts the first number from a string.",
+                Code = "Text.RegexExtract(""Order #12345"", ""\d+"")",
+                Result = "12345"
+            ], [
+                Description = "Extracts all words using global flag.",
+                Code = "Text.RegexExtract(""Hello world!"", ""\w+"", true)",
+                Result = "{""Hello"", ""world""}"
+            ], [
+                Description = "Returns empty text when no match is found.",
+                Code = "Text.RegexExtract(""abc"", ""\d+"")",
+                Result = """"""
+            ], [
+                Description = "Returns empty list when no global match is found.",
+                Code = "Text.RegexExtract(""abc"", ""\d+"", true)",
+                Result = "{}"
+            ]}
+        ],
+
+    documentedFunction = Value.ReplaceType(func, documentation)
 in 
     documentedFunction
