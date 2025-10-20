@@ -1,9 +1,9 @@
 let 
-    func = (textToRemove as nullable text) as text =>
-        if textToRemove = null or textToRemove = "" then
+    func = (textToModify as nullable text) as text =>
+        if textToModify = null or textToModify = "" then
             ""
         else let
-            textBinary = Text.ToBinary(textToRemove, 1251),
+            textBinary = Text.ToBinary(textToModify, 1251),
             textASCII  = Text.FromBinary(textBinary, TextEncoding.Ascii),
             RemovedLetters = List.RemoveItems(Text.ToList(textASCII), {"a".."z", "A".."Z"}),
             CombinedText = Text.Combine(RemovedLetters)
@@ -11,8 +11,8 @@ let
             CombinedText,
 
     documentation = type function (
-        textToRemove as (type nullable text meta [
-            Documentation.FieldCaption = "textToRemove",
+        textToModify as (type nullable text meta [
+            Documentation.FieldCaption = "textToModify",
             Documentation.FieldDescription = "The input text from which to remove letters"
         ])) as text meta [
             Documentation.Name = "Text.RemoveLetters",

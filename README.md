@@ -840,12 +840,12 @@ Removes all alphabetic characters from a text string, leaving only non-letter ch
 #### **Syntax**
 
 ```fs
-Text.RemoveLetters(inputText as text) as text
+Text.RemoveLetters(textToModify as text) as text
 ```
 
 #### **Parameters**
 
-- `inputText`: The text string from which to remove alphabetic characters.
+- `textToModify`: The text string from which to remove alphabetic characters.
 
 #### **Return Value**
 
