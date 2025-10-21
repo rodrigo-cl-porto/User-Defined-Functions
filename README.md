@@ -545,6 +545,12 @@ Number.IsPrime(7) // -> true
 Number.IsPrime(10) // -> false
 ```
 
+### Credits
+
+- Author: Abigail
+- Source: [Abigail's regex to test for prime numbers](http://test.neilk.net/blog/2000/06/01/abigails-regex-to-test-for-prime-numbers/)
+- YouTube Video: [How on Earth does ^.?$|^(..+?)\1+$ produce primes?](https://www.youtube.com/watch?v=5vbk0TwkokM)
+
 <br>
 
 ## [`Number.ToRoman`](/Power%20Query/Number.ToRoman.pq)
@@ -828,6 +834,11 @@ in
 |:-:|
 |value1|
 |value2|
+
+### Credits
+
+- Author: [Excel Off The Grid](https://exceloffthegrid.com/)
+- Source: [Power Query Trick: Instantly Remove All Null Columns! 💥](https://www.youtube.com/watch?v=Zkg9ICg9i40)
 
 <br>
 
