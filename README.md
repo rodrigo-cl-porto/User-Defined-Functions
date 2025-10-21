@@ -19,7 +19,11 @@ This repo contains custom functions I've developed throughout my experience as a
     - [`Number.IsInteger`](#numberisinteger)
     - [`Number.IsPrime`](#numberisprime)
     - [`Number.ToRoman`](#numbertoroman)
+    - [`Table.AddListAsColumn`](#tableaddlistascolumn)
     - [`Table.FixColumnNames`](#tablefixcolumnnames)
+    - [`Table.PreprocessTextColumns`](#tablepreprocesstextcolumns)
+    - [`Table.RemoveBlankColumns`](#tableremoveblankcolumns)
+    - [`Table.TransposeCorrectly`](#tabletransposecorrectly)
     - [`Text.CountChar`](#textcountchar)
     - [`Text.ExtractNumbers`](#textextractnumbers)
     - [`Text.HtmlToPlainText.pq`](#texthtmltoplaintextpq)
@@ -68,26 +72,26 @@ This repo contains custom functions I've developed throughout my experience as a
 
 ## Power Query (M Code)
 
-### [`Binary.Unzip`](/Power%20Query/Binary.Unzip.pq)
+## [`Binary.Unzip`](/Power%20Query/Binary.Unzip.pq)
 
 Extracts files from a ZIP archive and returns a table of entries with file names and decompressed content.
 
-#### **Syntax**
+### Syntax
 ```fs
 Binary.Unzip(ZIPFile as binary) as table
 ```
 
-#### **Parameters**
+### Parameters
 
 - `ZIPFile` — A binary containing a ZIP archive (for example, the result of `File.Contents`).
 
-#### **Return value**
+### Return Value
 
 A table with the following columns:
 - `FileName` (text) — The entry name inside the ZIP.
 - `Content` (binary or null) — The decompressed file content; `null` if decompression failed or entry unsupported.
 
-#### **Example**
+### Example
 
 ```fs
 let
@@ -107,68 +111,76 @@ in
     FirstText
 ```
 
-#### **Credits**
+### **Credits**
 
 - Author: Ignacio Barrau
 - Source: [ExtractZIP.pq](https://github.com/ibarrau/PowerBi-code/blob/master/PowerQuery/ExtractZIP.pq)
 
-### [`DateTime.ToUnixTime`](/Power%20Query/DateTime.ToUnixTime.pq)
+<br>
+
+## [`DateTime.ToUnixTime`](/Power%20Query/DateTime.ToUnixTime.pq)
 
 Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:00:00).
 
-#### **Syntax**
+### Syntax
 ```fs
 DateTime.ToUnixTime(datetimeToConvert as datetime) as number
 ```
 
-#### **Parameters**
+### Parameters
 
 - `datetimeToConvert`: A datetime value to convert.
 
-#### **Return Value**
+### Return Value
 
 Converts `datetime` to Unixtime, which consists of a number representing the total seconds between `datetimeToConvert` and the Unix epoch (1970-01-01 00:00:00). Values are negative for datetimes before the epoch.
 
-#### **Remarks**
+### Remarks
 
 - No timezone conversion is performed — treat the input as UTC if you need UTC-based Unix time.
 
-#### **Example**
+### Example
 
 ```fs
 DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0)) // -> returns 1672531200
 ```
 
-### [`List.Correlation`](/Power%20Query/List.Correlation.pq)
+<br>
+
+## [`List.Correlation`](/Power%20Query/List.Correlation.pq)
 
 Calculates the correlation coefficient between two lists of numeric values. Supports Pearson (linear) and Spearman (rank-based) correlation.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-List.Correlation(list1 as list, list2 as list, optional typeCorrelation as text) as number
+List.Correlation(
+    list1 as list,
+    list2 as list,
+    optional typeCorrelation as text
+) as number
 ```
 
-#### **Parameters**
+### Parameters
 
 - `list1`: list of numeric values (nulls and non-numeric values are treated as 0).
 - `list2`: list of numeric values (nulls and non-numeric values are treated as 0).
 - `typeCorrelation` (optional): "Pearson" (default) or "Spearman". Case-insensitive.
 
-#### **Return value**
+### Return Value
 
 A number representing the correlation coefficient:
 
 - Pearson: standard Pearson correlation (linear relationship).
 - Spearman: Spearman rank correlation (uses dense ranking; tied values receive the same rank).
 
-#### **Remarks**
+### Remarks
 
 - Input lists must be the same length; otherwise, an error is raised.
 - Null, empty string, or non-numeric entries are converted to 0 before calculation.
 - Result is returned as a decimal number (can be negative, positive, or `NaN` if degenerate).
 
-#### **Examples**
+### Examples
 
 ```fs
 List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30})
@@ -181,61 +193,71 @@ List.Correlation({0, null, 3, "a", 4}, {4, 5, null, 10, 30})
 // -> 0.556720639738652  (non-numeric values are treated as 0)
 ```
 
-### [`List.Rank`](/Power%20Query/List.Rank.pq)
+<br>
 
-Returns a list of ranks for a given list of values. Tied values receive the same rank (dense ranking). The output list preserves the input order.
+## [`List.Rank`](/Power%20Query/List.Rank.pq)
 
-#### **Syntax**
+Returns a list of ranks for a given list of values. Tied values receive the same rank (dense ranking). The Result list preserves the input order.
+
+### Syntax
 ```fs
-List.Rank(values as list, optional order as nullable number) as list
+List.Rank(
+    values as list,
+    optional order as Order.Type
+) as list
 ```
 
-#### **Parameters**
+### Parameters
 - `values`: A list of values to rank. Values must be comparable (numbers, texts, dates, etc.).
 - `order` (optional): Use `Order.Ascending` or `Order.Descending`. If omitted, the function treats the ordering as descending (i.e., highest value gets rank 1).
 
-#### **Return value**
+### Return Value
 A list of integers with the same length as `values`, where each element is the rank (1-based) of the corresponding input value.
 
-#### **Remarks**
+### Remarks
 - Ranks are "dense": equal values receive the same rank and the next distinct value's rank increases by 1.
   - Example (descending default): values {3,1,2,3} → ranks {1,3,2,1}
 - The function returns ranks in the original input order.
 - Comparison uses Power Query's Value.Compare, so mixed-type comparisons follow Power Query rules.
 
-#### **Examples**
+### Examples
 ```fs
 List.Rank({10, 10, 5, 7}) // {1, 1, 3, 2} (default: descending)
 List.Rank({31, 11, 27, 31}, Order.Ascending) // {3, 1, 2, 3}
 List.Rank({10, 10, 30, 30, 2}) // {2, 2, 1, 1, 3}
 ```
 
-### [`List.Intercept`](/Power%20Query/List.Intercept.pq)
+<br>
+
+## [`List.Intercept`](/Power%20Query/List.Intercept.pq)
 
 Calculates the intercept of the linear regression line between two numerical lists X and Y.
 
-#### Syntax
+### Syntax
 
 ```fs
-List.Intercept(X as list, Y as list) as number
+List.Intercept(
+    X as list,
+    Y as list
+) as number
 ```
 
-#### Parameters
+### Parameters
 
 - `X`: A list of numerical values representing the independent variable.
 - `Y`: A list of numerical values representing the dependent variable.
 
-#### Return Value
+### Return Value
 
 Returns a number representing the intercept of the linear regression line calculated using the least squares method. If the lists have different lengths, the function returns `null`.
 
-##### Remarks
+### Remarks
 
 - Both input lists must have the same length; otherwise, the function returns `null`.
 - The function uses the least squares method to calculate the intercept.
 - Non-numeric values in the lists will cause an error during calculation.
 
-#### Example
+### Example
 
 ```fs
 List.Intercept({1, 2, 3}, {4, 5, 6})
@@ -245,31 +267,36 @@ List.Intercept({1, 2}, {3})
 // -> null (different lengths)
 ```
 
-### [`List.Outliers`](/Power%20Query/List.Outliers.pq)
+<br>
+
+## [`List.Outliers`](/Power%20Query/List.Outliers.pq)
 
 Identifies outliers in a list of numerical values using the Interquartile Range (IQR) method.
 
-#### Syntax
+### Syntax
 
 ```fs
-List.Outliers(values as list, optional multiplier as number) as list
+List.Outliers(
+    values as list,
+    optional multiplier as number
+) as list
 ```
 
-#### Parameters
+### Parameters
 
 - `values`: A list of numerical values to analyze for outliers.
 - `multiplier` (optional): A number to adjust the IQR threshold for defining outliers. Default is 1.5.
 
-#### Return Value
+### Return Value
 
 Returns a list of outlier values identified in the input list based on the IQR method. If no outliers are found, the function returns an empty list.
 
-#### Remarks
+### Remarks
 
 - The function first removes nulls, empty strings, and whitespace entries, then selects only valid numeric values.
 - Outliers are defined as values below Q₁ - 1.5×IQR or above Q₃ + 1.5×IQR, where Q₁ and Q₃ are the first and third quartiles respectively.
 
-##### Examples
+### Examples
 
 ```fs
 List.Outliers({1, 2, 3, 4, 100})
@@ -280,32 +307,37 @@ List.Outliers({1, 2, 3, 4, 50, 100}, 2)
 // -> {100} (100 is an outlier with a higher multiplier)
 ```
 
-### [`List.Slope`](/Power%20Query/List.Slope.pq)
+<br>
+
+## [`List.Slope`](/Power%20Query/List.Slope.pq)
 
 Calculates the slope of the linear regression between two numerical lists X and Y.
 
-#### Syntax
+### Syntax
 
 ```fs
-List.Slope(X as list, Y as list) as nullable number
+List.Slope(
+    X as list,
+    Y as list
+) as nullable number
 ```
 
-#### Parameters
+### Parameters
 
 - `X`: A list of numerical values representing the independent variable.
 - `Y`: A list of numerical values representing the dependent variable.
 
-#### Return Value
+### Return Value
 
 Returns a number representing the slope of the linear regression line calculated using the least squares method. If the lists have different lengths, the function returns `null`.
 
-#### Remarks
+### Remarks
 
 - Both input lists must have the same length; otherwise, the function returns `null`.
 - The function uses the least squares method to calculate the slope.
 - Non-numeric values in the lists will cause an error during calculation.
 
-#### Example
+### Example
 
 ```fs
 List.Slope({1, 2, 3}, {4, 5, 6})
@@ -315,25 +347,27 @@ List.Slope({1, 2}, {3})
 // -> null (different lengths)
 ```
 
-### [`List.PopulationStdDev`](/Power%20Query/List.PopulationStdDev.pq)
+<br>
+
+## [`List.PopulationStdDev`](/Power%20Query/List.PopulationStdDev.pq)
 
 Calculates the population standard deviation of a list of numerical values.
 
-#### Syntax
+### Syntax
 
 ```fs
 List.PopulationStdDev(values as list) as nullable number
 ```
 
-#### Parameters
+### Parameters
 
 - `values`: A list of numerical values to calculate the population standard deviation.
 
-#### Return Value
+### Return Value
 
 Returns a number representing the population standard deviation of the input list. If the list is empty or contains no numeric values, the function returns `null`.
 
-#### Remarks
+### Remarks
 
 - The function calculates the population standard deviation using the formula: $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$
     - $N$ is the number of values
@@ -341,7 +375,7 @@ Returns a number representing the population standard deviation of the input lis
     - $\mu$ is the mean of the values
 - Non-numeric values, nulls, and empty strings are ignored in the calculation.
 
-#### Example
+### Example
 
 ```fs
 List.PopulationStdDev({2, 4, 4, 4, 5, 5, 7, 9})
@@ -351,25 +385,27 @@ List.PopulationStdDev({})
 // -> null (empty list)
 ```
 
-### [`List.Variance`](/Power%20Query/List.Variance.pq)
+<br>
+
+## [`List.Variance`](/Power%20Query/List.Variance.pq)
 
 Calculates the population variance of a list of numerical values.
 
-#### Syntax
+### Syntax
 
 ```fs
 List.Variance(values as list) as nullable number
 ```
 
-#### Parameters
+### Parameters
 
 - `values`: A list of numerical values to calculate the population variance.
 
-#### Return Value
+### Return Value
 
 Returns a number representing the population variance of the input list. If the list is empty or contains no numeric values, the function returns `null`.
 
-#### Remarks
+### Remarks
 
 - The function calculates the population variance using the formula: $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$
     - $N$ is the number of values
@@ -377,7 +413,7 @@ Returns a number representing the population variance of the input list. If the 
     - $\mu$ is the mean of the values
 - Non-numeric values, nulls, and empty strings are ignored in the calculation.
 
-#### Example
+### Examples
 
 ```fs
 List.Variance({1, 2, 3, 4, 5})
@@ -390,167 +426,292 @@ List.Variance({})
 // -> null (empty list)
 ```
 
-### [`List.WeightedAverage`](/Power%20Query/List.WeightedAverage.pq)
+<br>
+
+## [`List.WeightedAverage`](/Power%20Query/List.WeightedAverage.pq)
 
 Calculates the weighted average of a list of values given a corresponding list of weights.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 List.WeightedAverage(values as list, weights as list) as nullable number
 ```
 
-#### **Parameters**
+### Parameters
 
 - `values`: A list of numerical values to calculate the weighted average.
 - `weights`: A list of numerical weights corresponding to each value.
 
-#### **Return Value**
+### Return Value
 
 Returns a number representing the weighted average of the input values. If the lists have different lengths or if the sum of weights is zero, the function returns `null`.
 
-#### **Remarks**
+### Remarks
 
 - The function calculates the weighted average using the formula: $WeightedAverage = \frac{\sum (x_i \times w_i)}{\sum w_i}$
     - $x_i$ are the individual values
     - $w_i$ are the corresponding weights
 
-#### **Example**
+### Example
 
 ```fs
 List.WeightedAverage({1, 2, 3}, {4, 5, 6})
 // -> 2.3333333333333335 (example weighted average value)
 ```
 
-### [`Number.FromRoman`](/Power%20Query/Number.FromRoman.pq)
+<br>
+
+## [`Number.FromRoman`](/Power%20Query/Number.FromRoman.pq)
 
 Converts a Roman numeral (text) to a number.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Number.FromRoman(romanText as text) as number
 ```
 
-#### **Parameters**
+### Parameters
 
 - `romanText`: A text string representing a Roman numeral.
 
-#### **Return Value**
+### Return Value
 
 Returns a number corresponding to the Roman numeral. If the input contains invalid characters, an error is raised.
 
-#### **Remarks**
+### Remarks
 
 - Supports standard Roman numeral characters: I, V, X, L, C, D, M (case-insensitive).
 
-#### **Examples**
+### Examples
 
 ```fs
 Number.FromRoman("XII") // -> 12
 Number.FromRoman("invalid") // -> Error
 ```
 
-### [`Number.IsInteger`](/Power%20Query/Number.IsInteger.pq)
+<br>
+
+## [`Number.IsInteger`](/Power%20Query/Number.IsInteger.pq)
 
 Checks if a given number is an integer.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Number.IsInteger(value as number) as logical
 ```
 
-#### **Parameters**
+### Parameters
 
 - `value`: A number to check.
 
-#### **Return Value**
+### Return Value
 
 Returns `true` if the number is an integer, `false` otherwise.
 
-#### **Examples**
+### Examples
 
 ```fs
 Number.IsInteger(10) // -> true
 Number.IsInteger(10.5) // -> false
 ```
 
-### [`Number.IsPrime`](/Power%20Query/Number.IsPrime.pq)
+<br>
+
+## [`Number.IsPrime`](/Power%20Query/Number.IsPrime.pq)
 
 Checks if a given number is a prime number.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Number.IsPrime(value as number) as logical
 ```
 
-#### **Parameters**
+### Parameters
 
 - `value`: A number to check.
 
-#### **Return Value**
+### Return Value
 
 Returns `true` if the number is prime, `false` otherwise.
 
-#### **Examples**
+### Examples
 
 ```fs
 Number.IsPrime(7) // -> true
 Number.IsPrime(10) // -> false
 ```
 
-### [`Number.ToRoman`](/Power%20Query/Number.ToRoman.pq)
+<br>
+
+## [`Number.ToRoman`](/Power%20Query/Number.ToRoman.pq)
 
 Converts an integer number to a Roman numeral (between 1 and 3999).
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Number.ToRoman(numberToConvert as number) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `numberToConvert`: The integer number to be converted to a Roman numeral.
 
-#### **Return Value**
+### Return Value
 
 Returns a text string representing the Roman numeral equivalent of the input integer. If the input number is outside the range of 1 to 3999, an error is raised.
 
-#### **Examples**
+### Examples
 
 ```fs
 Number.ToRoman(12) // -> "XII"
 Number.ToRoman(0) // -> Error
 ```
 
-### [`Table.FixColumnNames`](/Power%20Query/Table.FixColumnNames.pq)
+<br>
+
+## [`Table.AddListAsColumn`](/Power%20Query/Table.AddListAsColumn.pq)
+
+Adds a new column to a table using values from a provided list. The new column can be inserted at a specified position and can have a defined data type.
+
+### Syntax
+
+```fs
+Table.AddListAsColumn(
+    tbl as table, 
+    columnName as text, 
+    columnValues as list, 
+    optional position as number, 
+    optional columnType as type
+) as table
+```
+
+### Parameters
+
+- `tbl`: The input table to which the new column will be added.
+- `columnName`: The name of the new column to be added.
+- `columnValues`: A list of values to populate the new column.
+- `position` (optional): The position (0-based index) where the new column should be inserted. If not specified, the column is added at the end.
+- `columnType` (optional): The data type of the new column. If not specified, the column will have type `any`.
+
+### Return Value
+
+Returns a new table with the added column populated with values from the provided list. If the list has fewer items than the number of rows in the table, nulls are added for the remaining rows. If the list has more items than the number of rows, extra items are ignored.
+
+### Remarks
+
+- If the `position` parameter is provided, the new column will be inserted at the specified index. If the index is out of bounds, an error will occur.
+- If the `columnType` parameter is provided, the new column will be created with the specified data type. If not provided, the column will have type `any`.
+
+### Examples
+
+**Example 1**: Add a list as a new column at the end of the table.",
+
+```fs
+let
+    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]}),
+    NewColumnValues = {10, 20},
+    Result = Table.AddListAsColumn(Source, "C", NewColumnValues)
+in
+    Result
+```
+
+**Result**
+
+|A  |B  |C     |
+|:-:|:-:|:----:|
+|1  |2  |10    |
+|3  |4  |20    |
+
+**Example 2**: Add a list as a new column at a specific position with a defined data type.
+
+```fs
+let
+    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]}),
+    NewColumnValues = {10, 20},
+    Result = Table.AddListAsColumn(Source, "C", NewColumnValues, 2, Int64.Type)
+in
+    Result
+```
+
+**Result**
+
+|A  |C     |B  |
+|:-:|:----:|:-:|
+|1  |10    |2  |
+|3  |20    |4  |
+
+**Example 3**: If list has fewer items than rows, nulls are added for remaining rows.
+
+```fs
+let
+    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4], [A=5, B=6]}),
+    NewColumnValues = {10, 20},
+    Result = Table.AddListAsColumn(Source, "C", NewColumnValues)
+in
+    Result
+```
+
+**Result**
+
+|A  |B  |C     |
+|:-:|:-:|:----:|
+|1  |2  |10    |
+|3  |4  |20    |
+|5  |6  |_null_|
+
+**Example 4**: If list has more items than rows, extra items are ignored.
+
+```fs
+let
+    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]}),
+    NewColumnValues = {10, 20, 30, 40},
+    Result = Table.AddListAsColumn(Source, "C", NewColumnValues)
+in
+    Result
+```
+
+**Result**
+
+|A  |B  |C  |
+|:-:|:-:|:-:|
+|1  |2  |10 |
+|3  |4  |20 |
+
+<br>
+
+## [`Table.FixColumnNames`](/Power%20Query/Table.FixColumnNames.pq)
 
 Cleans and standardizes column names in a table by removing unwanted characters, trimming spaces, and applying specified text formatting (Proper, Lower, Upper). It also removes columns with default names like 'Column1', 'Column2', etc.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Table.FixColumnNames(tbl as table, optional textFormat as text) as table
+Table.FixColumnNames(
+    tbl as table,
+    optional textFormat as text
+) as table
 ```
 
-#### **Parameters**
+### Parameters
 
 - `tbl`: The input table whose column names need to be fixed.
 - `textFormat` (optional): The desired text format for the column names. Accepts 'Proper', 'Lower', or 'Upper'. If not specified, no formatting is applied.
 
-#### **Return Value**
+### Return Value
 
 A table with cleaned and standardized column names.
 
-#### **Remarks**
+### Remarks
 
-- The function processes the column names of the provided table to ensure they are clean and standardized. It removes non-printable characters, trims leading and trailing spaces, replaces non-breaking spaces with regular spaces, eliminates duplicated spaces, and applies the specified text formatting (Proper, Lower, Upper). Additionally, it removes any columns that have default names such as 'Column1', 'Column2', etc., ensuring that only relevant columns remain in the output table.
+- The function processes the column names of the provided table to ensure they are clean and standardized. It removes non-printable characters, trims leading and trailing spaces, replaces non-breaking spaces with regular spaces, eliminates duplicated spaces, and applies the specified text formatting (Proper, Lower, Upper). Additionally, it removes any columns that have default names such as 'Column1', 'Column2', etc., ensuring that only relevant columns remain in the Result table.
 - If the `textFormat` parameter is not provided, the function will only clean the column names without applying any specific text formatting.
 
-#### **Examples**
+### Examples
 
 ```fs
 Table.FixColumnNames(SourceTable, "Proper") // Cleans and formats column names to Proper case.
@@ -559,97 +720,329 @@ Table.FixColumnNames(SourceTable, "Upper") // Cleans and formats column names to
 Table.FixColumnNames(SourceTable) // Cleans column names without applying any specific text formatting.
 ```
 
-### [`Text.CountChar`](/Power%20Query/Text.CountChar.pq)
+<br>
+
+## [`Table.PreprocessTextColumns`](/Power%20Query/Table.PreprocessTextColumns.pq)
+
+This function cleans and formats text columns in a table. It removes line breaks, non-standard spaces, duplicated spaces, and applies optional casing (Proper, Lower, or Upper). You can specify which columns to process or let the function automatically detect all text columns.
+
+### Syntax
+
+```fs
+Table.PreprocessTextColumns(
+    tbl as table,
+    optional columnNames as list,
+    optional textCasing as text
+) as table
+```
+
+### Parameters
+
+- `tbl`: The input table containing text columns to be cleaned and formatted.
+- `columnNames`: (optional) A list of column names to be processed. If not provided or empty, all columns of type text or nullable text will be processed.
+- `textCasing`: (optional) A string indicating the desired text casing format. Accepted values are:
+    - "Proper": Capitalizes the first letter of each word.
+    - "Lower": Converts all texts to lowercase.
+    - "Upper": Converts all texts to uppercase.
+    - If not specified, casing is not changed.
+
+### Remarks
+
+- The function replaces line feed characters (`#(lf)`) with spaces.
+- It removes non-breaking spaces (`Character.FromNumber(160)`), trims leading/trailing spaces, and collapses multiple spaces into one.
+- This function is useful for preparing text data for analysis, comparison, or display.
+
+### Examples
+
+**Example 1**: Clean all text columns
+
+```fs
+let
+    Source = #table({"Name", "Comment"}, {
+        {"  JOHN DOE  ", "Hello#(lf)World"},
+        {"  jane smith", "Nice to meet you"}
+    }),
+    Result = Table.PreprocessTextColumns(Source)
+in
+    Result
+```
+
+**Result**
+
+|Name          |Comment         |
+|:-------------|:---------------|
+|JOHN DOE      |Hello World     |
+|jane smith    |Nice to meet you|
+
+**Example 2**: Clean and apply Proper case to selected columns
+
+```fs
+let
+    Source = #table({"Name", "Note"}, {
+        {"  MARIA   clara", "great#(lf)job"},
+        {"joão   SILVA", "excellent work"}
+    }),
+    Result = Table.PreprocessTextColumns(Source, {"Name", "Note"}, "Proper")
+in
+    Result
+```
+
+**Result**
+
+|Name       |Note          |
+|:----------|:-------------|
+|Maria Clara|Great Job     |
+|João Silva |Excellent Work|
+
+<br>
+
+## [`Table.RemoveBlankColumns`](/Power%20Query/Table.RemoveBlankColumns.pq)
+
+Removes columns from a table that contain only blank values.
+
+### Syntax
+
+```fs
+Table.RemoveBlankColumns(tbl as table) as table
+```
+
+### Parameters
+
+- `tbl`: The table from which blank columns will be removed.
+
+### Example
+
+Transposing the table and changing the first column name
+
+```fs
+let
+    Source = #table({"A", "B"}, {{null, "value1"}, {"", "value2"}}),
+    Result = Table.RemoveBlankColumns(Source)
+in
+    Result
+```
+
+**Result**
+
+|B|
+|:-:|
+|value1|
+|value2|
+
+<br>
+
+## [`Table.TransposeCorrectly`](/Power%20Query/Table.TransposeCorrectly.pq)
+
+Transposes a table by converting selected columns (or all columns if none are specified) into rows, promotes headers, and adds a new column containing the original column names. This is useful for restructuring data while preserving column identity.
+
+### Syntax
+
+```fs
+Table.TransposeCorrectly(
+    tbl as table,
+    optional columns as list,
+    optional firstColumnName as text
+) as table
+```
+
+### Parameters
+
+- `tbl`: The input table whose columns will be transposed.
+- `columnNames`: (optional) A list of column names to transpose. If not provided, all columns in the table will be transposed.
+- `firstColumnName`: (optional) The name to assign to the first column of the transposed table. If not provided, the first name from the columns list will be used.
+
+### Remarks
+
+- The function promotes the first row of the transposed table as headers.
+- A new column is added containing the original column names, inserted at the beginning of the table.
+- This function is useful for reshaping data, especially when preparing it for pivoting or normalization.
+
+### Examples
+
+**Example 1**: Transposing all columns
+
+```fs
+let
+    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Result = Table.TransposeCorrectly(Source)
+in
+    Result
+```
+
+**Result**
+
+|A  |1  |4  |
+|:-:|:-:|:-:|
+|B  |2  |5  |
+|C  |3  |6  |
+
+**Example 2**: Transposing only the selected columns
+
+```fs
+let
+    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Result = Table.TransposeCorrectly(Source, {"A", "B"})
+in
+    Result
+```
+
+**Result**
+
+|A  |1  |4  |
+|:-:|:-:|:-:|
+|B  |2  |5  |
+
+**Example 3**: Transposing the table and changing the first column name
+
+```fs
+let
+    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Result = Table.TransposeCorrectly(Source, null, "D")
+in
+    Result
+```
+
+**Result**
+
+|D  |1  |4  |
+|:-:|:-:|:-:|
+|B  |2  |5  |
+|C  |3  |6  |
+
+
+<br>
+
+## [`Text.CountChar`](/Power%20Query/Text.CountChar.pq)
 
 Counts the occurrences of a specific character in a given text string.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.CountChar(textToCount as nullable text, charToCount as text) as number
+Text.CountChar(
+    textToCount as nullable text,
+    charToCount as text
+) as number
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToCount`: The text string in which to count occurrences of the character.
 - `charToCount`: The character to count within the text string.
 
-#### **Return Value**
+### Return Value
 
 Returns a number representing the count of occurrences of the specified character in the input text. If the input text is null, returns 0.
 
-#### **Remarks**
+### Remarks
 
 - The function is case-sensitive; 'a' and 'A' are considered different characters.
 - If `charToCount` is an empty string, the function returns 0.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.CountChar("hello world", "o") // -> 2
 Text.CountChar(null, "a") // -> 0
 ```
 
-### [`Text.ExtractNumbers`](/Power%20Query/Text.ExtractNumbers.pq)
+<br>
+
+## [`Text.ExtractNumbers`](/Power%20Query/Text.ExtractNumbers.pq)
 
 Extracts all numeric values from a given text string and returns them as a list of numbers.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Text.ExtractNumbers(inputText as text) as list
 ```
 
-#### **Parameters**
+### Parameters
 
 - `inputText`: The text string from which to extract numeric values.
 
-#### **Return Value**
+### Return Value
 
 Returns a list of numbers extracted from the input text. If no numbers are found, returns an empty list.
 
-#### **Examples**
+### Examples
+
+**Example 1**: Extracts numbers from a string containing mixed characters.
 
 ```fs
-Text.ExtractNumbers("The price is 45.67 and the tax is 3.21") // -> {45.67, 3.21}
-Text.ExtractNumbers("No numbers here!") // -> {}
+let
+    ExtractedNumbers = Text.ExtractNumbers("Order #12345: 67 items at $89 each.")
+in
+    ExtractedNumbers
 ```
 
-### [`Text.HtmlToPlainText.pq`](/Power%20Query/Text.HtmlToPlainText.pq)
+**Result**
+
+```fs
+{12345, 67, 89}
+```
+
+**Example 2**: Returns an empty list when no numbers are present.
+
+```fs
+let
+    ExtractedNumbers = Text.ExtractNumbers("No numbers here!")
+in
+    ExtractedNumbers
+```
+
+**Result**
+
+```fs
+{}
+```
+
+<br>
+
+## [`Text.HtmlToPlainText.pq`](/Power%20Query/Text.HtmlToPlainText.pq)
 
 Converts HTML content to plain text by stripping HTML tags.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Text.HtmlToPlainText(htmlText as text) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `htmlText`: The HTML text to be converted to plain text.
 
-#### **Return Value**
+### Return Value
 
 Returns the plain text content extracted from the HTML input.
 
-#### **Example**
+### Example
 
 ```fs
 Text.HtmlToPlainText("<p>Hello <b>World</b>!</p>") // -> "Hello World!"
 ```
 
-### [`Text.RegexExtract`](/Power%20Query/Text.RegexExtract.pq)
+<br>
+
+## [`Text.RegexExtract`](/Power%20Query/Text.RegexExtract.pq)
 
 Extracts a substring from a text using a regular expression pattern.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RegexExtract(textToExtract as text, regexPattern as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as any
+Text.RegexExtract(
+    textToExtract as text,
+    regexPattern as text,
+    optional global as logical,
+    optional caseInsensitive as logical,
+    optional multiline as logical
+) as any
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToExtract`: The input text from which to extract the substring.
 - `regexPattern`: The regular expression pattern to use for extraction.
@@ -657,18 +1050,18 @@ Text.RegexExtract(textToExtract as text, regexPattern as text, optional global a
 - `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
 - `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
-#### **Return Value**
+### Return Value
 
 Returns the extracted substring(s) based on the regex pattern. If `global` is `true`, returns a list of all matches; otherwise, returns the first match or `null` if no match is found.
 
-#### **Remarks**
+### Remarks
 
 - Uses .NET regular expressions for pattern matching.
 - If `global` is `true`, returns a list of all matches; otherwise, returns the first match or `null` if no match is found.
 - Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
 - Only the flags `g`, `i`, `m` are available.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RegexExtract("Hello World", "W.*d") // -> "World"
@@ -676,17 +1069,26 @@ Text.RegexExtract("abc 123 def 456", "\d+", true) // -> {"123", "456"}
 Text.RegexExtract("Hello\nWorld", "^W.*d", false, false, true) // -> "World"
 ```
 
-### [`Text.RegexReplace`](/Power%20Query/Text.RegexReplace.pq)
+<br>
+
+## [`Text.RegexReplace`](/Power%20Query/Text.RegexReplace.pq)
 
 Replaces substrings in a text that match a regular expression pattern with a specified replacement string.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RegexReplace(textToModify as text, regexPattern as text, replacer as text, optional global as logical, optional caseInsensitive as logical, optional multiline as logical) as nullable text
+Text.RegexReplace(
+    textToModify as text,
+    regexPattern as text,
+    replacer as text,
+    optional global as logical,
+    optional caseInsensitive as logical,
+    optional multiline as logical
+) as nullable text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToModify`: The input text in which to perform the replacements.
 - `regexPattern`: The regular expression pattern to match substrings for replacement.
@@ -695,18 +1097,18 @@ Text.RegexReplace(textToModify as text, regexPattern as text, replacer as text, 
 - `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
 - `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
-#### **Return Value**
+### Return Value
 
 Returns the modified text with the specified replacements. If no matches are found, returns the original text.
 
-#### **Remarks**
+### Remarks
 
 - Uses .NET regular expressions for pattern matching and replacement.
 - If `global` is `true`, replaces all matches; otherwise, replaces only the first match.
 - Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
 - Only the flags `g`, `i`, `m` are available.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RegexReplace("Hello World", "World", "Universe") // -> "Hello Universe"
@@ -714,34 +1116,41 @@ Text.RegexReplace("abc 123 def 456", "\d+", "number", true) // -> "abc number de
 Text.RegexReplace("Hello\nWorld", "^W.*d", "Everyone", false, false, true) // -> "Hello\nEveryone"
 ```
 
-### [`Text.RegexSplit`](/Power%20Query/Text.RegexSplit.pq)
+<br>
+
+## [`Text.RegexSplit`](/Power%20Query/Text.RegexSplit.pq)
 
 Splits a text into a list of substrings based on a regular expression pattern.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RegexSplit(textToSplit as text, regexPattern as text, optional caseInsensitive as logical, optional multiline as logical) as list
+Text.RegexSplit(
+    textToSplit as text,
+    regexPattern as text,
+    optional caseInsensitive as logical,
+    optional multiline as logical
+) as list
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToSplit`: The input text to be split.
 - `regexPattern`: The regular expression pattern to use as the delimiter for splitting.
 - `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
 - `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
-#### **Return Value**
+### Return Value
 
 Returns a list of substrings obtained by splitting the input text at each match of the regex pattern.
 
-#### **Remarks**
+### Remarks
 
 - Uses .NET regular expressions for pattern matching.
 - Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
 - Only the flags `i`, `m` are available.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RegexSplit("apple,banana,cherry", ",") // -> {"apple", "banana", "cherry"}
@@ -749,34 +1158,41 @@ Text.RegexSplit("one1two2three3", "\d") // -> {"one", "two", "three", ""}
 Text.RegexSplit("Hello\nWorld", "\n", false, true) // -> {"Hello", "World"}
 ```
 
-### [`Text.RegexTest`](/Power%20Query/Text.RegexTest.pq)
+<br>
+
+## [`Text.RegexTest`](/Power%20Query/Text.RegexTest.pq)
 
 Tests whether a text matches a regular expression pattern.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RegexTest(textToTest as text, regexPattern as text, optional caseInsensitive as logical, optional multiline as logical) as logical
+Text.RegexTest(
+    textToTest as text,
+    regexPattern as text,
+    optional caseInsensitive as logical,
+    optional multiline as logical
+) as logical
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToTest`: The input text to be tested against the regex pattern.
 - `regexPattern`: The regular expression pattern to test.
 - `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
 - `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
-#### **Return Value**
+### Return Value
 
 Returns `true` if the input text matches the regex pattern, `false` otherwise.
 
-#### **Remarks**
+### Remarks
 
 - Uses .NET regular expressions for pattern matching.
 - Due to Power Query's JavaScript parser limitations, some advanced regex features like lookbehind '(?<=pattern)' and negative lookbehind '(?<!pattern)' and certain flags (`s`, `u`, `v`, `d`, `y`) are not supported.
 - Only the flags `i`, `m` are available.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RegexTest("Hello World", "World") // -> true
@@ -784,151 +1200,175 @@ Text.RegexTest("abc 123", "^\d+$") // -> false
 Text.RegexTest("Hello\nWorld", "^W.*d", false, true) // -> true
 ```
 
-### [`Text.RemoveAccents`](/Power%20Query/Text.RemoveAccents.pq)
+<br>
+
+## [`Text.RemoveAccents`](/Power%20Query/Text.RemoveAccents.pq)
 
 Removes accents from characters in a text string.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Text.RemoveAccents(inputText as text) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `inputText`: The text string from which to remove accents.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all accented characters replaced by their unaccented equivalents.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RemoveAccents("Café") // -> "Cafe"
 Text.RemoveAccents("naïve") // -> "naive"
 ```
 
-### [`Text.RemoveDoubleSpaces`](/Power%20Query/Text.RemoveDoubleSpaces.pq)
+<br>
+
+## [`Text.RemoveDoubleSpaces`](/Power%20Query/Text.RemoveDoubleSpaces.pq)
 
 Removes consecutive double spaces from a text string, replacing them with single spaces.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Text.RemoveDoubleSpaces(inputText as text) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `inputText`: The text string from which to remove double spaces.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all consecutive double spaces replaced by single spaces.
 
-#### **Example**
+### Example
 
 ```fs
 Text.RemoveDoubleSpaces("This  is   a    test.") // -> "This is a test."
 ```
 
-### [`Text.RemoveLetters`](/Power%20Query/Text.RemoveLetters.pq)
+<br>
+
+## [`Text.RemoveLetters`](/Power%20Query/Text.RemoveLetters.pq)
 
 Removes all alphabetic characters from a text string, leaving only non-letter characters.
 
-#### **Syntax**
+### Syntax
 
 ```fs
 Text.RemoveLetters(textToModify as text) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToModify`: The text string from which to remove alphabetic characters.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all alphabetic characters removed.
 
-#### **Example**
+### Example
 
 ```fs
-Text.RemoveLetters("Hello123 World!") // -> "123 !"
+let
+    RemovedLetters = Text.RemoveLetters("Hello123 World!")
+in
+    RemovedLetters // -> "123 !"
 ```
 
-### [`Text.RemoveNumerals`](/Power%20Query/Text.RemoveNumerals.pq)
+<br>
+
+## [`Text.RemoveNumerals`](/Power%20Query/Text.RemoveNumerals.pq)
 
 Removes all numeric characters from a text string, with an option to also remove Roman numerals.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RemoveNumerals(textToRemove as nullable text, optional removeRomanNumerals as logical) as text
+Text.RemoveNumerals(
+    textToRemove as text,
+    optional removeRomanNumerals as logical
+) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToRemove`: The text string from which to remove numeric characters.
 - `removeRomanNumerals` (optional): A logical value indicating whether to also remove Roman numeral characters (I, V, X, L, C, D, M). Default is `false`.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all numeric characters (and optionally Roman numerals) removed.
 
-#### **Example**
+### Example
 
 ```fs
 Text.RemoveNumerals("Room 101 IV") // -> "Room  IV"
 Text.RemoveNumerals("Room 101 IV", true) // -> "Room  "
 ```
 
-### [`Text.RemovePunctuations`](/Power%20Query/Text.RemovePunctuations.pq)
+<br>
+
+## [`Text.RemovePunctuations`](/Power%20Query/Text.RemovePunctuations.pq)
 
 Removes all punctuation characters from a text string.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RemovePunctuations(textToRemove as nullable text, optional replacer as text) as text
+Text.RemovePunctuations(
+    textToRemove as nullable text,
+    optional replacer as text
+) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToRemove`: The text string from which to remove punctuation characters.
 - `replacer` (optional): A text string to replace punctuation characters with. If omitted, punctuation characters are removed without replacement.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all punctuation characters removed or replaced by the specified replacer.
 
-#### **Example**
+### Examples
 
 ```fs
 Text.RemovePunctuations("Hello, World!") // -> "Hello World"
 Text.RemovePunctuations("Hello, World!", " ") // -> "Hello  World "
 ```
 
-### [`Text.RemoveStopwords`](/Power%20Query/Text.RemoveStopwords.pq)
+<br>
+
+## [`Text.RemoveStopwords`](/Power%20Query/Text.RemoveStopwords.pq)
 
 Removes common Portuguese stopwords from a text string to enhance text analysis.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RemoveStopwords(textToModify as nullable text, optional undesirableWords as {text}) as text
+Text.RemoveStopwords(
+    textToModify as nullable text,
+    optional undesirableWords as list
+) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToModify`: The text string from which to remove stopwords.
 - `undesirableWords` (optional): A list of additional words to remove from the text. Default is an empty list.
 
-#### **Return Value**
+### Return Value
 
 Returns the input text with all Portuguese stopwords and any additional specified words removed.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns.")
@@ -938,53 +1378,65 @@ Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns."
 // -> "remover palavras comuns."
 ```
 
-### [`Text.RemoveWeirdChars`](/Power%20Query/Text.RemoveWeirdChars.pq)
+<br>
+
+## [`Text.RemoveWeirdChars`](/Power%20Query/Text.RemoveWeirdChars.pq)
 
 Removes special and non-printable characters from a text string, with an option to replace them with spaces.
 
-#### **Syntax**
+### Syntax
 
 ```fs
-Text.RemoveWeirdChars(textToClean as text, optional replacer as text) as text
+Text.RemoveWeirdChars(
+    textToClean as text,
+    optional replacer as text
+) as text
 ```
 
-#### **Parameters**
+### Parameters
 
 - `textToClean`: The text string to be cleaned.
 - `replacer` (optional): A text string to replace special characters with. If omitted, special characters are replaced by an white space.
 
-#### **Return Value**
+### Return Value
 
 Returns the cleaned text with special characters either removed or replaced by the specified replacer.
 
-#### **Examples**
+### Examples
 
 ```fs
 Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!") // -> "Hello World!"
 Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!", "_") // -> "Hello_World!"
 ```
 
+<br>
+
 ## VBA
 
-### [`AreArraysEquals`](/VBA/AreArraysEqual.vba)
+<br>
+
+## [`AreArraysEquals`](/VBA/AreArraysEqual.vba)
 
 Compares two arrays to check if they are equal, meaning they have the same size and identical elements in the same order.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-AreArraysEqual(Array1 As Variant, Array2 As Variant) As Boolean
+AreArraysEqual(
+    Array1 As Variant,
+    Array2 As Variant
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 - `Array1`: First array to compare
 - `Array2`: Second array to compare
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if both arrays are equal, `False` otherwise.
 
-#### **Remarks**
+### Remarks
 
 - Arrays must have the same upper and lower bounds
 - Arrays must have identical elements in the same positions
@@ -992,7 +1444,7 @@ Returns `True` if both arrays are equal, `False` otherwise.
 - Returns `False` if arrays have different sizes
 - Can compare arrays of any type since parameters are declared as Variant
 
-#### **Example**
+### Example
 
 ```vb
 Dim arr1 As Variant
@@ -1007,24 +1459,29 @@ Else
 End If
 ```
 
-### [`AutoFillFormulas`](/VBA/AutoFillFormulas.vba)
+<br>
+
+## [`AutoFillFormulas`](/VBA/AutoFillFormulas.vba)
 
 Automatically fills formulas across a range using a reference cell's formula. The reference cell can be either the first or last cell containing a formula in the range.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-AutoFillFormulas(rng As Range, Optional UseLastCellAsRef As Boolean = False)
+AutoFillFormulas(
+    rng As Range,
+    Optional UseLastCellAsRef As Boolean = False
+)
 ```
 
-#### **Parameters**
+### Parameters
 
 - `rng`: The range where formulas will be filled
 - `UseLastCellAsRef`: (Optional) Boolean flag to determine which cell to use as reference
     - `False` (Default): Uses the first cell with formula as reference
     - `True`: Uses the last cell with formula as reference
 
-#### **Remarks**
+### Remarks
 
 - Does nothing if the range is empty (Nothing) or contains only one cell
 - Only works if the range contains at least one formula
@@ -1032,11 +1489,7 @@ AutoFillFormulas(rng As Range, Optional UseLastCellAsRef As Boolean = False)
 - Only fills formulas in cells that are part of the specified range
 - Requires the helper function [`RangeHasAnyFormula`](#rangehasanyformula) to check for formulas in the range
 
-#### **Dependecies**
-
-- Requires `RangeHasAnyFormula` function to work properly
-
-#### **Example**
+### Example
 
 ```vb
 Dim rng As Range
@@ -1047,17 +1500,23 @@ AutoFillFormulas rng 'Uses first formula cell as reference
 AutoFillFormulas rng, True
 ```
 
-### [`CleanString`](/VBA/CleanString.vba)
+<br>
+
+## [`CleanString`](/VBA/CleanString.vba)
 
 Cleans a string by removing or replacing special characters and control characters with spaces.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-CleanString(ByVal myString As String, Optional ReplaceBySpace As Boolean = True, Optional ConvertNonBreakingSpace As Boolean = True) As String
+CleanString(
+    myString As String,
+    Optional ReplaceBySpace As Boolean = True,
+    Optional ConvertNonBreakingSpace As Boolean = True
+) As String
 ```
 
-#### **Parameters**
+### Parameters
 
 - `myString`: The input string to be cleaned
 - `ReplaceBySpace`: (Optional) Boolean flag that determines if special characters should be replaced by spaces
@@ -1067,18 +1526,18 @@ CleanString(ByVal myString As String, Optional ReplaceBySpace As Boolean = True,
     - `True` (Default): Converts non-breaking spaces (ASCII 160) to regular spaces
     - `False`: Leaves non-breaking spaces unchanged
 
-#### **Return Value**
+### Return Value
 
 Returns the cleaned string with special characters either removed or replaced by spaces.
 
-#### **Remarks**
+### Remarks
 - Removes ASCII control characters (0-31)
 - Handles special characters like ASCII 127, 129, 141, 143, 144, and 157
 - Converts non-breaking spaces to regular spaces (when enabled)
 - Trims leading and trailing spaces from the final result
 - Preserves all other printable characters
 
-#### **Example**
+### Example
 
 ```vb
 Dim cleanedStr As String
@@ -1096,27 +1555,29 @@ cleanedStr = CleanString("Hello" & Chr(160) & "World", True, False)
 Debug.Print cleanedStr ' Result: Original string unchanged
 ```
 
-### [`DisableRefreshAll`](/VBA/DisableRefreshAll.vba)
+<br>
+
+## [`DisableRefreshAll`](/VBA/DisableRefreshAll.vba)
 
 Disables the "Refresh All" functionality for OLEDB connections in a specified workbook.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 DisableRefreshAll(ByRef wb As Workbook)
 ```
 
-#### **Parameters**
+### Parameters
 
 - `wb`: Reference to the workbook where OLEDB connections will be modified
 
-#### **Use Cases**
+### **Use Cases**
 
 - Improve performance by preventing unnecessary data refreshes
 - Control which connections should be updated during a "Refresh All" operation
 - Selectively manage data refresh behavior in workbooks with multiple connections
 
-#### **Remarks**
+### Remarks
 
 - Only affects OLEDB type connections
 - Does not modify PowerPivot or other connection types
@@ -1124,7 +1585,7 @@ DisableRefreshAll(ByRef wb As Workbook)
 - The connections will still be refreshable individually, just not through "Refresh All" option
 - Changes are made directly to the workbook passed as parameter
 
-#### **Example**
+### Example
 
 ```vb
 Dim wb As Workbook
@@ -1132,28 +1593,30 @@ Set wb = ThisWorkbook
 DisableRefreshAll wb
 ```
 
-### [`EnableRefreshAll`](/VBA/EnableRefreshAll.vba)
+<br>
+
+## [`EnableRefreshAll`](/VBA/EnableRefreshAll.vba)
 
 Enables the "Refresh All" functionality for OLEDB connections in a specified workbook.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 EnableRefreshAll(ByRef wb As Workbook)
 ```
 
-#### **Parameters**
+### Parameters
 
 - `wb`: Reference to the workbook where OLEDB connections will be modified
 
-#### **Use Cases**
+### **Use Cases**
 
 - Restore default refresh behavior for OLEDB connections
 - Enable batch updates of multiple connections
 - Ensure all OLEDB connections are included in "Refresh All" operations
 - Manage data refresh settings after temporary disablement
 
-#### **Remarks**
+### Remarks
 
 - Only affects OLEDB type connections
 - Does not modify PowerPivot or other connection types
@@ -1161,7 +1624,7 @@ EnableRefreshAll(ByRef wb As Workbook)
 - Allows connections to be updated when using "Refresh All" command
 - Changes are made directly to the workbook passed as parameter
 
-#### **Example**
+### Example
 
 ```vb
 Dim wb As Workbook
@@ -1169,32 +1632,34 @@ Set wb = ThisWorkbook
 EnableRefreshAll wb
 ```
 
-### [`FileExists`](/VBA/FileExists.vba)
+<br>
+
+## [`FileExists`](/VBA/FileExists.vba)
 
 Checks if a file exists at the specified file path.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 FileExists(FilePath As String) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `FilePath`: The complete path to the file being checked
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the file exists, `False` otherwise.
 
-#### **Remarks**
+### Remarks
 
 - Uses VBA's `Dir` function to test file existence
 - Works with any file type
 - Path must be accessible from the current environment
 - Case-insensitive file path checking
 
-#### **Example**
+### Example
 
 ```vb
 Dim exists As Boolean
@@ -1207,30 +1672,32 @@ Else
 End If
 ```
 
-#### **Credits**
+### **Credits**
 
 - Original source: [www.TheSpreadsheetGuru.com/The-Code-Vault](www.TheSpreadsheetGuru.com/The-Code-Vault)
 - Resource: [http://www.rondebruin.nl/win/s9/win003.htm](http://www.rondebruin.nl/win/s9/win003.htm)
 
-### [`FileNameIsValid`](/VBA/FileNameIsValid.vba)
+<br>
+
+## [`FileNameIsValid`](/VBA/FileNameIsValid.vba)
 
 Validates if a given string can be used as a valid file name by checking for illegal characters.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 FileNameIsValid(FileName As String) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `FileName`: The string to be validated as a file name
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the file name is valid, `False` if it contains illegal characters or is empty.
 
-#### **Remarks**
+### Remarks
 
 - Checks for the following illegal characters: `\ / : * ? < > | [ ] "`
 - Returns `False` for empty strings
@@ -1238,7 +1705,7 @@ Returns `True` if the file name is valid, `False` if it contains illegal charact
 - Does not check file name length restrictions
 - Does not validate against reserved Windows file names
 
-#### **Example**
+### Example
 
 ```vb
 Dim isValid As Boolean
@@ -1253,31 +1720,36 @@ isValid = FileNameIsValid("folder/file.txt")
 Debug.Print isValid  ' False
 ```
 
-#### **Credits**
+### **Credits**
 
 - Author: Jon Peltier
 - Source: [www.TheSpreadsheetGuru.com/the-code-vault](www.TheSpreadsheetGuru.com/the-code-vault)
 
-### [`GetAllFileNames`](/VBA/GetAllFileNames.vba)
+<br>
+
+## [`GetAllFileNames`](/VBA/GetAllFileNames.vba)
 
 Retrieves an array of all file names from a specified folder and its subfolders, with optional file extension filtering.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-GetAllFileNames(FolderPath As String, Optional fileExt As String) As String()
+GetAllFileNames(
+    FolderPath As String,
+    Optional fileExt As String
+) As String()
 ```
 
-#### **Parameters**
+### Parameters
 
 - `FolderPath`: The path to the folder to search in
 - `fileExt`: (Optional) File extension to filter results. If omitted, returns all files
 
-#### **Return Value**
+### Return Value
 
 Returns a zero-based string array containing all matching file names.
 
-#### **Remarks**
+### Remarks
 
 - Recursively searches through all subfolders
 - Case-insensitive file extension matching
@@ -1287,11 +1759,11 @@ Returns a zero-based string array containing all matching file names.
 - Empty array if no files are found
 - Requires reference to Microsoft Scripting Runtime (or late binding)
 
-#### **Dependencies**
+### **Dependencies**
 
 - `Scripting.FileSystemObject` reference
 
-#### **Example**
+### Example
 
 ```vb
 Dim files() As String
@@ -1309,33 +1781,35 @@ For i = 0 To UBound(files)
 Next i
 ```
 
-### [`GetLettersOnly`](/VBA/GetLettersOnly.vba)
+<br>
+
+## [`GetLettersOnly`](/VBA/GetLettersOnly.vba)
 
 Extracts only ASCII letters (a–z) from a string and returns them in lowercase.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 GetLettersOnly(Text As String) As String
 ```
 
-#### **Parameters**
+### Parameters
 
 - `Text`: The input string to process.
 
-#### **Return Value**
+### Return Value
 
 Returns a string containing only the letters a–z (converted to lowercase). Returns an empty string if no ASCII letters are found.
 
-#### **Remarks**
+### Remarks
 
 - Filters characters using ASCII range 97–122 (letters a–z).
-- Converts characters to lowercase before testing and output.
+- Converts characters to lowercase before testing and Result.
 - Does not preserve original letter case.
 - Does not include accented letters, non-Latin characters, or other alphabetic Unicode letters.
 - Useful for normalizing or sanitizing input to ASCII letters only.
 
-#### **Example**
+### Example
 
 ```vb
 Dim result As String
@@ -1347,32 +1821,34 @@ result = GetLettersOnly("Ábç Def")
 Debug.Print result ' "def" (accented letters removed)
 ```
 
-### [`GetMonthNumberFromName`](/VBA/GetMonthNumberFromName.vba)
+<br>
+
+## [`GetMonthNumberFromName`](/VBA/GetMonthNumberFromName.vba)
 
 Converts a month name to its corresponding numeric value (1-12).
 
-#### **Syntax**
+### Syntax
 
 ```vb
 GetMonthNumberFromName(MonthName As String) As Integer
 ```
 
-#### **Parameters**
+### Parameters
 
 - `MonthName`: The name of the month (full or abbreviated, in any language supported by Excel)
 
-#### **Return Value**
+### Return Value
 
 Returns an integer from 1 to 12 representing the month number.
 
-#### **Remarks**
+### Remarks
 
 - Works with month names in any language supported by Excel
 Accepts both full month names and abbreviated forms
 - Case-insensitive
 - Returns error if month name is invalid
 
-#### **Example**
+### Example
 
 ```vb
 Dim monthNum As Integer
@@ -1390,27 +1866,33 @@ monthNum = GetMonthNumberFromName("Janvier")
 Debug.Print monthNum ' Returns 1 (French)
 ```
 
-### [`GetStringBetween`](/VBA/GetStringBetween.vba)
+<br>
+
+## [`GetStringBetween`](/VBA/GetStringBetween.vba)
 
 Extracts a substring between two specified delimiter strings.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-GetStringBetween(str As String, startStr As String, endStr As String) As String
+GetStringBetween(
+    str As String,
+    startStr As String,
+    endStr As String
+) As String
 ```
 
-#### **Parameters**
+### Parameters
 
 - `str`: The input string to search in
 - `startStr`: The starting delimiter string
 - `endStr`: The ending delimiter string
 
-#### **Return Value**
+### Return Value
 
 Returns the text found between the start and end strings. Returns an empty string if no match is found.
 
-#### **Remarks**
+### Remarks
 
 - Uses VBScript RegExp for pattern matching
 - Creates RegExp object using late binding to avoid explicit reference requirement
@@ -1419,7 +1901,7 @@ Returns the text found between the start and end strings. Returns an empty strin
 - Returns only the first match if multiple exist
 - Removes the delimiter strings from the result
 
-#### **Example**
+### Example
 
 ```vb
 Dim result As String
@@ -1434,27 +1916,33 @@ result = GetStringBetween("No delimiters here", "[", "]")
 Debug.Print result  ' Returns ""
 ```
 
-### [`GetStringWithSubstringInArray`](/VBA/GetStringWithSubstringInArray.vba)
+<br>
+
+## [`GetStringWithSubstringInArray`](/VBA/GetStringWithSubstringInArray.vba)
 
 Searches through an array of strings and returns the first string that contains a specified substring.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-GetStringWithSubstringInArray(SubString As String, SourceArray As Variant, Optional CaseSensitive As Boolean = False) As String
+GetStringWithSubstringInArray(
+    SubString As String,
+    SourceArray As Variant,
+    Optional CaseSensitive As Boolean = False
+) As String
 ```
 
-#### **Parameters**
+### Parameters
 
 - `SubString`: The text to search for within each array element
 - `SourceArray`: Array containing strings to search through
 - `CaseSensitive`: (Optional) Boolean flag to enable case-sensitive search. Default is False
 
-#### **Return Value**
+### Return Value
 
 Returns the first string from the array containing the substring. Returns an empty string if no match is found.
 
-#### **Remarks**
+### Remarks
 
 - Only processes elements that are strings (type `vbString`)
 - Ignores non-string elements in the array
@@ -1462,11 +1950,11 @@ Returns the first string from the array containing the substring. Returns an emp
 - Returns first match found and exits
 - Works with arrays of any dimension
 
-#### **Dependencies**
+### **Dependencies**
 
 - Requires [`StringContains`]() function
 
-#### **Example**
+### Example
 
 ```vb
 Dim testArray As Variant
@@ -1484,29 +1972,31 @@ result = GetStringWithSubstringInArray("none", testArray)
 Debug.Print result  ' Returns ""
 ```
 
-### [`GetTableColumnNames`](/VBA/GetTableColumnNames.vba)
+<br>
+
+## [`GetTableColumnNames`](/VBA/GetTableColumnNames.vba)
 
 Returns the header names of an Excel ListObject (table) as a zero-based string array.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 GetTableColumnNames(lo As ListObject) As String()
 ```
 
-#### **Parameters**
+### Parameters
 
 - `lo`: The ListObject (Excel table) to read column headers from
 
-#### **Return value**
+### Return Value
 
 Returns a zero-based array of strings containing the table column header values in left-to-right order.
 
-#### **Remarks**
+### Remarks
 
 - Includes hidden columns and preserves the table column order.
 
-#### **Example**
+### Example
 
 ```vb
 Dim colNames() As String
@@ -1520,31 +2010,33 @@ For i = 0 To UBound(colNames)
 Next i
 ```
 
-### [`IsAllTrue`](/VBA/IsAllTrue.vba)
+<br>
+
+## [`IsAllTrue`](/VBA/IsAllTrue.vba)
 
 Checks if all elements in a boolean array are `True`.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 IsAllTrue(blnArray As Variant) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `blnArray`: Array containing boolean values to be checked
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if all elements in the array are boolean `True`, otherwise returns `False`.
 
-#### **Use Cases**
+### **Use Cases**
 
 - Validating that multiple conditions are all met
 - Checking status of multiple boolean flags
 - Quality control checks where all criteria must be true
 
-#### **Remarks**
+### Remarks
 
 - Returns `False` if any element is not a boolean type
 - Returns `False` if any element is `False`
@@ -1552,7 +2044,7 @@ Returns `True` if all elements in the array are boolean `True`, otherwise return
 - Can handle arrays of any dimension
 - Array must be passed as `Variant` type
 
-#### **Example**
+### Example
 
 ```vb
 Dim testArray As Variant
@@ -1567,30 +2059,35 @@ testArray = Array(True, "True", True)
 Debug.Print IsAllTrue(testArray) ' Returns False (non-boolean element)
 ```
 
-### [`IsInArray`](/VBA/IsInArray.vba)
+<br>
+
+## [`IsInArray`](/VBA/IsInArray.vba)
 
 Checks whether a value exists in a one-dimensional array.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-IsInArray(ValueToBeFound As Variant, SourceArray As Variant) As Boolean
+IsInArray( _
+    ValueToBeFound As Variant, _
+    SourceArray As Variant _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `ValueToBeFound`: The value to search for (any Variant).
 - `SourceArray`: The one-dimensional array to search (Variant).
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the value is found in the array, otherwise returns `False`.
 
-#### **Remarks**
+### Remarks
 
 - Expects a one-dimensional array; passing an uninitialized or multi-dimensional array may cause errors.
 
-#### **Example**
+### Example
 
 ```vb
 Dim arr As Variant
@@ -1603,30 +2100,35 @@ Else
 End If
 ```
 
-### [`ListObjectExists`](/VBA/ListObjectExists.vba)
+<br>
+
+## [`ListObjectExists`](/VBA/ListObjectExists.vba)
 
 Checks whether a ListObject (Excel table) with a given name exists in a workbook.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-ListObjectExists(ByRef wb As Workbook, ByVal loName As String) As Boolean
+ListObjectExists( _
+    ByRef wb As Workbook, _
+    loName As String _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `wb`: Workbook to search.
 - `loName`: Name of the table (`ListObject`) to find.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if a ListObject with the specified name is found in any worksheet of the workbook; otherwise returns `False`.
 
-#### **Remarks**
+### Remarks
 
 - Performs a direct name comparison (behavior may be affected by the project's Option Compare setting).
 
-#### **Example**
+### Example
 
 ```vb
 Dim exists As Boolean
@@ -1639,25 +2141,27 @@ Else
 End If
 ```
 
-### [`PreviousMonthNumber`](/VBA/PreviousMonthNumber.vba)
+<br>
+
+## [`PreviousMonthNumber`](/VBA/PreviousMonthNumber.vba)
 
 Returns the numeric month (1–12) that precedes the month of a given date.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 PreviousMonthNumber(dt As Date) As Integer
 ```
 
-#### **Parameters**
+### Parameters
 
 - `dt`: Date value used to determine the previous month
 
-#### **Return Value**
+### Return Value
 
 Returns an Integer from 1 to 12 representing the previous month. For dates in January, returns 12 (December).
 
-#### **Example**
+### Example
 
 ```vb
 Dim prev As Integer
@@ -1669,32 +2173,34 @@ prev = PreviousMonthNumber(DateSerial(2025, 1, 10))
 Debug.Print prev ' returns 12 (December)
 ```
 
-### [`RangeHasAnyFormula`](/VBA/RangeHasAnyFormula.vba)
+<br>
+
+## [`RangeHasAnyFormula`](/VBA/RangeHasAnyFormula.vba)
 
 Checks if a given range contains any cells with formulas.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 RangeHasAnyFormula(ByVal rng As Range) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `rng`: The range to be checked for formulas
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the range contains at least one formula, `False` otherwise.
 
-#### **Remarks**
+### Remarks
 
 - Returns `False` if the range is Nothing
 - Uses error handling to detect the presence of formulas
 - Shows an error message if any unexpected error occurs during execution
 - Uses Excel's `SpecialCells` method with `xlCellTypeFormulas` to perform the check
 
-#### **Example**
+### Example
 
 ```vb
 Dim rng As Range
@@ -1707,30 +2213,32 @@ Else
 End If
 ```
 
-#### **Error Handling**
+### **Error Handling**
 
 - Displays a message box with error details if an unexpected error occurs
 - Properly handles the "No cells were found" error which indicates no formulas are present
 
-### [`RangeHasConstantValues`](/VBA/RangeHasConstantValues.vba)
+<br>
+
+## [`RangeHasConstantValues`](/VBA/RangeHasConstantValues.vba)
 
 Checks whether a given range contains any constant (non-formula) cells.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 RangeHasConstantValues(rng As Range) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `rng`: Range to check for constant values.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the range contains at least one constant cell; otherwise returns False. If `rng` is `Nothing` the function returns `False`.
 
-#### **Example**
+### Example
 
 ```vb
 Dim rng As Range
@@ -1743,25 +2251,27 @@ Else
 End If
 ```
 
-### [`RangeIsHidden`](/VBA/RangeIsHidden.vba)
+<br>
+
+## [`RangeIsHidden`](/VBA/RangeIsHidden.vba)
 
 Determines whether a given range is entirely hidden (no visible cells).
 
-#### **Syntax**
+### Syntax
 
 ```vb
 RangeIsHidden(rng As Range) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `rng`: The Range to check for visibility.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the range contains no visible cells (i.e., is hidden). Returns `False` if at least one cell in the range is visible or if `rng` is `Nothing`.
 
-#### **Example**
+### Example
 
 ```vb
 Dim rng As Range
@@ -1774,25 +2284,27 @@ Else
 End If
 ```
 
-### [`RangeToHtml`](/VBA/RangeToHtml.vba)
+<br>
+
+## [`RangeToHtml`](/VBA/RangeToHtml.vba)
 
 Converts an Excel Range into an HTML string by copying the range to a temporary workbook, publishing that sheet as an HTML file, and returning the file contents.
 
-#### **Syntax**
+### Syntax
 
-```vba
+```vb
 RangeToHtml(rng As Range) As String
 ```
 
-#### **Parameters**
+### Parameters
 
 - `rng`: The Range to convert to HTML.
 
-#### **Return Value**
+### Return Value
 
 Returns a string containing the HTML representation of the provided range. Returns an empty string if an error occurs.
 
-#### **Remarks**
+### Remarks
 
 - Creates a temporary workbook, pastes the range (values and formats) and removes drawing objects before publishing.
 - Uses the system temporary folder (Environ$("temp")) to create an intermediate .htm file.
@@ -1800,7 +2312,7 @@ Returns a string containing the HTML representation of the provided range. Retur
 - Replaces `align=center` with `align=left` in the resulting HTML.
 - Images/drawing objects are deleted in the temporary workbook to avoid embedding them in the HTML.
 
-#### **Example**
+### Example
 
 ```vba
 Dim html As String
@@ -1808,11 +2320,13 @@ html = RangeToHtml(ThisWorkbook.Worksheets("Sheet1").Range("A1:D10"))
 ' html now contains the HTML representation of the range
 ```
 
-### [`SendEmail`](/VBA/SendEmail.vba)
+<br>
+
+## [`SendEmail`](/VBA/SendEmail.vba)
 
 Sends an HTML email using CDO (Collaboration Data Objects) with NTLM authentication, typically used in corporate environments with Exchange Server.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 SendEmail( _
@@ -1821,10 +2335,11 @@ SendEmail( _
     Subject As String, _
     Message As String, _
     Optional CarbonCopy As String, _
-    Optional BlindCarbonCopy As String)
+    Optional BlindCarbonCopy As String _
+)
 ```
 
-#### **Parameters**
+### Parameters
 
 - `Sender`: Email address of the sender
 - `Recipient`: Email address(es) of the recipient(s)
@@ -1833,7 +2348,7 @@ SendEmail( _
 - `CarbonCopy`: (Optional) Email address(es) for CC recipients
 - `BlindCarbonCopy`: (Optional) Email address(es) for BCC recipients
 
-#### **Remarks**
+### Remarks
 
 - Uses CDO with NTLM authentication (Windows Authentication)
 - Configured for SMTP with STARTTLS (port 587)
@@ -1841,7 +2356,7 @@ SendEmail( _
 - Multiple recipients can be specified using semicolon (;) as separator
 - No explicit error handling is implemented
 
-#### **Configuration Constants**
+### **Configuration Constants**
 
 - `CDO_DEFAULT_SETTINGS`: -1 (Use system default settings)
 - `CDO_NTLM_AUTHENTICATION`: 2 (Windows Authentication)
@@ -1849,13 +2364,13 @@ SendEmail( _
 - `CDO_SERVER_PORT`: 587 (STARTTLS port)
 - `CDO_SMTP_SERVER`: "mailhost.yourdomain.net" (SMTP server address)
 
-#### **Dependencies**
+### **Dependencies**
 
 - Requires CDO to be available on the system
 - Requires proper SMTP server configuration
 - Requires appropriate network/firewall access
 
-#### **Example**
+### Example
 
 ```vb
 Call SendEmail( _
@@ -1867,26 +2382,31 @@ Call SendEmail( _
     "bcc@company.com")
 ```
 
-### [`SetQueryFormula`](/VBA/SetQueryFormula.vba)
+<br>
+
+## [`SetQueryFormula`](/VBA/SetQueryFormula.vba)
 
 Modifies a Power Query formula in the current workbook based on a given value, handling different data types appropriately.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-SetQueryFormula(queryName As String, value As Variant)
+SetQueryFormula( _
+    queryName As String, _
+    value As Variant _
+)
 ```
 
-#### **Parameters**
+### Parameters
 
 - `queryName`: Name of the Power Query to modify
 - `value`: Value to set in the query formula (supports `String`, `Date`, and `Byte Array`)
 
-#### **Dependencies**
+### **Dependencies**
 
 - Requires Excel version that supports Power Query
 
-#### **Example**
+### Example
 
 ```vb
 ' Set a string value
@@ -1901,34 +2421,40 @@ byteArr = Array(1, 2, 3)
 SetQueryFormula "MyQuery", byteArr  ' Results in: {1,2,3}
 ```
 
-### [`StringContains`](/VBA/StringContains.vba)
+<br>
+
+## [`StringContains`](/VBA/StringContains.vba)
 
 Checks if a string contains another string as a substring, with optional case sensitivity.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-StringContains(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
+StringContains( _
+    str1 As String, _
+    str2 As String, _
+    Optional caseSensitive As Boolean = False _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `str1`: The main string to search in
 - `str2`: The substring to search for
 - `caseSensitive`: (Optional) Boolean flag to enable case-sensitive search. Default is `False`
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if `str2` is found within `str1`, `False` otherwise.
 
-#### **Use Cases**
+### **Use Cases**
 
 - Text validation
 - String searching
 - Pattern matching without regular expressions
 - Case-insensitive text comparisons
 
-#### **Example**
+### Example
 
 ```vb
 Dim result As Boolean
@@ -1946,34 +2472,40 @@ result = StringContains("Test", "xyz")
 Debug.Print result ' Returns False
 ```
 
-### [`StringEndsWith`](/VBA/StringEndsWith.vba)
+<br>
+
+## [`StringEndsWith`](/VBA/StringEndsWith.vba)
 
 Checks if a string ends with another string, with optional case sensitivity.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-StringEndsWith(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
+StringEndsWith( _
+    str1 As String, _
+    str2 As String, _
+    Optional caseSensitive As Boolean = False _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `str1`: The main string to check
 - `str2`: The ending string to look for
 - `caseSensitive`: (Optional) Boolean flag to enable case-sensitive comparison. Default is `False`
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if `str1` ends with `str2`, `False` otherwise. Also returns `False` if `str2` is longer than `str1`.
 
-#### **Use Cases**
+### **Use Cases**
 
 - File extension validation
 - Text suffix checking
 - String pattern matching
 - Domain name validation
 
-#### **Example**
+### Example
 
 ```vb
 Dim result As Boolean
@@ -1991,27 +2523,33 @@ result = StringEndsWith("Test", "xyz")
 Debug.Print result ' Returns False
 ```
 
-### [`StringStartsWith`](/VBA/StringStartsWith.vba)
+<br>
+
+## [`StringStartsWith`](/VBA/StringStartsWith.vba)
 
 Checks whether a string starts with a specified substring, with optional case sensitivity.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-StringStartsWith(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
+StringStartsWith( _
+    str1 As String, _
+    str2 As String, _
+    Optional caseSensitive As Boolean = False _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `str1`: The main string to check.
 - `str2`: The prefix substring to look for.
 - `caseSensitive`: (Optional) If `True`, comparison is case-sensitive; if `False` (default), comparison is case-insensitive.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if `str1` starts with `str2`; otherwise returns `False`. Also returns `False` if `str2` is longer than `str1`.
 
-#### **Example**
+### Example
 
 ```vb
 Dim result As Boolean
@@ -2029,35 +2567,41 @@ result = StringStartsWith("Test", "LongPrefix")
 Debug.Print result ' False
 ```
 
-### [`SubstringIsInArray`](/VBA/SubstringIsInArray.vba)
+<br>
+
+## [`SubstringIsInArray`](/VBA/SubstringIsInArray.vba)
 
 Searches a one-dimensional array for any string element that contains a specified substring and returns `True` on the first match.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-StringStartsWith(str1 As String, str2 As String, Optional caseSensitive As Boolean = False) As Boolean
+StringStartsWith( _
+    str1 As String, _
+    str2 As String, _
+    Optional caseSensitive As Boolean = False _
+) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `subStr`: The substring to search for.
 - `srcArray`: One-dimensional array containing elements to search.
 - `caseSensitive`: (Optional) If `True`, performs a case-sensitive search; default is `False`.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if any string element in `srcArray` contains `subStr`; otherwise returns `False`.
 
-#### **Remarks**
+### Remarks
 
 - Only inspects elements typed as `String`; non-string elements are ignored.
 
-#### **Dependencies**
+### **Dependencies**
 
 - Depends on the helper function [`StringContains`](#stringcontains) for substring checks.
 
-#### **Example**
+### Example
 
 ```vb
 Dim arr As Variant
@@ -2067,35 +2611,38 @@ Debug.Print SubstringIsInArray("world", arr)        ' True (case-insensitive)
 Debug.Print SubstringIsInArray("WORLD", arr, True) ' False (case-sensitive)
 ```
 
-### [`Summation`](/VBA/Summation.vba)
+<br>
+
+## [`Summation`](/VBA/Summation.vba)
 
 Computes the numeric summation of a mathematical expression over an integer index range.
 
-#### **Syntax**
+### Syntax
 
 ```vb
-Summation(Expression As String, First As Long, Last As Long) As Double
+Summation( _
+    Expression As String, _
+    First As Long, _
+    Last As Long _
+) As Double
 ```
 
-#### **Parameters**
+### Parameters
 
 - `Expression`: A string representing the math expression in terms of a variable (e.g. `"2*n-1"` or `"1/x^2"`). The function extracts the variable name as the last alphabetical character found in the expression.
 - `First`: Starting integer index.
 - `Last`: Ending integer index.
 
-#### **Return Value**
+### Return Value
 
 Returns the summation's result from expression evaluated for the index running from `First` to `Last`.
 
-#### **Remarks**
+### Remarks
 
 - The variable used in Expression is determined by extracting letters from the expression and taking the last letter. Ensure your expression contains the intended variable and that it is the last letter in the expression if multiple letters appear
-
-#### **Dependecies**
-
 - Depends on the helper function [`GetLettersOnly`](#getlettersonly) in order to identify the variable in expression
 
-#### **Example**
+### Examples
 
 ```vb
 Debug.Print Summation("2*n-1", 1, 10) ' prints 100
@@ -2103,25 +2650,27 @@ Debug.Print Summation("1/x^2", 1, 1000000) ' ≈ 1.64 (approaches π²/6)
 Debug.Print Summation("n^2", 1, 5) ' prints 55
 ```
 
-### [`TableHasQuery`](/VBA/TableHasQuery.vba)
+<br>
+
+## [`TableHasQuery`](/VBA/TableHasQuery.vba)
 
 Checks whether a ListObject (Excel table) has an associated QueryTable.
 
-#### **Syntax**
+### Syntax
 
 ```vb
 TableHasQuery(tbl As ListObject) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `tbl`: The ListObject (table) to check.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the table has an associated `QueryTable`; otherwise returns `False`. If `tbl` is `Nothing`, the function returns `False`.
 
-#### **Example**
+### Example
 
 ```vb
 Dim tbl As ListObject
@@ -2137,25 +2686,27 @@ Else
 End If
 ```
 
-### [`WorksheetHasListObject`](/VBA/WorksheetHasListObject.vba)
+<br>
+
+## [`WorksheetHasListObject`](/VBA/WorksheetHasListObject.vba)
 
 Checks whether a worksheet contains at least one ListObject (table).
 
-#### **Syntax**
+### Syntax
 
 ```vb
 WorksheetHasListObject(ws As Worksheet) As Boolean
 ```
 
-#### **Parameters**
+### Parameters
 
 - `ws`: Worksheet to check for ListObjects.
 
-#### **Return Value**
+### Return Value
 
 Returns `True` if the worksheet contains one or more `ListObjects`; otherwise returns `False`.
 
-#### **Example**
+### Example
 
 ```vb
 Dim hasTable As Boolean

@@ -1,10 +1,8 @@
-Function GetLettersOnly(Text As String) As String
+Public Function GetLettersOnly(Text As String) As String
 
     Dim i       As Long
     Dim Letters As String
     Dim Chr     As String
-
-    Letters = vbNullString
 
     For i = 1 To Len(Text)
     

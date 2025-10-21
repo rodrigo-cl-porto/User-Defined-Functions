@@ -1,13 +1,10 @@
-Function RangeHasAnyFormula(ByVal rng As Range) As Boolean
+Public Function RangeHasAnyFormula(ByVal rng As Range) As Boolean
 
     Dim ErrNumber As Integer
     Dim ErrText   As String
     Dim Return    As Boolean
 
-    If rng Is Nothing Then
-        Return = False
-        Exit Function
-    End If
+    If rng Is Nothing Then Exit Function
 
     On Error Resume Next
     rng.SpecialCells xlCellTypeFormulas

@@ -29,7 +29,7 @@ let
         in tbRelevantColumns,
 
     documentation = type function (
-        tb as (type table meta [
+        tbl as (type table meta [
             Documentation.FieldCaption = "table",
             Documentation.FieldDescription = "The input table whose column names need to be fixed."
         ]),
@@ -47,11 +47,19 @@ let
             Documentation.Version = "1.0.0",
             Documentation.Examples = {[
                 Description = "Fix column names to Proper case and remove default columns.",
-                Code = "let#(lf)#(tab)Source = Excel.CurrentWorkbook(){[Name=""Table1""]}[Content],#(lf)#(tab)FixedColumnNames = Table.FixColumnNames(Source, ""Proper"")#(lf)in#(lf)#(tab)FixedColumnNames",
+                Code = "let" & #(lf) &
+                    "   Source = Excel.CurrentWorkbook(){[Name=""Table1""]}[Content]," & #(lf) &
+                    "   FixedColumnNames = Table.FixColumnNames(Source, ""Proper"")" & #(lf) &
+                    "in" & #(lf) &
+                    "   FixedColumnNames",
                 Result = "A table with cleaned column names in Proper case and without default columns."
             ], [
                 Description = "Fix column names to Upper case without removing default columns.",
-                Code = "let#(lf)#(tab)Source = Excel.CurrentWorkbook(){[Name=""Table1""]}[Content],#(lf)#(tab)FixedColumnNames = Table.FixColumnNames(Source, ""Upper"")#(lf)in#(lf)#(tab)FixedColumnNames",
+                Code = "let" & #(lf) &
+                    "   Source = Excel.CurrentWorkbook(){[Name=""Table1""]}[Content]," & #(lf) &
+                    "   FixedColumnNames = Table.FixColumnNames(Source, ""Upper"")" & #(lf) &
+                    "in" & #(lf) &
+                    "   FixedColumnNames",
                 Result = "A table with cleaned column names in Upper case, retaining all original columns."
             ]}
         ],
