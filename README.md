@@ -19,6 +19,7 @@ This repo contains custom functions I've developed throughout my experience as a
     - [`Number.IsInteger`](#numberisinteger)
     - [`Number.IsPrime`](#numberisprime)
     - [`Number.ToRoman`](#numbertoroman)
+    - [`Statistical.NormDist`](#statisticalnormdist)
     - [`Table.AddListAsColumn`](#tableaddlistascolumn)
     - [`Table.FixColumnNames`](#tablefixcolumnnames)
     - [`Table.PreprocessTextColumns`](#tablepreprocesstextcolumns)
@@ -165,7 +166,7 @@ List.Correlation(
 
 - `list1`: list of numeric values (nulls and non-numeric values are treated as 0).
 - `list2`: list of numeric values (nulls and non-numeric values are treated as 0).
-- `typeCorrelation` (optional): "Pearson" (default) or "Spearman". Case-insensitive.
+- `typeCorrelation` (_optional_): "Pearson" (default) or "Spearman". Case-insensitive.
 
 ### Return Value
 
@@ -209,7 +210,7 @@ List.Rank(
 
 ### Parameters
 - `values`: A list of values to rank. Values must be comparable (numbers, texts, dates, etc.).
-- `order` (optional): Use `Order.Ascending` or `Order.Descending`. If omitted, the function treats the ordering as descending (i.e., highest value gets rank 1).
+- `order` (_optional_): Use `Order.Ascending` or `Order.Descending`. If omitted, the function treats the ordering as descending (i.e., highest value gets rank 1).
 
 ### Return Value
 A list of integers with the same length as `values`, where each element is the rank (1-based) of the corresponding input value.
@@ -285,7 +286,7 @@ List.Outliers(
 ### Parameters
 
 - `values`: A list of numerical values to analyze for outliers.
-- `multiplier` (optional): A number to adjust the IQR threshold for defining outliers. Default is 1.5.
+- `multiplier` (_optional_): A number to adjust the IQR threshold for defining outliers. Default is 1.5.
 
 ### Return Value
 
@@ -580,6 +581,90 @@ Number.ToRoman(0) // -> Error
 
 <br>
 
+## [`Statistical.NormDist`](/Power%20Query/Statistical.NormDist.pq)
+
+This function calculates the value of the **normal distribution** (also known as Gaussian distribution) for a given input `x`. It supports both the **probability density function (PDF)** and the **cumulative distribution function (CDF)**, depending on the cumulative parameter.
+
+### Syntax
+
+```fs
+Statistical.NormDist(
+    x as number,
+    optional mean as number,
+    optional std as number,
+    optional accumulative as logical
+) as number
+```
+
+### Parameters
+
+- `x`: The value for which the normal distribution will be evaluated.
+- `mean` (_optional_): The mean ($\mu$) of the distribution. Defaults to 0 if not provided.
+- `standard deviation` (_optional_): The standard deviation ($\sigma$) of the distribution. Defaults to 1 if not provided.
+- `cumulative` (_optional_): Logical value indicating whether to return the cumulative distribution (true) or the probability density (false). Defaults to true.
+
+### Remarks
+
+- When `cumulative = false`, the function returns the probability density at point x using the formula:
+    - $\varphi(z)=\frac{1}{\sqrt{2 \pi}} e^{-\frac{z^2}{2}}​$
+    - where $z = \frac{x - \mu}{\sigma}$
+- When `cumulative = true`, the function returns the cumulative probability up to point $x$ using the formula:
+    - $\phi(z) = \frac{1}{2} + \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{t^{2}}dt}$.
+    - where $z = \frac{x - \mu}{\sigma}$
+- The integral part is calculated by Gaussian Quadrature, which uses a 24-point Legendre-Gauss approximation for high accuracy (Source: [Pomax - Legendre-Gauss Quadrature](https://pomax.github.io/bezierinfo/legendre-gauss.html)).
+    - $\int_{0}^{z / \sqrt{2}}{e^{t^{2}}dt} = \frac{\sqrt{2}}{4} z \sum_{i=1}^{24}{w_{i} \cdot \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
+    - where $w_{i}$ and $t_{i}$ are parameters provided by a Gaussian Quadrature table for 24-point approximation
+- This function is useful for statistical modeling, hypothesis testing, and data normalization.
+
+### Examples
+
+**Example 1**: Calculating the cumulative probability for a value of $x$ in a normal distribution with provided mean and standard deviation
+
+```fs
+let 
+    Result = Statistical.NormDist(100, 80, 10)
+in
+    Result
+```
+
+**Result**
+
+```fs
+0.9772498680518209
+```
+
+**Example 2**: In order to calculate the standard normal CDF, just don't input any mean nor standard deviation.
+
+```fs
+let 
+    Result = Statistical.NormDist(1.96)
+in
+    Result
+```
+
+**Result**
+
+```fs
+0.97500210485177963
+```
+
+**Example 3**: Calculating the standard normal PDF
+
+```fs
+let 
+    Result = Statistical.NormDist(1.96, null, null, false)
+in
+    Result
+```
+
+**Result**
+
+```fs
+0.058440944333451469
+```
+
+<br>
+
 ## [`Table.AddListAsColumn`](/Power%20Query/Table.AddListAsColumn.pq)
 
 Adds a new column to a table using values from a provided list. The new column can be inserted at a specified position and can have a defined data type.
@@ -601,8 +686,8 @@ Table.AddListAsColumn(
 - `tbl`: The input table to which the new column will be added.
 - `columnName`: The name of the new column to be added.
 - `columnValues`: A list of values to populate the new column.
-- `position` (optional): The position (0-based index) where the new column should be inserted. If not specified, the column is added at the end.
-- `columnType` (optional): The data type of the new column. If not specified, the column will have type `any`.
+- `position` (_optional_): The position (0-based index) where the new column should be inserted. If not specified, the column is added at the end.
+- `columnType` (_optional_): The data type of the new column. If not specified, the column will have type `any`.
 
 ### Return Value
 
@@ -706,7 +791,7 @@ Table.FixColumnNames(
 ### Parameters
 
 - `tbl`: The input table whose column names need to be fixed.
-- `textFormat` (optional): The desired text format for the column names. Accepts 'Proper', 'Lower', or 'Upper'. If not specified, no formatting is applied.
+- `textFormat` (_optional_): The desired text format for the column names. Accepts 'Proper', 'Lower', or 'Upper'. If not specified, no formatting is applied.
 
 ### Return Value
 
@@ -745,8 +830,8 @@ Table.PreprocessTextColumns(
 ### Parameters
 
 - `tbl`: The input table containing text columns to be cleaned and formatted.
-- `columnNames`: (optional) A list of column names to be processed. If not provided or empty, all columns of type text or nullable text will be processed.
-- `textCasing`: (optional) A string indicating the desired text casing format. Accepted values are:
+- `columnNames`: (_optional_) A list of column names to be processed. If not provided or empty, all columns of type text or nullable text will be processed.
+- `textCasing`: (_optional_) A string indicating the desired text casing format. Accepted values are:
     - "Proper": Capitalizes the first letter of each word.
     - "Lower": Converts all texts to lowercase.
     - "Upper": Converts all texts to uppercase.
@@ -859,8 +944,8 @@ Table.TransposeCorrectly(
 ### Parameters
 
 - `tbl`: The input table whose columns will be transposed.
-- `columnNames`: (optional) A list of column names to transpose. If not provided, all columns in the table will be transposed.
-- `firstColumnName`: (optional) The name to assign to the first column of the transposed table. If not provided, the first name from the columns list will be used.
+- `columnNames`: (_optional_) A list of column names to transpose. If not provided, all columns in the table will be transposed.
+- `firstColumnName`: (_optional_) The name to assign to the first column of the transposed table. If not provided, the first name from the columns list will be used.
 
 ### Remarks
 
@@ -1057,9 +1142,9 @@ Text.RegexExtract(
 
 - `textToExtract`: The input text from which to extract the substring.
 - `regexPattern`: The regular expression pattern to use for extraction.
-- `global` (optional): A logical value indicating whether to extract all matches (`true`) or just the first match (`false`). Default is `false`.
-- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
-- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+- `global` (_optional_): A logical value indicating whether to extract all matches (`true`) or just the first match (`false`). Default is `false`.
+- `caseInsensitive` (_optional_): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (_optional_): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
 ### Return Value
 
@@ -1104,9 +1189,9 @@ Text.RegexReplace(
 - `textToModify`: The input text in which to perform the replacements.
 - `regexPattern`: The regular expression pattern to match substrings for replacement.
 - `replacer`: The string to replace matched substrings with.
-- `global` (optional): A logical value indicating whether to replace all occurrences (`true`) or just the first occurrence (`false`). Default is `false`.
-- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
-- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+- `global` (_optional_): A logical value indicating whether to replace all occurrences (`true`) or just the first occurrence (`false`). Default is `false`.
+- `caseInsensitive` (_optional_): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (_optional_): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
 ### Return Value
 
@@ -1148,8 +1233,8 @@ Text.RegexSplit(
 
 - `textToSplit`: The input text to be split.
 - `regexPattern`: The regular expression pattern to use as the delimiter for splitting.
-- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
-- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+- `caseInsensitive` (_optional_): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (_optional_): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
 ### Return Value
 
@@ -1190,8 +1275,8 @@ Text.RegexTest(
 
 - `textToTest`: The input text to be tested against the regex pattern.
 - `regexPattern`: The regular expression pattern to test.
-- `caseInsensitive` (optional): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
-- `multiline` (optional): A logical value indicating whether to treat the input text as multiline. Default is `false`.
+- `caseInsensitive` (_optional_): A logical value indicating whether the regex matching should be case insensitive. Default is `false`.
+- `multiline` (_optional_): A logical value indicating whether to treat the input text as multiline. Default is `false`.
 
 ### Return Value
 
@@ -1311,7 +1396,7 @@ Text.RemoveNumerals(
 ### Parameters
 
 - `textToRemove`: The text string from which to remove numeric characters.
-- `removeRomanNumerals` (optional): A logical value indicating whether to also remove Roman numeral characters (I, V, X, L, C, D, M). Default is `false`.
+- `removeRomanNumerals` (_optional_): A logical value indicating whether to also remove Roman numeral characters (I, V, X, L, C, D, M). Default is `false`.
 
 ### Return Value
 
@@ -1342,7 +1427,7 @@ Text.RemovePunctuations(
 ### Parameters
 
 - `textToRemove`: The text string from which to remove punctuation characters.
-- `replacer` (optional): A text string to replace punctuation characters with. If omitted, punctuation characters are removed without replacement.
+- `replacer` (_optional_): A text string to replace punctuation characters with. If omitted, punctuation characters are removed without replacement.
 
 ### Return Value
 
@@ -1373,7 +1458,7 @@ Text.RemoveStopwords(
 ### Parameters
 
 - `textToModify`: The text string from which to remove stopwords.
-- `undesirableWords` (optional): A list of additional words to remove from the text. Default is an empty list.
+- `undesirableWords` (_optional_): A list of additional words to remove from the text. Default is an empty list.
 
 ### Return Value
 
@@ -1407,7 +1492,7 @@ Text.RemoveWeirdChars(
 ### Parameters
 
 - `textToClean`: The text string to be cleaned.
-- `replacer` (optional): A text string to replace special characters with. If omitted, special characters are replaced by an white space.
+- `replacer` (_optional_): A text string to replace special characters with. If omitted, special characters are replaced by an white space.
 
 ### Return Value
 
@@ -1488,7 +1573,7 @@ AutoFillFormulas(
 ### Parameters
 
 - `rng`: The range where formulas will be filled
-- `UseLastCellAsRef`: (Optional) Boolean flag to determine which cell to use as reference
+- `UseLastCellAsRef`: (_optional_) Boolean flag to determine which cell to use as reference
     - `False` (Default): Uses the first cell with formula as reference
     - `True`: Uses the last cell with formula as reference
 
@@ -1530,10 +1615,10 @@ CleanString(
 ### Parameters
 
 - `myString`: The input string to be cleaned
-- `ReplaceBySpace`: (Optional) Boolean flag that determines if special characters should be replaced by spaces
+- `ReplaceBySpace`: (_optional_) Boolean flag that determines if special characters should be replaced by spaces
     - `True` (Default): Replaces special characters with spaces
     - `False`: Removes special characters without replacement
-- `ConvertNonBreakingSpace`: (Optional) Boolean flag to handle non-breaking spaces
+- `ConvertNonBreakingSpace`: (_optional_) Boolean flag to handle non-breaking spaces
     - `True` (Default): Converts non-breaking spaces (ASCII 160) to regular spaces
     - `False`: Leaves non-breaking spaces unchanged
 
@@ -1754,7 +1839,7 @@ GetAllFileNames(
 ### Parameters
 
 - `FolderPath`: The path to the folder to search in
-- `fileExt`: (Optional) File extension to filter results. If omitted, returns all files
+- `fileExt`: (_optional_) File extension to filter results. If omitted, returns all files
 
 ### Return Value
 
@@ -1947,7 +2032,7 @@ GetStringWithSubstringInArray(
 
 - `SubString`: The text to search for within each array element
 - `SourceArray`: Array containing strings to search through
-- `CaseSensitive`: (Optional) Boolean flag to enable case-sensitive search. Default is False
+- `CaseSensitive`: (_optional_) Boolean flag to enable case-sensitive search. Default is False
 
 ### Return Value
 
@@ -2356,8 +2441,8 @@ SendEmail( _
 - `Recipient`: Email address(es) of the recipient(s)
 - `Subject`: Subject line of the email
 - `Message`: HTML-formatted body of the email
-- `CarbonCopy`: (Optional) Email address(es) for CC recipients
-- `BlindCarbonCopy`: (Optional) Email address(es) for BCC recipients
+- `CarbonCopy`: (_optional_) Email address(es) for CC recipients
+- `BlindCarbonCopy`: (_optional_) Email address(es) for BCC recipients
 
 ### Remarks
 
@@ -2452,7 +2537,7 @@ StringContains( _
 
 - `str1`: The main string to search in
 - `str2`: The substring to search for
-- `caseSensitive`: (Optional) Boolean flag to enable case-sensitive search. Default is `False`
+- `caseSensitive`: (_optional_) Boolean flag to enable case-sensitive search. Default is `False`
 
 ### Return Value
 
@@ -2503,7 +2588,7 @@ StringEndsWith( _
 
 - `str1`: The main string to check
 - `str2`: The ending string to look for
-- `caseSensitive`: (Optional) Boolean flag to enable case-sensitive comparison. Default is `False`
+- `caseSensitive`: (_optional_) Boolean flag to enable case-sensitive comparison. Default is `False`
 
 ### Return Value
 
@@ -2554,7 +2639,7 @@ StringStartsWith( _
 
 - `str1`: The main string to check.
 - `str2`: The prefix substring to look for.
-- `caseSensitive`: (Optional) If `True`, comparison is case-sensitive; if `False` (default), comparison is case-insensitive.
+- `caseSensitive`: (_optional_) If `True`, comparison is case-sensitive; if `False` (default), comparison is case-insensitive.
 
 ### Return Value
 
@@ -2598,7 +2683,7 @@ StringStartsWith( _
 
 - `subStr`: The substring to search for.
 - `srcArray`: One-dimensional array containing elements to search.
-- `caseSensitive`: (Optional) If `True`, performs a case-sensitive search; default is `False`.
+- `caseSensitive`: (_optional_) If `True`, performs a case-sensitive search; default is `False`.
 
 ### Return Value
 
