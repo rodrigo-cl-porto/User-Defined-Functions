@@ -695,8 +695,8 @@ Statistical.NormInv(
 
 ### Parameters
 
-- `probability`: A probability value between 0 and 1. Values outside this range are clamped to 0 or 1..
-- mean (_optional_): The mean ($\mu$) of the distribution. Defaults to 0 if not provided.
+- `probability`: A probability value between 0 and 1. Values outside this range are clamped to 0 or 1.
+- `mean` (_optional_): The mean ($\mu$) of the distribution. Defaults to 0 if not provided.
 - `standard deviation` (_optional_): The standard deviation ($\sigma$) of the distribution. Defaults to 1 if not provided.
 
 ### Return Value

@@ -53,54 +53,13 @@ let
                     in z
             in z,
 
-        CDF = (z as number) as number => let
-            GaussianIntegral = (z as number) as number => let
-                GaussianQuadratureTable = #table(
-                    type table [i = number, w = number, t = number], {
-                    { 1,  0.0640568928626056, 0.1279381953467522},
-                    { 2, -0.0640568928626056, 0.1279381953467522},
-                    { 3,  0.1911188674736163, 0.1258374563468283},
-                    { 4, -0.1911188674736163, 0.1258374563468283},
-                    { 5,  0.3150426796961634, 0.1216704729278034},
-                    { 6, -0.3150426796961634, 0.1216704729278034},
-                    { 7,  0.4337935076260451, 0.1155056680537256},
-                    { 8, -0.4337935076260451, 0.1155056680537256},
-                    { 9,  0.5454214713888396, 0.1074442701159656},
-                    {10, -0.5454214713888396, 0.1074442701159656},
-                    {11,  0.6480936519369755, 0.0976186521041139},
-                    {12, -0.6480936519369755, 0.0976186521041139},
-                    {13,  0.7401241915785544, 0.0861901615319533},
-                    {14, -0.7401241915785544, 0.0861901615319533},
-                    {15,  0.8200019859739029, 0.0733464814110803},
-                    {16, -0.8200019859739029, 0.0733464814110803},
-                    {17,  0.8864155270044011, 0.0592985849154368},
-                    {18, -0.8864155270044011, 0.0592985849154368},
-                    {19,  0.9382745520027328, 0.0442774388174198},
-                    {20, -0.9382745520027328, 0.0442774388174198},
-                    {21,  0.9747285559713095, 0.0285313886289337},
-                    {22, -0.9747285559713095, 0.0285313886289337},
-                    {23,  0.9951872199970213, 0.0123412297999872},
-                    {24, -0.9951872199970213, 0.0123412297999872}
-                }), // Source: https://pomax.github.io/bezierinfo/legendre-gauss.html
-                AddedGaussianFunction = Table.AddColumn(GaussianQuadratureTable, "f(t)", each Number.Exp(-0.125 * Number.Power(z*([t]+1), 2)), Decimal.Type),
-                AddedProduct = Table.AddColumn(AddedGaussianFunction, "w * f(t)", each [w] * [#"f(t)"], type number),
-                Summation = List.Sum(AddedProduct[#"w * f(t)"], Precision.Decimal),
-                GaussianQuadrature = Number.Sqrt(2/Number.PI) * (z/4) * Summation
-                in GaussianQuadrature,
-            AccumulatedProbability = 0.5 + GaussianIntegral(z)
-            in AccumulatedProbability,
-        
-        FDP = (z as number) as number => Number.Exp(-0.5*z*z) / Number.Sqrt(2*Number.PI),
-
         // Calculating the Z-Score
         z = if p = 0 then
                 Number.NegativeInfinity
             else if p = 1 then
                 Number.PositiveInfinity
-            else let
-                z0 = RationalApproximation(p),
-                z = List.Accumulate({1..2}, z0, (zi, i) => zi - (CDF(zi) - p) / FDP(zi))
-                in z,
+            else
+                RationalApproximation(p),
         
         // Calculating the x value
         mu = if mean is null then 0 else mean,
@@ -111,7 +70,7 @@ let
     documentation = type function (
         probability as (type number meta [
             Documentation.FieldCaption = "probability",
-            Documentation.FieldDescription = ""
+            Documentation.FieldDescription = "A probability value between 0 and 1. Values outside this range are clamped to 0 or 1."
         ]),
         optional mean as (type number meta [
             Documentation.FieldCaption = "mean",
@@ -131,11 +90,11 @@ let
             Documentation.Examples = {[
                 Description= "Returns x such as P(X ≤ x) = p for a normal distribution with given mean and standard deviation.",
                 Code= "Statistical.NormInv(0.9, 100, 15)",
-                Result = "119,22327346210234"
+                Result = "119.22327346210234"
             ], [
                 Description= "If neither mean nor standard deviation are informed, returns the value z such that P(Z ≤ z) equals the probability under the standard normal distribution.",
                 Code= "Statistical.NormInv(0.9)",
-                Result = "1,2815515641401563"
+                Result = "1.2815515641401563"
             ]}
         ],
     
