@@ -705,7 +705,7 @@ A number representing the value $x$ such that the normal distribution's cumulati
 
 ### Remarks
 
-- The function uses a rational approximation algorithm to compute the inverse of the standard normal distribution.
+- The function uses a [rational approximation algorithm](#credits-3) to compute the inverse of the standard normal distribution.
 - The input probability is clamped between 0 and 1. Values outside this range are adjusted to the nearest valid bound.
 - For `probability = 0`, the result is negative infinity (`Number.NegativeInfinity`).
 - For `probability = 1`, the result is positive infinity (`Number.PositiveInfinity`).
