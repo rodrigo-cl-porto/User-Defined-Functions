@@ -20,6 +20,7 @@ This repo contains custom functions I've developed throughout my experience as a
     - [`Number.IsPrime`](#numberisprime)
     - [`Number.ToRoman`](#numbertoroman)
     - [`Statistical.NormDist`](#statisticalnormdist)
+    - [`Statistical.NormInv`](#statisticalnorminv)
     - [`Table.AddListAsColumn`](#tableaddlistascolumn)
     - [`Table.FixColumnNames`](#tablefixcolumnnames)
     - [`Table.PreprocessTextColumns`](#tablepreprocesstextcolumns)
@@ -583,7 +584,7 @@ Number.ToRoman(0) // -> Error
 
 ## [`Statistical.NormDist`](/Power%20Query/Statistical.NormDist.pq)
 
-This function calculates the value of the **normal distribution** (also known as Gaussian distribution) for a given input `x`. It supports both the **probability density function (PDF)** and the **cumulative distribution function (CDF)**, depending on the cumulative parameter.
+Calculates the value of the **normal distribution** (also known as Gaussian distribution) for a given input `x`. It supports both the **probability density function (PDF)** and the **cumulative distribution function (CDF)**, depending on the cumulative parameter.
 
 ### Syntax
 
@@ -606,62 +607,141 @@ Statistical.NormDist(
 ### Remarks
 
 - When `cumulative = false`, the function returns the probability density at point x using the formula:
-    - $\varphi(z)=\frac{1}{\sqrt{2 \pi}} e^{-\frac{z^2}{2}}​$
+    - $\varphi(z)=\frac{1}{\sqrt{2 \pi}} \exp(-\frac{z^2}{2})​$
     - where $z = \frac{x - \mu}{\sigma}$
 - When `cumulative = true`, the function returns the cumulative probability up to point $x$ using the formula:
-    - $\phi(z) = \frac{1}{2} + \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{t^{2}}dt}$.
+    - $\phi(z) = \frac{1}{2} + \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt}$.
     - where $z = \frac{x - \mu}{\sigma}$
-- The integral part is calculated by Gaussian Quadrature, which uses a 24-point Legendre-Gauss approximation for high accuracy (Source: [Pomax - Legendre-Gauss Quadrature](https://pomax.github.io/bezierinfo/legendre-gauss.html)).
-    - $\int_{0}^{z / \sqrt{2}}{e^{t^{2}}dt} = \frac{\sqrt{2}}{4} z \sum_{i=1}^{24}{w_{i} \cdot \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
+- The integral part is calculated by [Gaussian Quadrature](#credits-2), which uses a 24-point Legendre-Gauss approximation for high accuracy.
+    - $ \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt} = \sqrt{\frac{2}{\pi}} \cdot \frac{z}{4} \cdot \sum_{i=1}^{24}{w_{i} \cdot \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
     - where $w_{i}$ and $t_{i}$ are parameters provided by a Gaussian Quadrature table for 24-point approximation
 - This function is useful for statistical modeling, hypothesis testing, and data normalization.
 
+### Return Value
+
+Returns the normal cumulative probability up to a given $x$ by default. If `cumulative = false`, returns the normal probability density at point $x$. If neither x or y are given, returns the **standard** normal CDF up to a given $x$ (which will be treated as the Z-score), or returns the **standard** normal PDF at $x$ if `cumulative` is `false`.
+
 ### Examples
 
-**Example 1**: Calculating the cumulative probability for a value of $x$ in a normal distribution with provided mean and standard deviation
+**Example 1**: Calculating the cumulative probability for a value of $x$ in a normal distribution with provided mean and standard deviation.
 
 ```fs
-let 
-    Result = Statistical.NormDist(100, 80, 10)
-in
-    Result
+Statistical.NormDist(100, 80, 10)
 ```
 
 **Result**
 
 ```fs
-0.9772498680518209
+0.97724986805182079
 ```
 
-**Example 2**: In order to calculate the standard normal CDF, just don't input any mean nor standard deviation.
+**Example 2**: Calculating the normal PDF for given mean and standard deviation.
 
 ```fs
-let 
-    Result = Statistical.NormDist(1.96)
-in
-    Result
+Statistical.NormDist(100, 80, 10, false)
 ```
 
 **Result**
 
 ```fs
-0.97500210485177963
+0.0539909665131881
 ```
 
-**Example 3**: Calculating the standard normal PDF
+**Example 3**: In order to calculate the standard normal CDF, just don't input any mean nor standard deviation.
 
 ```fs
-let 
-    Result = Statistical.NormDist(1.96, null, null, false)
-in
-    Result
+Statistical.NormDist(1.96)
 ```
 
 **Result**
 
 ```fs
-0.058440944333451469
+0.97500210485177974
 ```
+
+**Example 4**: Calculating the standard normal PDF.
+
+```fs
+Statistical.NormDist(1.96, null, null, false)
+```
+
+**Result**
+
+```fs
+0.058440944333451476
+```
+
+### Credits
+
+- [Gaussian Quadrature Weights and Abscissae](https://pomax.github.io/bezierinfo/legendre-gauss.html)
+    - Author: Mike "Pomax" Kamermans
+    - Published at: June 5th, 2011
+
+<br>
+
+## [`Statistical.NormInv`](/Power%20Query/Statistical.NormInv.pq)
+
+Returns the inverse of the cumulative distribution function (CDF) of the normal distribution.
+
+### Syntax
+
+```fs
+Statistical.NormInv(
+    probability as number,
+    optional mean as number,
+    optional sd as number
+) as number
+```
+
+### Parameters
+
+- `probability`: A probability value between 0 and 1. Values outside this range are clamped to 0 or 1..
+- mean (_optional_): The mean ($\mu$) of the distribution. Defaults to 0 if not provided.
+- `standard deviation` (_optional_): The standard deviation ($\sigma$) of the distribution. Defaults to 1 if not provided.
+
+### Return Value
+
+A number representing the value $x$ such that the normal distribution's cumulative probability $P(X \le x)$ equals the given `probability`. If neither mean nor standard deviation are specified, returns the value $z$ such that the **standard normal** distribution's cumulative probability  $P(Z \le z)$ equals the given `probability`.
+
+### Remarks
+
+- The function uses a rational approximation algorithm to compute the inverse of the standard normal distribution.
+- The input probability is clamped between 0 and 1. Values outside this range are adjusted to the nearest valid bound.
+- For `probability = 0`, the result is negative infinity (`Number.NegativeInfinity`).
+- For `probability = 1`, the result is positive infinity (`Number.PositiveInfinity`).
+
+### Examples
+
+**Example 1**: Returns $x$ such that $P(X \le x) = p$ for a normal distribution with given mean and standard deviation.
+
+```fs
+Statistical.NormInv(0.9, 100, 15)
+```
+
+**Result**
+
+```fs
+119.22327346210234
+```
+
+**Example 2**: If neither mean nor standard deviation are informed, returns the value $z$ such that $P(Z \le z) = p$ under the **standard** normal distribution.
+
+```fs
+Statistical.NormInv(0.9)
+```
+
+**Result**
+
+```fs
+1.2815515641401563
+```
+
+### Credits
+
+- [An algorithm for computing the inverse normal cumulative distribution function](https://web.archive.org/web/20151030215612/http://home.online.no/~pjacklam/notes/invnorm/)
+    - Author: Peter John Acklam
+    - Original Site: http://home.online.no/~pjacklam/notes/invnorm
+    - Published at: May 4th, 2003
 
 <br>
 

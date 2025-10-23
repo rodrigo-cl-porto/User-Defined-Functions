@@ -4,7 +4,7 @@ let
         sigma = if sd is null then 1 else sd,
         z = (x - mu)/sigma,
         result = if cumulative = false then
-            1/Number.Sqrt(2*Number.PI) * Number.Exp(-Number.Power(z, 2)/2)
+            Number.Exp(-0.5 * Number.Power(z, 2)) / Number.Sqrt(2 * Number.PI)
         else let
             GaussianIntegral = (z as number) as number => let
                 GaussianQuadratureTable = #table(
@@ -34,14 +34,15 @@ let
                     {23,  0.9951872199970213, 0.0123412297999872},
                     {24, -0.9951872199970213, 0.0123412297999872}
                 }), // Source: https://pomax.github.io/bezierinfo/legendre-gauss.html
-                AddedGaussianFunction = Table.AddColumn(GaussianQuadratureTable, "f(t)", each Number.Exp(-Number.Power(z*([t]+1), 2)/8), type number),
-                AddedProduct = Table.AddColumn(AddedGaussianFunction, "wf(t)", each [w] * [#"f(t)"], type number),
-                GaussianQuadrature = (Number.Sqrt(2)/4) * z * List.Sum(AddedProduct[#"wf(t)"])
+                AddedGaussianFunction = Table.AddColumn(GaussianQuadratureTable, "f(t)", each Number.Exp(-0.125 * Number.Power(z*([t]+1), 2)), type number),
+                AddedProduct = Table.AddColumn(AddedGaussianFunction, "w * f(t)", each [w] * [#"f(t)"], type number),
+                Summation = List.Sum(AddedProduct[#"w * f(t)"]),
+                GaussianQuadrature = Number.Sqrt(2/Number.PI) * (z/4) * Summation
                 in GaussianQuadrature,
-            AccumulatedGaussian = 0.5 + 1/Number.Sqrt(Number.PI) * GaussianIntegral(z)
-            in AccumulatedGaussian 
+            AccumulatedProbability = 0.5 + GaussianIntegral(z)
+            in AccumulatedProbability
         in result,
-    
+
     documentation = type function (
         x as (type number meta [
             Documentation.FieldCaption = "x",
@@ -70,15 +71,19 @@ let
             Documentation.Examples = {[
                 Description = "Calculating the cumulative probability for a value of x in a normal distribution with provided mean and standard deviation.",
                 Code = "Statistical.NormDist(100, 80, 10)",
-                Result = "0.9772498680518209"
+                Result = "0.97724986805182079"
+            ], [
+                Description = "Calculating the normal PDF for given mean and standard deviation.",
+                Code= "Statistical.NormDist(100, 80, 10, false)",
+                Result= "0.0539909665131881"
             ], [
                 Description = "In order to calculate the standard normal CDF, just don't input any mean nor standard deviation.",
                 Code = "Statistical.NormDist(1.96)",
-                Result = "0.97500210485177963"
+                Result = "0.97500210485177974"
             ], [
                 Description = "Calculating the standard normal PDF",
                 Code = "Statistical.NormDist(1.96, null, null, false)",
-                Result = "0.058440944333451469"
+                Result = "0.058440944333451476"
             ]}
         ],
     
