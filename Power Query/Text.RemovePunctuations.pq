@@ -16,8 +16,7 @@ let
             SplittedText = Text.Split(TextWithoutPunctuation, " "),
             RemovedEmpties = List.RemoveItems(SplittedText, {"", null}),
             RemovedDoubleSpaces = Text.Combine(RemovedEmpties, " ")
-        in
-            RemovedDoubleSpaces,
+            in RemovedDoubleSpaces,
     
     documentation = type function (
         textToRemove as (type nullable text meta [

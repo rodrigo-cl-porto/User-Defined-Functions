@@ -60,8 +60,7 @@ let
                 else
                     List.RemoveItems(SplittedText, Stopwords & undesirableWords),
             CombinedText = Text.Combine(RemovedWords, " ")
-        in
-            CombinedText,
+            in CombinedText,
     
     documentation = type function (
         textToRemove as (type nullable text meta [

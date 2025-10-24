@@ -21,7 +21,7 @@ let
             Documentation.FieldCaption = "Multiplier",
             Documentation.FieldDescription = "Multiplier to define outlier thresholds (default is 1.5)",
             Documentation.DefaultValue = 1.5
-        ])) as list meta [
+        ])) as {number} meta [
             Documentation.Name = "List.Outliers",
             Documentation.Description = "Identifies outliers in a numerical list using the interquartile range (IQR) method.",
             Documentation.LongDescription = "This function returns the outlier values from a list of numbers based on the interquartile range (IQR) method. It first removes nulls, empty strings, and whitespace entries, then selects only valid numeric values. Outliers are defined as values below Q₁ - 1.5×IQR or above Q₃ + 1.5×IQR, where Q₁ and Q₃ are the first and third quartiles respectively.",

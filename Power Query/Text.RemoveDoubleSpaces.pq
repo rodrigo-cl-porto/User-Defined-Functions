@@ -6,8 +6,7 @@ let
             SplittedText = Text.Split(textToRemove, " "),
             RemovedEmpties = List.RemoveItems(SplittedText, {"", null}),
             CombinedText = Text.Combine(RemovedEmpties, " ")
-        in
-            CombinedText,
+            in CombinedText,
     
     documentation = type function (
         textToRemove as (type nullable text meta [

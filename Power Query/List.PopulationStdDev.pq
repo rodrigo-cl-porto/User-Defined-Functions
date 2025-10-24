@@ -3,7 +3,7 @@ let
         result = Number.Sqrt(List.Covariance(values, values))
         in Decimal.From(result),
 
-    documentedType = type function (
+    documentation = type function (
         values as (type {number} meta [
             Documentation.FieldCaption = "values",
             Documentation.FieldDescription = "Numerical list to calculate the population standard deviation"
@@ -24,6 +24,6 @@ let
             ]}
         ],
 
-    documentedFunction = Value.ReplaceType(func, documentedType)
+    documentedFunction = Value.ReplaceType(func, documentation)
 in  
     documentedFunction

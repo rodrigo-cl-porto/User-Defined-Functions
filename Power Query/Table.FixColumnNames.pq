@@ -11,21 +11,18 @@ let
                     RemovedEmpties = List.RemoveItems(SplittedText, {""}),
                     CombinedText = Text.Combine(RemovedEmpties, " ")
                     in CombinedText
-            in if Text.Upper(textFormat) = "PROPER" then
-                Text.Proper(RemovedDuplicatedSpaces)
-            else if Text.Upper(textFormat) = "LOWER" then
-                Text.Lower(RemovedDuplicatedSpaces)
-            else if Text.Upper(textFormat) = "UPPER" then
-                Text.Upper(RemovedDuplicatedSpaces)
-            else
-                RemovedDuplicatedSpaces
+                in if Text.Upper(textFormat) = "PROPER" then
+                    Text.Proper(RemovedDuplicatedSpaces)
+                else if Text.Upper(textFormat) = "LOWER" then
+                    Text.Lower(RemovedDuplicatedSpaces)
+                else if Text.Upper(textFormat) = "UPPER" then
+                    Text.Upper(RemovedDuplicatedSpaces)
+                else
+                    RemovedDuplicatedSpaces
         ),
         ColumnNames = Table.ColumnNames(tbTransformedColumnNames),
         RelevantColumnsNames = List.Select(ColumnNames, each not Text.StartsWith(_, "COLUMN")),
-        tbRelevantColumns = Table.SelectColumns(
-            tbTransformedColumnNames,
-            RelevantColumnsNames
-        )
+        tbRelevantColumns = Table.SelectColumns(tbTransformedColumnNames, RelevantColumnsNames)
         in tbRelevantColumns,
 
     documentation = type function (

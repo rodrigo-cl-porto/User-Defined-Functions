@@ -44,14 +44,14 @@ let
         ReplacedBreakRows = Text.Replace(ExtractedText, "<br>", "#(lf)"),
         SplitText = Text.Split(ReplacedBreakRows, Separator),
         ExtractedMatches = try
-            if SplitText{0} = "null" then
-                null
-            else if global=true then 
-                SplitText
-            else
-                SplitText{0}
-        otherwise 
-            if global=true then {} else ""
+                if SplitText{0} = "null" then
+                    null
+                else if global=true then 
+                    SplitText
+                else
+                    SplitText{0}
+            otherwise 
+                if global=true then {} else ""
         in ExtractedMatches,
 
     documentation = type function (

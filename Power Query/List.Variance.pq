@@ -1,15 +1,15 @@
 let
-    func = (numbersList as list, optional isPopulational as logical) as number =>
+    func = (values as list, optional isPopulational as logical) as number =>
         if isPopulational = null or isPopulational = false then
             // Uses sampling variance formula, which takes (n-1) on the denominator.
-            Number.Power(List.StandardDeviation(numbersList), 2)
+            Number.Power(List.StandardDeviation(values), 2)
         else
             // Uses population variance formula, which takes (n) on the denominator.
-            List.Covariance(numbersList, numbersList),
+            List.Covariance(values, values),
 
     documentation = type function (
-        numbersList as (type {number} meta [
-            Documentation.FieldCaption = "numbersList",
+        values as (type {number} meta [
+            Documentation.FieldCaption = "values",
             Documentation.FieldDescription = "The numeric list whose variance is to be calculated."
         ]),
         optional isPopulational as (type logical meta [
@@ -24,7 +24,7 @@ let
                 "This function returns the variance of a list of numbers. "
                 & "By default, it calculates the sample variance, using n-1 in the denominator. "
                 & "If the optional parameter populational is set to true, it calculates the population variance, using n in the denominator.",
-            Documentation.Category = "Statistics",
+            Documentation.Category = "List",
             Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
             Documentation.Examples = {[

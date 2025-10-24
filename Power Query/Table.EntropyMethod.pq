@@ -1,9 +1,8 @@
-(tbl as table, optional listColumns as nullable list) as any =>
-let
+(tbl as table, optional listColumns as nullable list) as any => let
     ColumnNames = if listColumns = null or listColumns = {} then
-        Table.ColumnsOfType(tbl, {type number, type nullable number})
-    else 
-        listColumns,
+            Table.ColumnsOfType(tbl, {type number, type nullable number})
+        else 
+            listColumns,
     SelectedColumns = Table.SelectColumns(tbl, ColumnNames),
     MaxValuesRecord = let 
         MaxValues = List.Transform(ColumnNames, each List.Max(Table.Column(SelectedColumns, _))),
@@ -42,8 +41,7 @@ let
         }
     ),
     IndividualEntropyCalculated = Table.TransformColumns(NormalizedValues, IndividualEntropyTransformations),
-    WeightCriteriaRecord = 
-    let 
+    WeightCriteriaRecord = let 
         //Calculating criteria's entropy
         N = Table.RowCount(tbl),
         sMax = Number.Ln(N), // Maximum Entropy

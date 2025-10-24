@@ -75,18 +75,15 @@ let
             Documentation.Category = "Text",
             Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
-            Documentation.Examples = {
-                [
-                    Description = "Basic usage of Text.RegexSplit",
-                    Code = "Text.RegexSplit(""apple, banana; cherry|date"", ""[,\s;|]+"")",
-                    Result = "{""apple"", ""banana"", ""cherry"", ""date""}"
-                ],
-                [
-                    Description = "Using case insensitive flag",
-                    Code = "Text.RegexSplit(""Apple, banana; Cherry|date"", ""[a-z]+"", true)",
-                    Result = "{"""", "", "", ""; "", ""|"", """"}"
-                ]
-            }
+            Documentation.Examples = {[
+                Description = "Basic usage of Text.RegexSplit",
+                Code = "Text.RegexSplit(""apple, banana; cherry|date"", ""[,\s;|]+"")",
+                Result = "{""apple"", ""banana"", ""cherry"", ""date""}"
+            ], [
+                Description = "Using case insensitive flag",
+                Code = "Text.RegexSplit(""Apple, banana; Cherry|date"", ""[a-z]+"", true)",
+                Result = "{"""", "", "", ""; "", ""|"", """"}"
+            ]}
         ],
     
     documentedFunction = Value.ReplaceType(func, documentation)

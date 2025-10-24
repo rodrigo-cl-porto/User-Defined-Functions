@@ -12,18 +12,15 @@ let
             Documentation.Category = "Number",
             Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
-            Documentation.Examples = {
-                [
-                    Description = "Check if a whole number is an integer.",
-                    Code = "Number.IsInteger(10)",
-                    Result = "true"
-                ],
-                [
-                    Description = "Check if a decimal number is an integer.",
-                    Code = "Number.IsInteger(10.5)",
-                    Result = "false"
-                ]
-            }
+            Documentation.Examples = {[
+                Description = "Check if a whole number is an integer.",
+                Code = "Number.IsInteger(10)",
+                Result = "true"
+            ], [
+                Description = "Check if a decimal number is an integer.",
+                Code = "Number.IsInteger(10.5)",
+                Result = "false"
+            ]}
         ]),
 
     documentedFunction = Value.ReplaceType(func, documentation)

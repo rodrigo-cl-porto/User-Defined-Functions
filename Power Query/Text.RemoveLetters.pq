@@ -7,8 +7,7 @@ let
             textASCII  = Text.FromBinary(textBinary, TextEncoding.Ascii),
             RemovedLetters = List.RemoveItems(Text.ToList(textASCII), {"a".."z", "A".."Z"}),
             CombinedText = Text.Combine(RemovedLetters)
-        in 
-            CombinedText,
+            in CombinedText,
 
     documentation = type function (
         textToModify as (type nullable text meta [

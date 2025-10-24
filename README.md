@@ -7,12 +7,14 @@ This repo contains custom functions I've developed throughout my experience as a
 - [Power Query (M Code)](#power-query-m-code)
     - [`Binary.Unzip`](#binaryunzip)
     - [`DateTime.ToUnixTime`](#datetimetounixtime)
+    - [`Decision.TOPSIS`](#decisiontopsis)
     - [`List.Correlation`](#listcorrelation)
     - [`List.Rank`](#listrank)
     - [`List.Intercept`](#listintercept)
     - [`List.Outliers`](#listoutliers)
     - [`List.Slope`](#listslope)
     - [`List.PopulationStdDev`](#listpopulationstddev)
+    - [`List.Primes`](#listprimes)
     - [`List.Variance`](#listvariance)
     - [`List.WeightedAverage`](#listweightedaverage)
     - [`Number.FromRoman`](#numberfromroman)
@@ -22,6 +24,7 @@ This repo contains custom functions I've developed throughout my experience as a
     - [`Statistical.NormDist`](#statisticalnormdist)
     - [`Statistical.NormInv`](#statisticalnorminv)
     - [`Table.AddListAsColumn`](#tableaddlistascolumn)
+    - [`Table.CorrelationMatrix`](#tablecorrelationmatrix)
     - [`Table.FixColumnNames`](#tablefixcolumnnames)
     - [`Table.PreprocessTextColumns`](#tablepreprocesstextcolumns)
     - [`Table.RemoveBlankColumns`](#tableremoveblankcolumns)
@@ -146,6 +149,71 @@ Converts `datetime` to Unixtime, which consists of a number representing the tot
 ```fs
 DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0)) // -> returns 1672531200
 ```
+
+<br>
+
+## [`Decision.TOPSIS`](/Power%20Query/Decision.TOPSIS.pq)
+
+This function applies the **TOPSIS** (_Technique for Order Preference by Similarity to Ideal Solution_) method to rank alternatives based on multiple criteria. It normalizes the data, applies weights, calculates the distance to the ideal and anti-ideal solutions, and computes a **closeness coefficient (CC)** for each alternative. The result is a ranked table of alternatives.
+
+### Syntax
+
+```fs
+Decision.TOPSIS(
+    tbl as table,
+    alternativesColumn as text,
+    weights as record
+) as table
+```
+
+### Parameters
+
+- `table`: The input table containing alternatives and their evaluation across multiple criteria.
+- `alternativesColumn`: The name of the column that identifies each alternative.
+- `weights`: A record where each field name corresponds to a criterion column in the table, and each field value is the weight (importance) of that criterion.
+
+### Return Value
+
+A ranked table of alternatives ordered by the closeness coeficient (CC).
+
+### Remarks
+
+- The function performs the following steps:
+    - Normalization of each criterion using Euclidean norm.
+    - Weighting of normalized values using the provided weights.
+    - Calculation of Positive Ideal Solution (PIS) and Negative Ideal Solution (NIS).
+    - Distance to PIS ($D^{+}$) and Distance to NIS ($D^{-}$) for each alternative.
+    - Closeness Coefficient (CC):
+        $CC = \frac{D^{-}}{D^{+} + D^{-}}​$
+    - Ranking: Alternatives are sorted by CC in descending order. Ties receive the same rank.
+- If both $D^{+}$ and $D^{-}$ are zero, CC is set to 0.5.
+- This method is widely used in multi-criteria decision analysis (MCDA), especially when criteria have different units or scales.
+
+### Example
+
+Ranking alternatives with three criteria.
+
+```fs
+let
+    Source = #table(
+        {"Alternative", "Cost", "Quality", "Speed"}, {
+            {"A", 300, 80, 60},
+            {"B", 250, 70, 75},
+            {"C", 400, 90, 50}
+    }),
+    Weights = [Cost = 0.4, Quality = 0.3, Speed = 0.3],
+    Result = Decision.TOPSIS(Source, "Alternative", Weights)
+in
+    Result
+```
+
+**Result**
+
+|Alternative|Cost|Quality|Speed|CC  |RANKING|
+|:---------:|:--:|:-----:|:---:|:--:|:-----:|
+|C          |400 |90     |50   |0.74|1      |
+|B          |250 |70     |75   |0.26|2      |
+|A          |300 |80     |60   |0.26|3      |
 
 <br>
 
@@ -358,7 +426,9 @@ Calculates the population standard deviation of a list of numerical values.
 ### Syntax
 
 ```fs
-List.PopulationStdDev(values as list) as nullable number
+List.PopulationStdDev(
+    values as list
+) as nullable number
 ```
 
 ### Parameters
@@ -389,6 +459,59 @@ List.PopulationStdDev({})
 
 <br>
 
+## [`List.Primes`](/Power%20Query/List.Primes.pq)
+
+Returns a list of prime numbers less than or equal to a given number `n`. It uses the Sieve of Eratosthenes for small values and a variation of Dijkstra’s algorithm for larger values to efficiently generate prime numbers.
+
+### Syntax
+
+```fs
+List.Primes(
+    n as Int64.Type
+) as type {number}
+```
+
+### Parameters
+
+- `n`: A positive integer; if `n` < 2, the function returns an empty list.
+
+### Return Value
+
+The function returns a list of all prime numbers lower or equal to `n`.
+
+### Remarks
+
+- For `n` < 1000, the function uses the Sieve of Eratosthenes, which is efficient for small ranges.
+- For `n` ≥ 1000, the function applies a Dijkstra-inspired algorithm that tracks multiples of known primes to identify new primes.
+
+### Examples
+
+**Example 1**: Primes up to 10.
+
+```fs
+List.Primes(10)
+```
+
+**Result**
+
+```fs
+{2, 3, 5, 7}
+```
+
+**Example 2**: Primes up to 30.
+
+```fs
+List.Primes(30)
+```
+
+**Result**
+
+```fs
+{2, 3, 5, 7, 11, 13, 17, 19, 23, 29}
+```
+
+<br>
+
 ## [`List.Variance`](/Power%20Query/List.Variance.pq)
 
 Calculates the population variance of a list of numerical values.
@@ -396,7 +519,9 @@ Calculates the population variance of a list of numerical values.
 ### Syntax
 
 ```fs
-List.Variance(values as list) as nullable number
+List.Variance(
+    values as {number}
+) as nullable number
 ```
 
 ### Parameters
@@ -417,15 +542,40 @@ Returns a number representing the population variance of the input list. If the 
 
 ### Examples
 
+**Example 1**: Calculating sample variance value.
+
 ```fs
 List.Variance({1, 2, 3, 4, 5})
-// -> 2.5 (sample variance value)
+```
 
+**Result**
+
+```fs
+2.5
+```
+
+**Example 2**: Calculating population variance value.
+
+```fs
 List.Variance({1, 2, 3, 4, 5}, true)
-// -> 2 (population variance value)
+```
 
+**Result**
+
+```fs
+2
+```
+
+**Example 3**: Returns `null` if receives a empty list.
+
+```fs
 List.Variance({})
-// -> null (empty list)
+```
+
+**Result**
+
+```fs
+null
 ```
 
 <br>
@@ -524,12 +674,14 @@ Number.IsInteger(10.5) // -> false
 
 ## [`Number.IsPrime`](/Power%20Query/Number.IsPrime.pq)
 
-Checks if a given number is a prime number.
+Checks if a given number is prime.
 
 ### Syntax
 
 ```fs
-Number.IsPrime(value as number) as logical
+Number.IsPrime(
+    value as Int64.Type
+) as logical
 ```
 
 ### Parameters
@@ -542,9 +694,28 @@ Returns `true` if the number is prime, `false` otherwise.
 
 ### Examples
 
+**Example 1**: Check if 7 is prime
+
 ```fs
-Number.IsPrime(7) // -> true
-Number.IsPrime(10) // -> false
+Number.IsPrime(7)
+```
+
+**Result**
+
+```fs
+true
+```
+
+**Example 2**: Check if 100 is prime
+
+```fs
+Number.IsPrime(100)
+```
+
+**Result**
+
+```fs
+false
 ```
 
 ### Credits
@@ -855,6 +1026,81 @@ in
 
 <br>
 
+## [`Table.CorrelationMatrix`](/Power%20Query/Table.CorrelationMatrix.pq)
+
+Calculates the correlation matrix for a given table. It computes the Pearson correlation coefficient between each pair of numeric columns, returning a table where each cell represents the correlation between two variables.
+
+### Syntax
+
+```fs
+Table.CorrelationMatrix(
+    tbl as table,
+    optional columnNames as type {text}
+) as table
+```
+
+### Parameters
+
+- `tbl`: The input table containing numeric columns to be analyzed.
+- `columnNames` (_optional_): A list of column names to include in the correlation matrix. If not provided, all numeric columns in the table will be used.
+
+### Return Value
+
+The result is a symmetric matrix with correlation values ranging from -1 to 1. The output table includes a "VARIABLE" column indicating the row variable, followed by columns representing correlations with other variables.
+
+### Remarks
+
+- The function uses the Pearson correlation formula to measure linear relationships between columns.
+- Nulls, empty strings, and non-numeric values are treated as 0 during computation.
+
+### Examples
+
+**Example 1**: Correlation matrix for all numeric columns.
+
+```fs
+let
+    Source = #table({"A", "B", "C"}, {
+        {1, 2, 3},
+        {2, 4, 6},
+        {3, 6, 9}
+    }),
+    Result = Table.CorrelationMatrix(Source)
+in
+    Result
+```
+
+**Result**
+
+|VARIABLE|A  |B  |C  |
+|:------:|:-:|:-:|:-:|
+|A       |1.0|1.0|1.0|
+|B       |1.0|1.0|1.0|
+|C       |1.0|1.0|1.0|
+
+**Example 2**: Correlation matrix for selected columns.
+
+```fs
+let
+    Source = #table({"X", "Y", "Z"}, {
+        {1, 10, 100},
+        {2, 20, 80},
+        {3, 30, 60},
+        {4, 40, 40}
+    }),
+    Result = Table.CorrelationMatrix(Source, {"X", "Z"})
+in
+    Result
+```
+
+**Result**
+
+|VARIABLE|X   |Z   |
+|:------:|:--:|:--:|
+|X       | 1.0|-1.0|
+|Z       |-1.0| 1.0|
+
+<br>
+
 ## [`Table.FixColumnNames`](/Power%20Query/Table.FixColumnNames.pq)
 
 Cleans and standardizes column names in a table by removing unwanted characters, trimming spaces, and applying specified text formatting (Proper, Lower, Upper). It also removes columns with default names like 'Column1', 'Column2', etc.
@@ -995,8 +1241,8 @@ in
 
 **Result**
 
-|B|
-|:-:|
+|B     |
+|:----:|
 |value1|
 |value2|
 
@@ -1117,9 +1363,28 @@ Returns a number representing the count of occurrences of the specified characte
 
 ### Examples
 
+**Example 1**: Counts the number of vowels "o" in "hello world".
+
 ```fs
-Text.CountChar("hello world", "o") // -> 2
-Text.CountChar(null, "a") // -> 0
+Text.CountChar("hello world", "o")
+```
+
+**Result**
+
+```fs
+2
+```
+
+**Example 2**: Returns 0 if there's no occurrence.
+
+```fs
+Text.CountChar("quite", "a")
+```
+
+**Result**
+
+```fs
+0
 ```
 
 <br>
@@ -1147,10 +1412,7 @@ Returns a list of numbers extracted from the input text. If no numbers are found
 **Example 1**: Extracts numbers from a string containing mixed characters.
 
 ```fs
-let
-    ExtractedNumbers = Text.ExtractNumbers("Order #12345: 67 items at $89 each.")
-in
-    ExtractedNumbers
+Text.ExtractNumbers("Order #12345: 67 items at $89 each.")
 ```
 
 **Result**
@@ -1162,10 +1424,7 @@ in
 **Example 2**: Returns an empty list when no numbers are present.
 
 ```fs
-let
-    ExtractedNumbers = Text.ExtractNumbers("No numbers here!")
-in
-    ExtractedNumbers
+Text.ExtractNumbers("No numbers here!")
 ```
 
 **Result**
@@ -1197,7 +1456,13 @@ Returns the plain text content extracted from the HTML input.
 ### Example
 
 ```fs
-Text.HtmlToPlainText("<p>Hello <b>World</b>!</p>") // -> "Hello World!"
+Text.HtmlToPlainText("<p>Hello <b>World</b>!</p>")
+```
+
+**Result**
+
+```fs
+"Hello World!"
 ```
 
 <br>
@@ -1239,10 +1504,40 @@ Returns the extracted substring(s) based on the regex pattern. If `global` is `t
 
 ### Examples
 
+**Example 1**: Extract patterns which start with "W" and end with "d".
+
 ```fs
-Text.RegexExtract("Hello World", "W.*d") // -> "World"
-Text.RegexExtract("abc 123 def 456", "\d+", true) // -> {"123", "456"}
-Text.RegexExtract("Hello\nWorld", "^W.*d", false, false, true) // -> "World"
+Text.RegexExtract("Hello World", "W.*d")
+```
+
+**Result**
+
+```fs
+"World"
+```
+
+**Example 2**: Extracts all numbers from a text by activating the `global` flag.
+
+```fs
+Text.RegexExtract("abc 123 def 456", "\d+", true)
+```
+
+**Result**
+
+```fs
+{"123", "456"}
+```
+
+**Example 3**: By activating the `multiline` flag, the character "^" and "$" comes to mean, respectively, "start of line" and "end of line" instead of "start of text" and "end of text".
+
+```fs
+Text.RegexExtract("Hello#(lf)World", "^W.*?d", false, false, true)
+```
+
+**Result**
+
+```fs
+"World"
 ```
 
 <br>
@@ -1286,10 +1581,40 @@ Returns the modified text with the specified replacements. If no matches are fou
 
 ### Examples
 
+**Example 1**: Replacing text to another one.
+
 ```fs
-Text.RegexReplace("Hello World", "World", "Universe") // -> "Hello Universe"
-Text.RegexReplace("abc 123 def 456", "\d+", "number", true) // -> "abc number def number"
-Text.RegexReplace("Hello\nWorld", "^W.*d", "Everyone", false, false, true) // -> "Hello\nEveryone"
+Text.RegexReplace("Hello World", "World", "Universe")
+```
+
+**Result**
+
+```fs
+"Hello Universe"
+```
+
+**Example 2**: Replacing all numbers in text to word "number".
+
+```fs
+Text.RegexReplace("abc 123 def 456", "\d+", "number", true)
+```
+
+**Result**
+
+```fs
+"abc number def number"
+```
+
+**Example 3**: Replacing all words at start of a line which start with a "W" and end with a "d" by "Everyone".
+
+```fs
+Text.RegexReplace("Hello#(lf)World", "^W\w*?d", "Everyone", false, false, true)
+```
+
+**Result**
+
+```fs
+"Hello#(lf)Everyone"
 ```
 
 <br>
@@ -1426,7 +1751,13 @@ Returns the input text with all consecutive double spaces replaced by single spa
 ### Example
 
 ```fs
-Text.RemoveDoubleSpaces("This  is   a    test.") // -> "This is a test."
+Text.RemoveDoubleSpaces("This  is   a    test.")
+```
+
+**Result**
+
+```fs
+"This is a test."
 ```
 
 <br>
@@ -1452,10 +1783,13 @@ Returns the input text with all alphabetic characters removed.
 ### Example
 
 ```fs
-let
-    RemovedLetters = Text.RemoveLetters("Hello123 World!")
-in
-    RemovedLetters // -> "123 !"
+Text.RemoveLetters("Hello123 World!")
+```
+
+**Result**
+
+```fs
+"123 !"
 ```
 
 <br>
@@ -1484,9 +1818,28 @@ Returns the input text with all numeric characters (and optionally Roman numeral
 
 ### Example
 
+**Example 1**: Removing numerals from a text.
+
 ```fs
-Text.RemoveNumerals("Room 101 IV") // -> "Room  IV"
-Text.RemoveNumerals("Room 101 IV", true) // -> "Room  "
+Text.RemoveNumerals("Room 101 IV")
+```
+
+**Result**
+
+```fs
+"Room  IV"
+```
+
+**Example 2**: Removing numerals from a text, including Roman numerals.
+
+```fs
+Text.RemoveNumerals("Room 101 IV", true) 
+```
+
+**Result**
+
+```fs
+"Room  "
 ```
 
 <br>

@@ -1,5 +1,6 @@
 let
-    func = (htmlText as text) as text => Record.Field(Html.Table(htmlText, {{"text", ":root"}}){0}, "text"), // Html.Table() may not work on Excel Power Query
+    func = (htmlText as text) as text => 
+        Record.Field(Html.Table(htmlText, {{"text", ":root"}}){0}, "text"),
 
     documentation = type function (
         htmlText as (type text meta [

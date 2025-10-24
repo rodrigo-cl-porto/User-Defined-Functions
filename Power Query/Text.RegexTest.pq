@@ -26,8 +26,7 @@ let
         "</script>",
         ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0},
         Result = try Expression.Evaluate(ExtractedText) otherwise false
-    in
-        Result,
+        in Result,
 
     documentation = type function (
         textToTest as (type text meta [

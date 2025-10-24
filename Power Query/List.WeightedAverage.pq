@@ -25,12 +25,12 @@ let
             Documentation.FieldCaption = "weights",
             Documentation.FieldDescription = "The list of weights corresponding to each number in the values list."
         ])) as (type nullable number meta [
-        Documentation.Name = "List.WeightedAverage",
-        Documentation.Description = "Calculates the weighted average of a list of numbers, where weights are their respective positions in the list.",
-        Documentation.LongDescription =
-            "This function computes the weighted average of a list of numbers by assigning weights based on their positions in the list. "
-                & "The first element has a weight of 1, the second a weight of 2, and so on, up to the N-th element which has a weight of N. "
-                & "The weighted average is calculated by multiplying each number by its weight, summing these products, and then dividing by the sum of the weights.",
+            Documentation.Name = "List.WeightedAverage",
+            Documentation.Description = "Calculates the weighted average of a list of numbers, where weights are their respective positions in the list.",
+            Documentation.LongDescription =
+                "This function computes the weighted average of a list of numbers by assigning weights based on their positions in the list. "
+                    & "The first element has a weight of 1, the second a weight of 2, and so on, up to the N-th element which has a weight of N. "
+                    & "The weighted average is calculated by multiplying each number by its weight, summing these products, and then dividing by the sum of the weights.",
             Documentation.Category = "List",
             Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",

@@ -49,8 +49,7 @@ let
                 Value.Compare(x_index, y_index)
         ),
         ListOfRanks = List.Transform(SortedValueByIndex, each _{2})
-        in
-            ListOfRanks,
+        in ListOfRanks,
     
     func = (list1 as list, list2 as list, optional typeCorrelation as text) as number => let
         handleList = (values as list, typeCorr as text) as list => let

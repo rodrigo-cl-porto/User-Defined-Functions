@@ -8,8 +8,7 @@ let
             (currentText as text, AsciiChar as number) as text =>
             Text.Replace(currentText, Character.FromNumber(AsciiChar), repl)
         )
-    in 
-        CleanedText,
+        in CleanedText,
     
     documentation = type function (
         textToClean as (type text meta [

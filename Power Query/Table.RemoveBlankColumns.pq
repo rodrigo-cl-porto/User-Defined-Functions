@@ -20,7 +20,7 @@ let
 			Documentation.Description = "Removes columns from a table that contain only blank values.",
             Documentation.LongDescription = "This function scans each column in the input table and replaces any blank values (null or empty strings) with null. It then profiles the table to identify columns where all values are null and removes those columns from the final output.",
 			Documentation.Category = "Table",
-			Documentation.Author = "ExcelOffTheGrid",
+			Documentation.Author = "Excel Off The Grid",
             Documentation.Source = "https://www.youtube.com/watch?v=Zkg9ICg9i40",
 			Documentation.Version = "1.0.1",
 			Documentation.Examples = {[

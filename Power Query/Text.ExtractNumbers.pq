@@ -7,8 +7,7 @@ let
             ExtractedDigits = List.Select(Text.ToList(textToExtract), each List.Contains(Digits, _)),
             ExtractedNumbers = List.RemoveItems(Text.Split(Text.Combine(ExtractedDigits), " "), {"", null}),
             ConvertedToListNumbers = List.Transform(ExtractedNumbers, Number.FromText)
-        in
-            ConvertedToListNumbers,
+            in ConvertedToListNumbers,
     
     documentation = type function (
         textToExtract as (type nullable text meta [

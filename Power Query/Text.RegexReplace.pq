@@ -30,20 +30,18 @@ let
         "</script>",
         ExtractedText = Web.Page(Script)[Data]{0}[Children]{0}[Children]{1}[Text]{0},
         ReplacedBreakRows = Text.Replace(ExtractedText, "<br>", "#(lf)"),
-        ReplacedText =
-        try 
-            if ReplacedBreakRows = "null" then 
-                null
-            else
-                ReplacedBreakRows
-        otherwise
+        ReplacedText = try 
+                if ReplacedBreakRows = "null" then 
+                    null
+                else
+                    ReplacedBreakRows
+            otherwise
                 error Error.Record(
-                "Regex.Error",
-                "Regex failed to match the expression in string",
-                "Regex: " & regexPattern
-            )
-    in
-        ReplacedText,
+                    "Regex.Error",
+                    "Regex failed to match the expression in string",
+                    "Regex: " & regexPattern
+                )
+        in ReplacedText,
 
     documentation = type function (
         textToModify as (type text meta [
@@ -83,9 +81,9 @@ let
                 Code = "Text.RegexReplace(""Order 1234"", ""\d"", ""#"", true)",
                 Result = """" & "Order ####" & """"
             ], [
-                    Description = "Replace the first occurrence of 'cat' with 'dog', case-insensitively.",
-                    Code = "Text.RegexReplace(""The Cat sat on the mat."", ""cat"", ""dog"", false, true)",
-                    Result = """" & "The dog sat on the mat." & """"
+                Description = "Replace the first occurrence of 'cat' with 'dog', case-insensitively.",
+                Code = "Text.RegexReplace(""The Cat sat on the mat."", ""cat"", ""dog"", false, true)",
+                Result = """" & "The dog sat on the mat." & """"
             ]}
         ],
 

@@ -2,8 +2,8 @@ let
     func = (tbl as table, optional columnNames as list, optional textCasing as text) as table => let 
         TextColumns = if List.Contains({null, {}}, columnNames) then
             Table.ColumnsOfType(tbl, {type text, type nullable text})
-            else
-                columnNames,
+        else
+            columnNames,
         ListColumnsTransformations = List.Transform(
             TextColumns,
             (columnName as text) as list => {

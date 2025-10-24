@@ -25,15 +25,14 @@ let
                 {0..N-1},
                 0,
                 (state as number, i as number) as number =>
-                if i = 0 then
-                    state + ReversedListNumbers{0}
-                else if ReversedListNumbers{i} >= ReversedListNumbers{i-1} then
-                    state + ReversedListNumbers{i}
-                else
-                    state - ReversedListNumbers{i}
+                    if i = 0 then
+                        state + ReversedListNumbers{0}
+                    else if ReversedListNumbers{i} >= ReversedListNumbers{i-1} then
+                        state + ReversedListNumbers{i}
+                    else
+                        state - ReversedListNumbers{i}
             )
-        in
-            ConvertedToNumber,
+            in ConvertedToNumber,
 
     documentation = type function (
         romanToConvert as (type text meta [
@@ -46,18 +45,15 @@ let
             Documentation.Category = "Number",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
             Documentation.Version = "1.0.0",
-            Documentation.Examples = {
-                [
-                    Description = "Convert a valid Roman numeral to a number.",
-                    Code = "Number.FromRoman(""XIV"")",
-                    Result = "14"
-                ],
-                [
-                    Description = "Handle invalid Roman numeral input.",
-                    Code = "Number.FromRoman(""ABCD"")",
-                    Result = "Error: Text is not a Roman numeral."
-                ]
-            },
+            Documentation.Examples = {[
+                Description = "Convert a valid Roman numeral to a number.",
+                Code = "Number.FromRoman(""XIV"")",
+                Result = "14"
+            ], [
+                Description = "Handle invalid Roman numeral input.",
+                Code = "Number.FromRoman(""ABCD"")",
+                Result = "Error: Text is not a Roman numeral."
+            ]},
             Documentation.SeeAlso = {"Number.ToRoman"}
         ],
 
