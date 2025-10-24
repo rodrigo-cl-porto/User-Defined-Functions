@@ -83,7 +83,9 @@ Extracts files from a ZIP archive and returns a table of entries with file names
 
 ### Syntax
 ```fs
-Binary.Unzip(ZIPFile as binary) as table
+Binary.Unzip(
+    ZIPFile as binary
+) as table
 ```
 
 ### Parameters
@@ -129,7 +131,9 @@ Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:
 
 ### Syntax
 ```fs
-DateTime.ToUnixTime(datetimeToConvert as datetime) as number
+DateTime.ToUnixTime(
+    datetimeToConvert as datetime
+) as number
 ```
 
 ### Parameters
@@ -329,12 +333,28 @@ Returns a number representing the intercept of the linear regression line calcul
 
 ### Example
 
+**Example 1**: Calculating the intercept value of linear regression.
+
 ```fs
 List.Intercept({1, 2, 3}, {4, 5, 6})
-// -> -1 (example intercept value)
+```
 
+**Result**
+
+```fs
+-1
+```
+
+**Example 2**: Returns `null` if the input lists have different lengths.
+
+```fs
 List.Intercept({1, 2}, {3})
-// -> null (different lengths)
+```
+
+**Result**
+
+```fs
+null
 ```
 
 <br>
@@ -364,17 +384,56 @@ Returns a list of outlier values identified in the input list based on the IQR m
 ### Remarks
 
 - The function first removes nulls, empty strings, and whitespace entries, then selects only valid numeric values.
-- Outliers are defined as values below Q₁ - 1.5×IQR or above Q₃ + 1.5×IQR, where Q₁ and Q₃ are the first and third quartiles respectively.
+- Outliers are defined as values below $Q_{1} - 1.5 \cdot IQR$ or above $Q_{3} + 1.5 \cdot IQR$, where $Q_1$ and $Q_3$ are the first and third quartiles respectively.
 
 ### Examples
 
+**Example 1**: Returns outliers from a list with extreme values.
+
 ```fs
-List.Outliers({1, 2, 3, 4, 100})
-// -> {100} (100 is an outlier)
+List.Outliers({1, 2, 3, 4, 5, 6, 50, 100})
+```
+
+**Result**
+
+```fs
+{50, 100}
+```
+
+**Example 2**: With a higher multiplier, identifying outliers becomes stricter.
+
+```fs
+List.Outliers({1, 2, 3, 4, 5, 6, 50, 100}, 3)
+```
+
+**Result**
+
+```fs
+{100}
+```
+
+**Example 3**: Returns an empty list if there's no outlier.
+
+```fs
 List.Outliers({10, 12, 14, 15, 16, 18, 20})
-// -> {} (no outliers)
-List.Outliers({1, 2, 3, 4, 50, 100}, 2)
-// -> {100} (100 is an outlier with a higher multiplier)
+```
+
+**Result**
+
+```fs
+{}
+```
+
+**Example 4**: Ignores nulls and empty strings.
+
+```fs
+List.Outliers({1, null, "", 2, 3, 4, 5, null, 6, 50, 100})
+```
+
+**Result**
+
+```fs
+{50, 100}
 ```
 
 <br>
@@ -407,14 +466,30 @@ Returns a number representing the slope of the linear regression line calculated
 - The function uses the least squares method to calculate the slope.
 - Non-numeric values in the lists will cause an error during calculation.
 
-### Example
+### Examples
+
+**Example 1**: Calculates the slope of linear regression.
 
 ```fs
 List.Slope({1, 2, 3}, {4, 5, 6})
-// -> 1 (example slope value)
+```
 
+**Result**
+
+```fs
+1
+```
+
+**Example 2**: Returns `null` if input lists have different lenghts.
+
+```fs
 List.Slope({1, 2}, {3})
-// -> null (different lengths)
+```
+
+**Result**
+
+```fs
+null
 ```
 
 <br>
@@ -441,20 +516,38 @@ Returns a number representing the population standard deviation of the input lis
 
 ### Remarks
 
-- The function calculates the population standard deviation using the formula: $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$
-    - $N$ is the number of values
-    - $x_i$ are the individual values
-    - $\mu$ is the mean of the values
+- The function calculates the population standard deviation using the formula:
+    - $\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$
+    - where:
+        - $N$ is the number of values
+        - $x_i$ are the individual values
+        - $\mu$ is the mean of the values
 - Non-numeric values, nulls, and empty strings are ignored in the calculation.
 
-### Example
+### Examples
+
+**Example 1**: Calculates population standard deviation for a numeric list.
 
 ```fs
 List.PopulationStdDev({2, 4, 4, 4, 5, 5, 7, 9})
-// -> 2.8284271247461903 (example population standard deviation value)
+```
 
+**Result**
+
+```fs
+2.8284271247461903
+```
+
+**Example 2**: Returns `null` for empty lists.
+
+```fs
 List.PopulationStdDev({})
-// -> null (empty list)
+```
+
+**Result**
+
+```fs
+null
 ```
 
 <br>
@@ -468,7 +561,7 @@ Returns a list of prime numbers less than or equal to a given number `n`. It use
 ```fs
 List.Primes(
     n as Int64.Type
-) as type {number}
+) as {number}
 ```
 
 ### Parameters
@@ -587,7 +680,10 @@ Calculates the weighted average of a list of values given a corresponding list o
 ### Syntax
 
 ```fs
-List.WeightedAverage(values as list, weights as list) as nullable number
+List.WeightedAverage(
+    values as list,
+    weights as list
+) as nullable number
 ```
 
 ### Parameters
@@ -607,9 +703,16 @@ Returns a number representing the weighted average of the input values. If the l
 
 ### Example
 
+Calculing the weighted average for a list with specified weights.
+
 ```fs
 List.WeightedAverage({1, 2, 3}, {4, 5, 6})
-// -> 2.3333333333333335 (example weighted average value)
+```
+
+**Result**
+
+```fs
+2.3333333333333335
 ```
 
 <br>
@@ -621,7 +724,9 @@ Converts a Roman numeral (text) to a number.
 ### Syntax
 
 ```fs
-Number.FromRoman(romanText as text) as number
+Number.FromRoman(
+    romanText as text
+) as number
 ```
 
 ### Parameters
@@ -636,11 +741,16 @@ Returns a number corresponding to the Roman numeral. If the input contains inval
 
 - Supports standard Roman numeral characters: I, V, X, L, C, D, M (case-insensitive).
 
-### Examples
+### Example
 
 ```fs
-Number.FromRoman("XII") // -> 12
-Number.FromRoman("invalid") // -> Error
+Number.FromRoman("XII")
+```
+
+**Result**
+
+```fs
+12
 ```
 
 <br>
@@ -652,7 +762,9 @@ Checks if a given number is an integer.
 ### Syntax
 
 ```fs
-Number.IsInteger(value as number) as logical
+Number.IsInteger(
+    value as number
+) as logical
 ```
 
 ### Parameters
@@ -733,7 +845,9 @@ Converts an integer number to a Roman numeral (between 1 and 3999).
 ### Syntax
 
 ```fs
-Number.ToRoman(numberToConvert as number) as text
+Number.ToRoman(
+    numberToConvert as number
+) as text
 ```
 
 ### Parameters
@@ -1220,7 +1334,9 @@ Removes columns from a table that contain only blank values.
 ### Syntax
 
 ```fs
-Table.RemoveBlankColumns(tbl as table) as table
+Table.RemoveBlankColumns(
+    tbl as table
+) as table
 ```
 
 ### Parameters
@@ -1396,7 +1512,9 @@ Extracts all numeric values from a given text string and returns them as a list 
 ### Syntax
 
 ```fs
-Text.ExtractNumbers(inputText as text) as list
+Text.ExtractNumbers(
+    inputText as text
+) as {number}
 ```
 
 ### Parameters
@@ -1442,7 +1560,9 @@ Converts HTML content to plain text by stripping HTML tags.
 ### Syntax
 
 ```fs
-Text.HtmlToPlainText(htmlText as text) as text
+Text.HtmlToPlainText(
+    htmlText as text
+) as text
 ```
 
 ### Parameters
@@ -1710,7 +1830,9 @@ Removes accents from characters in a text string.
 ### Syntax
 
 ```fs
-Text.RemoveAccents(inputText as text) as text
+Text.RemoveAccents(
+    inputText as text
+) as text
 ```
 
 ### Parameters
@@ -1737,7 +1859,9 @@ Removes consecutive double spaces from a text string, replacing them with single
 ### Syntax
 
 ```fs
-Text.RemoveDoubleSpaces(inputText as text) as text
+Text.RemoveDoubleSpaces(
+    inputText as text
+) as text
 ```
 
 ### Parameters
@@ -1769,7 +1893,9 @@ Removes all alphabetic characters from a text string, leaving only non-letter ch
 ### Syntax
 
 ```fs
-Text.RemoveLetters(textToModify as text) as text
+Text.RemoveLetters(
+    textToModify as text
+) as text
 ```
 
 ### Parameters
@@ -1951,9 +2077,9 @@ Compares two arrays to check if they are equal, meaning they have the same size 
 ### Syntax
 
 ```vb
-AreArraysEqual(
-    Array1 As Variant,
-    Array2 As Variant
+AreArraysEqual( _
+    Array1 As Variant, _
+    Array2 As Variant _
 ) As Boolean
 ```
 
@@ -1997,9 +2123,9 @@ Automatically fills formulas across a range using a reference cell's formula. Th
 ### Syntax
 
 ```vb
-AutoFillFormulas(
-    rng As Range,
-    Optional UseLastCellAsRef As Boolean = False
+AutoFillFormulas( _
+    rng As Range, _
+    Optional UseLastCellAsRef As Boolean = False _
 )
 ```
 
@@ -2038,10 +2164,10 @@ Cleans a string by removing or replacing special characters and control characte
 ### Syntax
 
 ```vb
-CleanString(
-    myString As String,
-    Optional ReplaceBySpace As Boolean = True,
-    Optional ConvertNonBreakingSpace As Boolean = True
+CleanString( _
+    myString As String, _
+    Optional ReplaceBySpace As Boolean = True, _
+    Optional ConvertNonBreakingSpace As Boolean = True _
 ) As String
 ```
 
@@ -2093,7 +2219,9 @@ Disables the "Refresh All" functionality for OLEDB connections in a specified wo
 ### Syntax
 
 ```vb
-DisableRefreshAll(ByRef wb As Workbook)
+DisableRefreshAll( _
+    ByRef wb As Workbook _
+)
 ```
 
 ### Parameters
@@ -2131,7 +2259,9 @@ Enables the "Refresh All" functionality for OLEDB connections in a specified wor
 ### Syntax
 
 ```vb
-EnableRefreshAll(ByRef wb As Workbook)
+EnableRefreshAll( _
+    ByRef wb As Workbook _
+)
 ```
 
 ### Parameters
@@ -2170,7 +2300,9 @@ Checks if a file exists at the specified file path.
 ### Syntax
 
 ```vb
-FileExists(FilePath As String) As Boolean
+FileExists( _
+    FilePath As String _
+) As Boolean
 ```
 
 ### Parameters
@@ -2215,7 +2347,9 @@ Validates if a given string can be used as a valid file name by checking for ill
 ### Syntax
 
 ```vb
-FileNameIsValid(FileName As String) As Boolean
+FileNameIsValid( _
+    FileName As String _
+) As Boolean
 ```
 
 ### Parameters
@@ -2263,9 +2397,9 @@ Retrieves an array of all file names from a specified folder and its subfolders,
 ### Syntax
 
 ```vb
-GetAllFileNames(
-    FolderPath As String,
-    Optional fileExt As String
+GetAllFileNames( _
+    FolderPath As String, _
+    Optional fileExt As String _
 ) As String()
 ```
 
@@ -2319,7 +2453,9 @@ Extracts only ASCII letters (a–z) from a string and returns them in lowercase.
 ### Syntax
 
 ```vb
-GetLettersOnly(Text As String) As String
+GetLettersOnly( _
+    Text As String _
+) As String
 ```
 
 ### Parameters
@@ -2359,7 +2495,9 @@ Converts a month name to its corresponding numeric value (1-12).
 ### Syntax
 
 ```vb
-GetMonthNumberFromName(MonthName As String) As Integer
+GetMonthNumberFromName( _
+    MonthName As String _
+) As Integer
 ```
 
 ### Parameters
@@ -2404,10 +2542,10 @@ Extracts a substring between two specified delimiter strings.
 ### Syntax
 
 ```vb
-GetStringBetween(
-    str As String,
-    startStr As String,
-    endStr As String
+GetStringBetween( _
+    str As String, _
+    startStr As String, _
+    endStr As String _
 ) As String
 ```
 
@@ -2454,10 +2592,10 @@ Searches through an array of strings and returns the first string that contains 
 ### Syntax
 
 ```vb
-GetStringWithSubstringInArray(
-    SubString As String,
-    SourceArray As Variant,
-    Optional CaseSensitive As Boolean = False
+GetStringWithSubstringInArray( _
+    SubString As String, _ 
+    SourceArray As Variant, _
+    Optional CaseSensitive As Boolean = False _
 ) As String
 ```
 
@@ -2510,7 +2648,9 @@ Returns the header names of an Excel ListObject (table) as a zero-based string a
 ### Syntax
 
 ```vb
-GetTableColumnNames(lo As ListObject) As String()
+GetTableColumnNames( _
+    lo As ListObject _
+) As String()
 ```
 
 ### Parameters
@@ -2548,7 +2688,9 @@ Checks if all elements in a boolean array are `True`.
 ### Syntax
 
 ```vb
-IsAllTrue(blnArray As Variant) As Boolean
+IsAllTrue( _
+    blnArray As Variant _
+) As Boolean
 ```
 
 ### Parameters
@@ -2679,7 +2821,9 @@ Returns the numeric month (1–12) that precedes the month of a given date.
 ### Syntax
 
 ```vb
-PreviousMonthNumber(dt As Date) As Integer
+PreviousMonthNumber( _
+    dt As Date _
+) As Integer
 ```
 
 ### Parameters
@@ -2711,7 +2855,9 @@ Checks if a given range contains any cells with formulas.
 ### Syntax
 
 ```vb
-RangeHasAnyFormula(ByVal rng As Range) As Boolean
+RangeHasAnyFormula( _
+    ByVal rng As Range _
+) As Boolean
 ```
 
 ### Parameters
@@ -2756,7 +2902,9 @@ Checks whether a given range contains any constant (non-formula) cells.
 ### Syntax
 
 ```vb
-RangeHasConstantValues(rng As Range) As Boolean
+RangeHasConstantValues( _
+    rng As Range _
+) As Boolean
 ```
 
 ### Parameters
@@ -2789,7 +2937,9 @@ Determines whether a given range is entirely hidden (no visible cells).
 ### Syntax
 
 ```vb
-RangeIsHidden(rng As Range) As Boolean
+RangeIsHidden( _
+    rng As Range _
+) As Boolean
 ```
 
 ### Parameters
@@ -2822,7 +2972,9 @@ Converts an Excel Range into an HTML string by copying the range to a temporary 
 ### Syntax
 
 ```vb
-RangeToHtml(rng As Range) As String
+RangeToHtml( _
+    rng As Range _
+) As String
 ```
 
 ### Parameters
@@ -3188,7 +3340,9 @@ Checks whether a ListObject (Excel table) has an associated QueryTable.
 ### Syntax
 
 ```vb
-TableHasQuery(tbl As ListObject) As Boolean
+TableHasQuery( _
+    tbl As ListObject _
+) As Boolean
 ```
 
 ### Parameters
@@ -3224,7 +3378,9 @@ Checks whether a worksheet contains at least one ListObject (table).
 ### Syntax
 
 ```vb
-WorksheetHasListObject(ws As Worksheet) As Boolean
+WorksheetHasListObject( _
+    ws As Worksheet _
+) As Boolean
 ```
 
 ### Parameters

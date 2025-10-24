@@ -5,10 +5,10 @@ let
         Q1 = List.Percentile(NumValues, 0.25), // First quartile
         Q3 = List.Percentile(NumValues, 0.75), // Third quartile
         IQR = Q3 - Q1, // Interquartile Range
-        mult = if multiplier is null then multiplier else 1.5,
+        mult = if multiplier is null then 1.5 else multiplier,
         upperFence = Q3 + mult*IQR,
         lowerFence = Q1 - mult*IQR,
-        Outliers = List.Select(NumValues, each _ > upperFence or _ < lowerFence)
+        Outliers = List.Select(NumValues, each _ < lowerFence or _ > upperFence )
         in Outliers,
 
     documentation = type function(
@@ -30,20 +30,20 @@ let
             Documentation.Author = "Rodrigo Celso de Lima Porto",
             Documentation.Examples = {[
                 Description = "Returns outliers from a list with extreme values.",
-                Code = "List.Outliers({1, 2, 3, 4, 100})",
+                Code = "List.Outliers({1, 2, 3, 4, 5, 6, 50, 100})",
+                Result = "{50, 100}"
+            ], [
+                Description = "With a higher multiplier, identifying outliers becomes stricter.",
+                Code = "List.Outliers({1, 2, 3, 4, 5, 6, 50, 100}, 2)",
                 Result = "{100}"
             ], [
-                Description = "Returns an empty list when there are no outliers.",
+                Description = "Returns an empty list if there's no outlier.",
                 Code = "List.Outliers({10, 12, 13, 14, 15})",
                 Result = "{}"
             ], [
                 Description = "Ignores nulls and empty strings.",
-                Code = "List.Outliers({1, null, """", 2, 3, 100})",
-                Result = "{100}"
-            ], [
-                Description = "Uses a custom multiplier to define outliers more strictly.",
-                Code = "List.Outliers({1, 2, 3, 4, 50, 100}, 2)",
-                Result = "{100}"
+                Code = "List.Outliers({1, null, """", 2, 3, 4, 5, null, 6, 50, 100})",
+                Result = "{50, 100}"
             ]}
         ],
 
