@@ -18,7 +18,7 @@ let
             Documentation.Examples = {[
                 Description = "Convert a specific DateTime to Unix time.",
                 Code = "DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0))",
-                Result = 1672531200
+                Result = "1672531200"
             ]}
         ],
     

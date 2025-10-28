@@ -49,8 +49,13 @@ let
             Documentation.Author = "Ignacio Barrau",
             Documentation.Examples = {[
                 Description = "Unzips a ZIP file and retrieves the content of the first file.",
-                Code = "let Files = Binary.Unzip(File.Contents(""C:\Temp\archive.zip"")) in Files{0}[Content]",
-                Result = "binary content of the first file in the ZIP"
+                Code = "let" & "#(lf)" &
+                "   FilePath = ""path\to\file.zip""," & "#(lf)" &
+                "   Files = Binary.Unzip(File.Contents(FilePath)),"  & "#(lf)" &
+                "   Content = Files{0}[Content]" & "#(lf)" &
+                "in" & "#(lf)" &
+                "   Content",
+                Result = "Binary content of the first file in the ZIP"
             ]}
         ]),
     documentedFunction = Value.ReplaceType(func, documentation)

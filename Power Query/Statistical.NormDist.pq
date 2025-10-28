@@ -33,29 +33,22 @@ let
                 {23,  0.9951872199970213, 0.0123412297999872},
                 {24, -0.9951872199970213, 0.0123412297999872}
             }), // Source: https://pomax.github.io/bezierinfo/legendre-gauss.html
-            AddedGaussianFunction = Table.AddColumn(GaussianQuadratureTable, "f(t)", each Number.Exp(-0.125 * Number.Power(z*([t]+1), 2)), Decimal.Type),
-            AddedProduct = Table.AddColumn(AddedGaussianFunction, "w * f(t)", each [w] * [#"f(t)"], Decimal.Type),
-            Summation = List.Sum(AddedProduct[#"w * f(t)"], Precision.Decimal),
+            AddedGaussianFunction = Table.AddColumn(GaussianQuadratureTable, "f(t)", each Number.Exp(-0.125 * Number.Power(z*([t]+1), 2)), type number),
+            AddedProduct = Table.AddColumn(AddedGaussianFunction, "w * f(t)", each [w] * [#"f(t)"], type number),
+            Summation = List.Sum(AddedProduct[#"w * f(t)"]),
             GaussianQuadrature = Number.Sqrt(2/Number.PI) * (z/4) * Summation
             in GaussianQuadrature,
         // Gaussian Cumulative Distribution Function
-        CDF = (z as number) as number =>
-            if z > 0 then
-                0.5 + GaussianIntegral(z)
-            else
-                0.5 - GaussianIntegral(-z),
-        AsymptoticApproximationForTails = (z as number) as number => let
-            CDFApproximation = (z as number) as number => PDF(z) / z * (1 - 1/(z*z) + 3/Number.Power(z, 4) - 15/Number.Power(z, 6) + 105/Number.Power(z, 8))
-            in if z > 0 then
-                CDFApproximation(z)
-            else
-                1 - CDFApproximation(z),
+        CDF = (z as number) as number => 0.5 + GaussianIntegral(z),
+        TailCut = 8,
         Result = if cumulative = false then
                 PDF(z)
-            else if z > -6 or z < 6 then
+            else if z >= -TailCut and z <= TailCut then
                 CDF(z)
+            else if z > TailCut then
+                1
             else
-                AsymptoticApproximationForTails(z)
+                0
         in Result,
 
     documentation = type function (

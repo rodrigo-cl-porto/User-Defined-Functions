@@ -5,15 +5,16 @@ let
             TextValues = List.Transform(values, Text.From)
             in TextValues,
         CriteriaNames = Record.FieldNames(weights),
-        #"Normalized Values" = let 
+        #"Normalized Values" = let
             Denominators = List.Transform(
                 CriteriaNames,
-                each let 
+                each let
                     ColumnValues = Table.Column(tbl, _),
                     Norm2 = List.Accumulate(
                         ColumnValues,
                         0,
-                        (sum as number, current as number) as number => sum + Number.Power(current, 2)
+                        (sum as number, current as number) as number => 
+                            sum + Number.Power(current, 2)
                     ),
                     Norm = Number.Power(Norm2, 0.5)
                     in Norm
