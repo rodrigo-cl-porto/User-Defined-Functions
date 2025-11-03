@@ -1,1 +1,2 @@
-*.pq linguist-language=Power Query
+*.pq linguist-detectable=true
+*.pq linguist-language=PowerQuery
