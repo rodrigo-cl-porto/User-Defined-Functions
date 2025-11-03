@@ -153,7 +153,7 @@ Converts `datetime` to Unixtime, which consists of a number representing the tot
 DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0))
 ```
 
-**Return**
+**Result**
 
 ```fs
 1672531200
@@ -354,7 +354,7 @@ A number representing the correlation coefficient:
 List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30})
 ```
 
-**Return**
+**Result**
 
 ```fs
 0.858575902776297  (Pearson, default)
@@ -366,7 +366,7 @@ List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30})
 List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30}, "Spearman")
 ```
 
-**Return**
+**Result**
 
 ```fs
 1
@@ -378,7 +378,7 @@ List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30}, "Spearman")
 List.Correlation({0, null, 3, "a", 4}, {4, 5, null, 10, 30})
 ```
 
-**Return**
+**Result**
 
 ```fs
 0.556720639738652
@@ -420,7 +420,7 @@ A list of integers with the same length as `values`, where each element is the r
 List.Rank({10, 10, 5, 7})
 ```
 
-**Return**
+**Result**
 
 ```fs
 {1, 1, 3, 2}
@@ -432,7 +432,7 @@ List.Rank({10, 10, 5, 7})
 List.Rank({31, 11, 27, 31}, Order.Ascending)
 ```
 
-**Return**
+**Result**
 
 ```fs
 {3, 1, 2, 3}
@@ -764,7 +764,7 @@ Returns a number representing the population variance of the input list. If the 
 
 ### Remarks
 
-- The function calculates the population variance using the formula: $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$
+- The function calculates the population variance using the formula: $\sigma^{2} = \frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2$
     - $N$ is the number of values
     - $x_i$ are the individual values
     - $\mu$ is the mean of the values
@@ -834,7 +834,7 @@ Returns a number representing the weighted average of the input values. If the l
 
 ### Remarks
 
-- The function calculates the weighted average using the formula: $WeightedAverage = \frac{\sum (x_i \times w_i)}{\sum w_i}$
+- The function calculates the weighted average using the formula: $\text{Weighted Average} = \frac{\sum (x_i \times w_i)}{\sum w_i}$
     - $x_i$ are the individual values
     - $w_i$ are the corresponding weights
 
@@ -914,9 +914,28 @@ Returns `true` if the number is an integer, `false` otherwise.
 
 ### Examples
 
+**Example 1**: Returns `true` if the number is an integer.
+
 ```fs
-Number.IsInteger(10) // -> true
-Number.IsInteger(10.5) // -> false
+Number.IsInteger(10)
+```
+
+**Result**
+
+```fs
+true
+```
+
+**Example 2**: Returns `false` if the number is not an integer.
+
+```fs
+Number.IsInteger(10.5)
+```
+
+**Result**
+
+```fs
+false
 ```
 
 <br>
@@ -995,11 +1014,16 @@ Number.ToRoman(
 
 Returns a text string representing the Roman numeral equivalent of the input integer. If the input number is outside the range of 1 to 3999, an error is raised.
 
-### Examples
+### Example
 
 ```fs
-Number.ToRoman(12) // -> "XII"
-Number.ToRoman(0) // -> Error
+Number.ToRoman(12)
+```
+
+**Result**
+
+```fs
+"XII"
 ```
 
 <br>
@@ -1175,9 +1199,9 @@ Adds a new column to a table using values from a provided list. The new column c
 
 ```fs
 Table.AddListAsColumn(
-    tbl as table, 
-    columnName as text, 
-    columnValues as list, 
+    tbl as table,
+    columnName as text,
+    columnValues as list,
     optional position as number, 
     optional columnType as type
 ) as table
@@ -1310,7 +1334,8 @@ The result is a symmetric matrix with correlation values ranging from -1 to 1. T
 
 ```fs
 let
-    Source = #table({"A", "B", "C"}, {
+    Source = #table(
+        {"A", "B", "C"}, {
         {1, 2, 3},
         {2, 4, 6},
         {3, 6, 9}
@@ -1332,7 +1357,8 @@ in
 
 ```fs
 let
-    Source = #table({"X", "Y", "Z"}, {
+    Source = #table(
+        {"X", "Y", "Z"}, {
         {1, 10, 100},
         {2, 20, 80},
         {3, 30, 60},
@@ -1426,7 +1452,8 @@ Table.PreprocessTextColumns(
 
 ```fs
 let
-    Source = #table({"Name", "Comment"}, {
+    Source = #table(
+        {"Name", "Comment"}, {
         {"  JOHN DOE  ", "Hello#(lf)World"},
         {"  jane smith", "Nice to meet you"}
     }),
@@ -1446,7 +1473,8 @@ in
 
 ```fs
 let
-    Source = #table({"Name", "Note"}, {
+    Source = #table(
+        {"Name", "Note"}, {
         {"  MARIA   clara", "great#(lf)job"},
         {"joão   SILVA", "excellent work"}
     }),
@@ -1486,7 +1514,11 @@ Transposing the table and changing the first column name
 
 ```fs
 let
-    Source = #table({"A", "B"}, {{null, "value1"}, {"", "value2"}}),
+    Source = #table(
+        {"A", "B"}, {
+        {null, "value1"},
+        {"", "value2"}
+    }),
     Result = Table.RemoveBlankColumns(Source)
 in
     Result
@@ -1538,7 +1570,11 @@ Table.TransposeCorrectly(
 
 ```fs
 let
-    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Source = #table(
+        {"A", "B", "C"}, {
+        {1, 2, 3},
+        {4, 5, 6}
+    }),
     Result = Table.TransposeCorrectly(Source)
 in
     Result
@@ -1555,7 +1591,11 @@ in
 
 ```fs
 let
-    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Source = #table(
+        {"A", "B", "C"}, {
+        {1, 2, 3},
+        {4, 5, 6}
+    }),
     Result = Table.TransposeCorrectly(Source, {"A", "B"})
 in
     Result
@@ -1571,7 +1611,11 @@ in
 
 ```fs
 let
-    Source = #table({"A", "B", "C"}, {{1, 2, 3}, {4, 5, 6}}),
+    Source = #table(
+        {"A", "B", "C"}, {
+        {1, 2, 3},
+        {4, 5, 6}
+    }),
     Result = Table.TransposeCorrectly(Source, null, "D")
 in
     Result
@@ -1910,10 +1954,40 @@ Returns a list of substrings obtained by splitting the input text at each match 
 
 ### Examples
 
+**Example 1**: Splits text by comma.
+
 ```fs
-Text.RegexSplit("apple,banana,cherry", ",") // -> {"apple", "banana", "cherry"}
-Text.RegexSplit("one1two2three3", "\d") // -> {"one", "two", "three", ""}
-Text.RegexSplit("Hello\nWorld", "\n", false, true) // -> {"Hello", "World"}
+Text.RegexSplit("apple,banana,cherry", ",")
+```
+
+**Result**
+
+```fs
+{"apple", "banana", "cherry"}
+```
+
+**Example 2**: Splits text by any digit.
+
+```fs
+Text.RegexSplit("one1two2three3", "\d")
+```
+
+**Result**
+
+```fs
+{"one", "two", "three", ""}
+```
+
+**Example 3**: Splits text by any line feed.
+
+```fs
+Text.RegexSplit("Hello\nWorld", "\n", false, true)
+```
+
+**Result**
+
+```fs
+{"Hello", "World"}
 ```
 
 <br>
@@ -1952,10 +2026,44 @@ Returns `true` if the input text matches the regex pattern, `false` otherwise.
 
 ### Examples
 
+**Example 1**: Checks if text contains the word "World".
+
 ```fs
-Text.RegexTest("Hello World", "World") // -> true
-Text.RegexTest("abc 123", "^\d+$") // -> false
-Text.RegexTest("Hello\nWorld", "^W.*d", false, true) // -> true
+Text.RegexTest("Hello World", "World")
+```
+
+**Result**
+
+```fs
+true
+```
+
+**Example 2**: Checks if text contains any digit.
+
+```fs
+Text.RegexTest("abc 123", "^\d+$")
+```
+
+**Result**
+
+```fs
+false
+```
+
+**Example 3**: Checks if text contains any digit e-mail.
+
+```fs
+Text.RegexTest(
+    "My e-mail is example.email@mail.com", 
+    "[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}",
+    false
+)
+```
+
+**Result**
+
+```fs
+true
 ```
 
 <br>
@@ -1980,11 +2088,16 @@ Text.RemoveAccents(
 
 Returns the input text with all accented characters replaced by their unaccented equivalents.
 
-### Examples
+### Example
 
 ```fs
-Text.RemoveAccents("Café") // -> "Cafe"
-Text.RemoveAccents("naïve") // -> "naive"
+Text.RemoveAccents("Café")
+```
+
+**Result**
+
+```fs
+"Cafe"
 ```
 
 <br>
@@ -2079,7 +2192,7 @@ Text.RemoveNumerals(
 
 Returns the input text with all numeric characters (and optionally Roman numerals) removed.
 
-### Example
+### Examples
 
 **Example 1**: Removing numerals from a text.
 
@@ -2131,9 +2244,28 @@ Returns the input text with all punctuation characters removed or replaced by th
 
 ### Examples
 
+**Example 1**: Removes all punctuations in a text.
+
 ```fs
-Text.RemovePunctuations("Hello, World!") // -> "Hello World"
-Text.RemovePunctuations("Hello, World!", " ") // -> "Hello  World "
+Text.RemovePunctuations("Hello, World!") 
+```
+
+**Result**
+
+```fs
+"Hello World"
+```
+
+**Example 2**: Replaces all punctuations in a text by a specified character.
+
+```fs
+Text.RemovePunctuations("Hello, World!", " ")
+```
+
+**Result**
+
+```fs
+"Hello  World "
 ```
 
 <br>
@@ -2162,12 +2294,31 @@ Returns the input text with all Portuguese stopwords and any additional specifie
 
 ### Examples
 
-```fs
-Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns.")
-// -> "exemplo texto remover palavras comuns."
+**Example 1**: Removes all stopwords.
 
-Text.RemoveStopwords("Este é um exemplo de texto para remover palavras comuns.", {"exemplo", "texto"})
-// -> "remover palavras comuns."
+```fs
+Text.RemoveStopwords("This is an example of text to remove stopwords.")
+```
+
+**Result**
+
+```fs
+"example text remove stopwords."
+```
+
+**Example 2**: Also removes any undesireble words if specified.
+
+```fs
+Text.RemoveStopwords(
+    "This is an example of text to remove stopwords.",
+    {"exemple", "text"}
+)
+```
+
+**Result**
+
+```fs
+"remove stopwords."
 ```
 
 <br>
@@ -2196,14 +2347,33 @@ Returns the cleaned text with special characters either removed or replaced by t
 
 ### Examples
 
+**Example 1**: Cleans text with special characters.
+
 ```fs
-Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!") // -> "Hello World!"
-Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!", "_") // -> "Hello_World!"
+Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!")
+```
+
+**Result**
+
+```fs
+"Hello World!"
+```
+
+**Example 2**: Replaces all weird characters if a replacer is specified.
+
+```fs
+Text.RemoveWeirdChars("Hello" & Character.FromNumber(0) & "World!", "_")
+```
+
+**Result**
+
+```fs
+"Hello_World!"
 ```
 
 <br>
 
-## VBA
+## VBA (Visual Basic for Applications)
 
 <br>
 
@@ -2559,7 +2729,7 @@ Returns a zero-based string array containing all matching file names.
 - Empty array if no files are found
 - Requires reference to Microsoft Scripting Runtime (or late binding)
 
-### **Dependencies**
+### Dependencies
 
 - `Scripting.FileSystemObject` reference
 
@@ -2754,7 +2924,7 @@ Returns the first string from the array containing the substring. Returns an emp
 - Returns first match found and exits
 - Works with arrays of any dimension
 
-### **Dependencies**
+### Dependencies
 
 - Requires [`StringContains`]() function
 
@@ -3182,7 +3352,7 @@ SendEmail( _
 - `CDO_SERVER_PORT`: 587 (STARTTLS port)
 - `CDO_SMTP_SERVER`: "mailhost.yourdomain.net" (SMTP server address)
 
-### **Dependencies**
+### Dependencies
 
 - Requires CDO to be available on the system
 - Requires proper SMTP server configuration
@@ -3220,7 +3390,7 @@ SetQueryFormula( _
 - `queryName`: Name of the Power Query to modify
 - `value`: Value to set in the query formula (supports `String`, `Date`, and `Byte Array`)
 
-### **Dependencies**
+### Dependencies
 
 - Requires Excel version that supports Power Query
 
@@ -3415,7 +3585,7 @@ Returns `True` if any string element in `srcArray` contains `subStr`; otherwise 
 
 - Only inspects elements typed as `String`; non-string elements are ignored.
 
-### **Dependencies**
+### Dependencies
 
 - Depends on the helper function [`StringContains`](#stringcontains) for substring checks.
 
@@ -3425,7 +3595,7 @@ Returns `True` if any string element in `srcArray` contains `subStr`; otherwise 
 Dim arr As Variant
 arr = Array("Hello World", "Sample", "Test")
 
-Debug.Print SubstringIsInArray("world", arr)        ' True (case-insensitive)
+Debug.Print SubstringIsInArray("world", arr)       ' True (case-insensitive)
 Debug.Print SubstringIsInArray("WORLD", arr, True) ' False (case-sensitive)
 ```
 
@@ -3462,10 +3632,40 @@ Returns the summation's result from expression evaluated for the index running f
 
 ### Examples
 
+**Example 1**: Returns the sum of the first 10 odd numbers.
+
 ```vb
-Debug.Print Summation("2*n-1", 1, 10) ' prints 100
-Debug.Print Summation("1/x^2", 1, 1000000) ' ≈ 1.64 (approaches π²/6)
-Debug.Print Summation("n^2", 1, 5) ' prints 55
+Debug.Print Summation("2*n-1", 1, 10)
+```
+
+**Result**
+
+```vb
+100
+```
+
+**Example 2**: Returns the approximated sum of the Basel problem ($\sum_{n=1}^{\infty}{\frac{1}{n^2}}=\frac{\pi}{6}$)
+
+```vb
+Debug.Print Summation("1/x^2", 1, 1000000)
+```
+
+**Result**
+
+```vb
+1.64 ' approaches π²/6
+```
+
+**Example 3**: Returns the sum of the first 5 square numbers.
+
+```vb
+Debug.Print Summation("i^2", 1, 5)
+```
+
+**Result**
+
+```vb
+55
 ```
 
 <br>
