@@ -1030,12 +1030,12 @@ Statistical.NormDist(
 
 - When `cumulative = false`, the function returns the probability density at point x using the formula:
     - $\varphi(z)=\frac{1}{\sqrt{2 \pi}} \exp(-\frac{z^2}{2})​$
-    - where $z = \frac{x - \mu}{\sigma}$
+    - where $z = \frac{x-\mu}{\sigma}$ is the number of standard deviations from mean.
 - When `cumulative = true`, the function returns the cumulative probability up to point $x$ using the formula:
     - $\phi(z) = \frac{1}{2} + \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt}$.
     - where $z = \frac{x - \mu}{\sigma}$
 - The integral part is calculated by [Gaussian Quadrature](#credits-2), which uses a 24-point Legendre-Gauss approximation for high accuracy.
-    - $ \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt} = \frac{z}{4} \sqrt{\frac{2}{\pi}} \sum_{i=1}^{24}{w_{i} \text{ exp}(- \frac{z^{2}(t_{i}+1)^2}{8})} $
+    - $\frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt} = \frac{z}{4} \sqrt{\frac{2}{\pi}} \sum_{i=1}^{24}{w_{i} \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
     - where $w_{i}$ and $t_{i}$ are parameters provided by a Gaussian Quadrature table for 24-point approximation
 - This function is useful for statistical modeling, hypothesis testing, and data normalization.
 
