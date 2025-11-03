@@ -12,7 +12,7 @@ let
         ]),
         HeaderChoice = BinaryFormat.Choice(
             Unsigned32BitLittleIEndian,
-            each if _ <> 67324752 then  // not the IsValid number? then return a dummy formatter
+            each if _ <> 67324752 then // not the IsValid number? then return a dummy formatter
                 BinaryFormat.Record([IsValid = false, Filename=null, Content=null])
             else
                 BinaryFormat.Choice(
@@ -26,7 +26,7 @@ let
                             (x) => try Binary.Buffer(Binary.Decompress(x, Compression.Deflate)) otherwise null
                         )
                     ]),
-                    type binary                   // enable streaming
+                    type binary // enable streaming
                 )
         ),
         ZipFormat = BinaryFormat.List(HeaderChoice, each _[IsValid] = true),

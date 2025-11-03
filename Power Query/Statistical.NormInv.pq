@@ -39,27 +39,27 @@ let
             p_high = 0.97575,
             
             z = if p < p_low then let // Lower region.
-                    q = Number.Sqrt(-2 * Number.Ln(p)),
-                    z = (((((c{0}*q+c{1})*q+c{2})*q+c{3})*q+c{4})*q+c{5}) / ((((d{0}*q+d{1})*q+d{2})*q+d{3})*q+1)
-                    in z
-                else if p <= p_high then let // Central region.
-                    q = p - 0.5,
-                    r = q*q,
-                    z = (((((a{0}*r+a{1})*r+a{2})*r+a{3})*r+a{4})*r+a{5})*q / (((((b{0}*r+b{1})*r+b{2})*r+b{3})*r+b{4})*r+1)
-                    in z
-                else let // Upper region.
-                    q = Number.Sqrt(-2 * Number.Ln(1-p)),
-                    z = -(((((c{0}*q+c{1})*q+c{2})*q+c{3})*q+c{4})*q+c{5}) / ((((d{0}*q+d{1})*q+d{2})*q+d{3})*q+1)
-                    in z
+                q = Number.Sqrt(-2 * Number.Ln(p)),
+                z = (((((c{0}*q+c{1})*q+c{2})*q+c{3})*q+c{4})*q+c{5}) / ((((d{0}*q+d{1})*q+d{2})*q+d{3})*q+1)
+                in z
+            else if p <= p_high then let // Central region.
+                q = p - 0.5,
+                r = q*q,
+                z = (((((a{0}*r+a{1})*r+a{2})*r+a{3})*r+a{4})*r+a{5})*q / (((((b{0}*r+b{1})*r+b{2})*r+b{3})*r+b{4})*r+1)
+                in z
+            else let // Upper region.
+                q = Number.Sqrt(-2 * Number.Ln(1-p)),
+                z = -(((((c{0}*q+c{1})*q+c{2})*q+c{3})*q+c{4})*q+c{5}) / ((((d{0}*q+d{1})*q+d{2})*q+d{3})*q+1)
+                in z
             in z,
 
         // Calculating the Z-Score
         z = if p = 0 then
-                Number.NegativeInfinity
-            else if p = 1 then
-                Number.PositiveInfinity
-            else
-                RationalApproximation(p),
+            Number.NegativeInfinity
+        else if p = 1 then
+            Number.PositiveInfinity
+        else
+            RationalApproximation(p),
         
         // Calculating the x value
         mu = if mean is null then 0 else mean,

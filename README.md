@@ -102,10 +102,7 @@ A table with the following columns:
 ### Example
 
 ```fs
-let
-    Source = Binary.Unzip(File.Contents("C:\Temp\archive.zip"))
-in
-    Source
+Binary.Unzip(File.Contents("C:\Temp\archive.zip"))
 ```
 
 This yields a table you can expand or transform. To read the content of the first file as text:
@@ -131,6 +128,7 @@ in
 Converts a Power Query datetime value to Unix time (seconds since 1970-01-01 00:00:00).
 
 ### Syntax
+
 ```fs
 DateTime.ToUnixTime(
     datetimeToConvert as datetime
@@ -152,7 +150,13 @@ Converts `datetime` to Unixtime, which consists of a number representing the tot
 ### Example
 
 ```fs
-DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0)) // -> returns 1672531200
+DateTime.ToUnixTime(#datetime(2023, 1, 1, 0, 0, 0))
+```
+
+**Return**
+
+```fs
+1672531200
 ```
 
 <br>
@@ -284,9 +288,9 @@ Ranking alternatives with three criteria.
 let
     Source = #table(
         {"Alternative", "Cost", "Quality", "Speed"}, {
-            {"A", 300, 80, 60},
-            {"B", 250, 70, 75},
-            {"C", 400, 90, 50}
+        {"A", 300, 80, 60},
+        {"B", 250, 70, 75},
+        {"C", 400, 90, 50}
     }),
     Weights = [Cost = 0.4, Quality = 0.3, Speed = 0.3],
     Result = Decision.TOPSIS(Source, "Alternative", Weights)
@@ -344,15 +348,40 @@ A number representing the correlation coefficient:
 
 ### Examples
 
+**Example 1**: Calculates the default Pearson Correlation.
+
 ```fs
 List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30})
-// -> 0.858575902776297  (Pearson, default)
+```
 
+**Return**
+
+```fs
+0.858575902776297  (Pearson, default)
+```
+
+**Example 2**: Calculates the Spearman (monotonic) Correlation if specified.
+
+```fs
 List.Correlation({0, 1, 3, 4}, {4, 5, 10, 30}, "Spearman")
-// -> 1  (Spearman: monotonic/rank-perfect relationship)
+```
 
+**Return**
+
+```fs
+1
+```
+
+**Example 3**: Non-numeric values are treated as 0.
+
+```fs
 List.Correlation({0, null, 3, "a", 4}, {4, 5, null, 10, 30})
-// -> 0.556720639738652  (non-numeric values are treated as 0)
+```
+
+**Return**
+
+```fs
+0.556720639738652
 ```
 
 <br>
@@ -362,6 +391,7 @@ List.Correlation({0, null, 3, "a", 4}, {4, 5, null, 10, 30})
 Returns a list of ranks for a given list of values. Tied values receive the same rank (dense ranking). The Result list preserves the input order.
 
 ### Syntax
+
 ```fs
 List.Rank(
     values as list,
@@ -383,10 +413,29 @@ A list of integers with the same length as `values`, where each element is the r
 - Comparison uses Power Query's Value.Compare, so mixed-type comparisons follow Power Query rules.
 
 ### Examples
+
+**Example 1**: Returns the descending rank list.
+
 ```fs
-List.Rank({10, 10, 5, 7}) // {1, 1, 3, 2} (default: descending)
-List.Rank({31, 11, 27, 31}, Order.Ascending) // {3, 1, 2, 3}
-List.Rank({10, 10, 30, 30, 2}) // {2, 2, 1, 1, 3}
+List.Rank({10, 10, 5, 7})
+```
+
+**Return**
+
+```fs
+{1, 1, 3, 2}
+```
+
+**Example 2**: Returns the ascending rank list if specified.
+
+```fs
+List.Rank({31, 11, 27, 31}, Order.Ascending)
+```
+
+**Return**
+
+```fs
+{3, 1, 2, 3}
 ```
 
 <br>
@@ -986,7 +1035,7 @@ Statistical.NormDist(
     - $\phi(z) = \frac{1}{2} + \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt}$.
     - where $z = \frac{x - \mu}{\sigma}$
 - The integral part is calculated by [Gaussian Quadrature](#credits-2), which uses a 24-point Legendre-Gauss approximation for high accuracy.
-    - $ \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt} = \sqrt{\frac{2}{\pi}} \cdot \frac{z}{4} \cdot \sum_{i=1}^{24}{w_{i} \cdot \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
+    - $ \frac{1}{\sqrt{\pi}} \int_{0}^{z / \sqrt{2}}{e^{-t^{2}}dt} = \frac{z}{4} \sqrt{\frac{2}{\pi}} \sum_{i=1}^{24}{w_{i} \exp(-\frac{z^{2}(t_{i}+1)^2}{8})}$
     - where $w_{i}$ and $t_{i}$ are parameters provided by a Gaussian Quadrature table for 24-point approximation
 - This function is useful for statistical modeling, hypothesis testing, and data normalization.
 
