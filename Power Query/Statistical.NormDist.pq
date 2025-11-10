@@ -7,7 +7,7 @@ let
         PDF = (z as number) as number => Number.Exp(-0.5*z*z) / Number.Sqrt(2 * Number.PI),
         GaussianIntegral = (z as number) as number => let
             GaussianQuadratureTable = #table(
-                type table [i = number, t = number, w = number], {
+                type table [i=number, t=number, w=number], {
                 { 1,  0.0640568928626056, 0.1279381953467522},
                 { 2, -0.0640568928626056, 0.1279381953467522},
                 { 3,  0.1911188674736163, 0.1258374563468283},
