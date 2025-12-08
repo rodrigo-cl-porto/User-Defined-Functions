@@ -1,19 +1,19 @@
 let
     func = (tbl as table, columnName as text, columnValues as list, optional position as number, optional columnType as type) as table => let 
-        #"Added Index" = Table.AddIndexColumn(tbl, "Index", 0, 1),
-        #"Added List as Column" = Table.AddColumn(
-            #"Added Index",
+        AddedIndex = Table.AddIndexColumn(tbl, "Index", 0, 1),
+        AddedColumn = Table.AddColumn(
+            AddedIndex,
             columnName,
             each try columnValues{[Index]} otherwise null,
             if columnType = null then type any else columnType
         ),
-        #"Removed Index" = Table.RemoveColumns(#"Added List as Column", "Index")
+        RemovedIndex = Table.RemoveColumns(AddedColumn, "Index")
         in if position = null then
-            #"Removed Index"
+            RemovedIndex
         else let
-            #"List of Reordered Columns" = List.InsertRange(Table.ColumnNames(tbl), position - 1, {columnName}),
-            #"Reordered Columns" = Table.ReorderColumns(#"Removed Index", #"List of Reordered Columns")
-            in  #"Reordered Columns",
+            ListOfReorderedColumns = List.InsertRange(Table.ColumnNames(tbl), position - 1, {columnName}),
+            ReorderedColumns = Table.ReorderColumns(RemovedIndex, ListOfReorderedColumns)
+            in ReorderedColumns,
     
     documentation = type function (
         tbl as (type table meta [
@@ -49,7 +49,7 @@ let
             },
             Documentation.DefaultValue = type any
         ])) as table meta [
-            Documentation.Name = "Table.AddListAsColumn",
+            Documentation.Name = "Table.AddColumnFromList",
             Documentation.Description = "Adds a list as a new column to a table at a specified position.",
             Documentation.LongDescription = "This function takes a table and adds a new column with values from a provided list. The new column can be inserted at a specified position within the table. If no position is provided, the new column is added at the end of the table. An optional column type can also be specified for the new column.",
             Documentation.Category = "Table",
@@ -60,7 +60,7 @@ let
                 Code = "let" & "#(lf)" &
                     "    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]})," & "#(lf)" &
                     "    NewColumnValues = {10, 20}," & "#(lf)" &
-                    "    Result = Table.AddListAsColumn(Source, ""C"", NewColumnValues)" & "#(lf)" &
+                    "    Result = Table.AddColumnFromList(Source, ""C"", NewColumnValues)" & "#(lf)" &
                     "in" & "#(lf)" &
                     "    Result",
                 Result = "Table.FromRecords({[A=1, B=2, C=10], [A=3, B=4, C=20]})"
@@ -69,7 +69,7 @@ let
                 Code = "let" & "#(lf)" &
                     "    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]})," & "#(lf)" &
                     "    NewColumnValues = {10, 20}," & "#(lf)" &
-                    "    Result = Table.AddListAsColumn(Source, ""C"", NewColumnValues, 2, Int64.Type)" & "#(lf)" &
+                    "    Result = Table.AddColumnFromList(Source, ""C"", NewColumnValues, 2, Int64.Type)" & "#(lf)" &
                     "in" & "#(lf)" &
                     "    Result",
                 Result = "Table.FromRecords({[A=1, C=10, B=2], [A=3, C=20, B=4]})"
@@ -78,7 +78,7 @@ let
                 Code = "let" & "#(lf)" &
                     "    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4], [A=5, B=6]})," & "#(lf)" &
                     "    NewColumnValues = {10, 20}," & "#(lf)" &
-                    "    Result = Table.AddListAsColumn(Source, ""C"", NewColumnValues)" & "#(lf)" &
+                    "    Result = Table.AddColumnFromList(Source, ""C"", NewColumnValues)" & "#(lf)" &
                     "in" & "#(lf)" &
                     "    Result",
                 Result = "Table.FromRecords({[A=1, B=2, C=10], [A=3, B=4, C=20], [A=5, B=6, C=null]"
@@ -87,7 +87,7 @@ let
                 Code = "let" & "#(lf)" &
                     "    Source = Table.FromRecords({[A=1, B=2], [A=3, B=4]})," & "#(lf)" &
                     "    NewColumnValues = {10, 20, 30, 40}," & "#(lf)" &
-                    "    Result = Table.AddListAsColumn(Source, ""C"", NewColumnValues)" & "#(lf)" &
+                    "    Result = Table.AddColumnFromList(Source, ""C"", NewColumnValues)" & "#(lf)" &
                     "in" & "#(lf)" &
                     "    Result",
                 Result = "Table.FromRecords({[A=1, B=2, C=10], [A=3, B=4, C=20]})"
