@@ -104,5 +104,6 @@ Here is a list of very useful repos of user-defined functions:
 - [M Custom Functions](https://github.com/tirnovar/m-custom-functions) by Štěpán Rešl
 - [m-custom-functions](https://github.com/tirnovar/m-custom-functions) by Tirnovar
 - [M-tools](https://github.com/acaprojects/m-tools/tree/master) by Kim Burgess
+- [PowerBi-code](https://github.com/ibarrau/PowerBi-code/tree/master) by ibarrau
 - [PowerQueryFunctions](https://github.com/OscarValerock/PowerQueryFunctions) by OscarValerock
 - [PowerQueryLib](https://github.com/ninmonkey/Ninmonkey.PowerQueryLib) by NinMonkey
