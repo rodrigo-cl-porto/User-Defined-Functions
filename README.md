@@ -27,7 +27,8 @@ Here you will find both functions created by me and useful functions developed b
             <td><a href="/src/m/Binary.Unzip.pq"><code>Binary.Unzip</code></a></td>
             <td>Extracts file from a compressed ZIP file</td>
             <td align="center">
-                <a href="/docs/en/m/Binary.Unzip.md"><img src="docs/assets/usa_flag.svg" width="20"/></a>
+                <a href="/docs/en/m/Binary.Unzip.md">📄</a>
+                <img src="https://cdn.jsdelivr.net/gh/rodrigo-cl-porto/User-Defined-Functions/docs/assets/usa_flag.svg" alt="Binary.Unzip" width="20">
             </td>
         </tr>
         <tr>
