@@ -1,6 +1,6 @@
 # [`RangeHasConstantValues`](/src/vba/RangeHasConstantValues.vba)
 
-Checks whether a given range contains any constant (non-formula) cells.
+Checks whether a given range contains any constant (non-formula) cell.
 
 ## Syntax
 

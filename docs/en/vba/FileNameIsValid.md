@@ -1,6 +1,6 @@
 # [`FileNameIsValid`](/src/vba/FileNameIsValid.vba)
 
-Validates if a given string can be used as a valid file name by checking for illegal characters.
+Checks if a given string can be used as a valid file name by checking for illegal characters.
 
 ## Syntax
 

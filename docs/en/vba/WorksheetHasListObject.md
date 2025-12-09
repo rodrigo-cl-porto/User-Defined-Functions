@@ -1,6 +1,6 @@
 # [`WorksheetHasListObject`](/src/vba/WorksheetHasListObject.vba)
 
-Checks whether a worksheet contains at least one ListObject (table).
+Checks if a worksheet contains at least one ListObject (Excel table).
 
 ## Syntax
 

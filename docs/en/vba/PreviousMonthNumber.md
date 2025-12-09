@@ -1,6 +1,6 @@
 # [`PreviousMonthNumber`](/src/vba/PreviousMonthNumber.vba)
 
-Returns the numeric month (1–12) that precedes the month of a given date.
+Returns the month's number (1–12) that precedes the month of a given date.
 
 ## Syntax
 

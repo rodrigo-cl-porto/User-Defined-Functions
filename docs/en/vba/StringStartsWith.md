@@ -1,6 +1,6 @@
 # [`StringStartsWith`](/src/vba/StringStartsWith.vba)
 
-Checks whether a string starts with a specified substring, with optional case sensitivity.
+Checks if a string starts with a specified substring, with optional case sensitivity.
 
 ## Syntax
 

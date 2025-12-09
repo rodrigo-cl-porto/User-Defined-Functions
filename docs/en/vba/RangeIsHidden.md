@@ -1,6 +1,6 @@
 # [`RangeIsHidden`](/src/vba/RangeIsHidden.vba)
 
-Determines whether a given range is entirely hidden (no visible cells).
+Checks if a given range is entirely hidden (no visible cells).
 
 ## Syntax
 

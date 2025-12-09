@@ -1,6 +1,6 @@
 # [`GetStringBetween`](/src/vba/GetStringBetween.vba)
 
-Extracts a substring between two specified delimiter strings.
+Extracts a string between two specified delimiters.
 
 ## Syntax
 

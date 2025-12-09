@@ -1,6 +1,6 @@
 # [`CleanString`](/src/vba/CleanString.vba)
 
-Cleans a string by removing or replacing special characters and control characters with spaces.
+Cleans a string by removing or replacing special and control characters with spaces.
 
 ## Syntax
 

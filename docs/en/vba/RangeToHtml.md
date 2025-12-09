@@ -1,6 +1,6 @@
 # [`RangeToHtml`](/src/vba/RangeToHtml.vba)
 
-Converts an Excel Range into an HTML string by copying the range to a temporary workbook, publishing that sheet as an HTML file, and returning the file contents.
+Converts an range into an HTML string by copying the range to a temporary workbook, publishing that sheet as an HTML file, and returning the file contents.
 
 ## Syntax
 

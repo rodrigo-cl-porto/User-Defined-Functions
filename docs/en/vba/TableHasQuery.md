@@ -1,6 +1,6 @@
 # [`TableHasQuery`](/src/vba/TableHasQuery.vba)
 
-Checks whether a ListObject (Excel table) has an associated QueryTable.
+Checks if a ListObject (Excel table) has an associated QueryTable.
 
 ## Syntax
 

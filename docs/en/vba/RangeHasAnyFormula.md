@@ -1,6 +1,6 @@
 # [`RangeHasAnyFormula`](/src/vba/RangeHasAnyFormula.vba)
 
-Checks if a given range contains any cells with formulas.
+Checks if a given range contains any cell with formulas.
 
 ## Syntax
 
