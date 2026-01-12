@@ -395,8 +395,14 @@ Here you will find both functions created by me and useful functions developed b
 
 ## 🤝 Contributions
 
-Contributions are welcome!
-If you have an interesting feature, improvement, or fix for any function or documentation, feel free to open a pull request or an issue.
+Any contribution is welcome!
+
+You can contribute by:
+- proposing a new interesting function
+- improving an existing one
+- improving this documentation's repo
+- fixing any possible bug function or documentation error
+- helping financially through sponsorship
 
 ## 🗂️ Other UDF Repositories
 
