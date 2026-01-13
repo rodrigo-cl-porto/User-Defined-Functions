@@ -12,7 +12,7 @@ Here you will find both functions created by me and useful functions developed b
 
 ## 📖 Documentation
 
-- This repo's documentation is hosted on this [GitHub Wiki](wiki)
+- This repo's documentation is hosted on this [GitHub Wiki](../../wiki)
 
 ## 🤝 Contributions
 
