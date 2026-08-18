@@ -20,7 +20,7 @@ let
             Documentation.Description = "Converts a Unix timestamp (the number of seconds since January 1, 1970) to datetime.",
             Documentation.LongDescription = "This function takes a integer value that represents the total number of seconds that have elapsed since the Unix epoch (January 1, 1970, at 00:00:00 UTC) and converts it to datetime.",
             Documentation.Category = "DateTime",
-            Documentation.Version = "1.0.2",
+            Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
             Documentation.Examples = {[
                 Description = "Convert a specific Unix timestamp to datetime.",
@@ -29,7 +29,7 @@ let
             ], [
                 Description = "Convert a specific Unix timestamp to datetime.",
                 Code = "DateTime.FromUnixTime(1786649709)",
-                Result = "#datetime(2026, 8, 13, 22, 7, 13)"
+                Result = "#datetime(2026, 8, 13, 19, 35, 9)"
             ]}
         ],
     
