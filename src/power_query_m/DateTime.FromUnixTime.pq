@@ -22,29 +22,29 @@ let
             ConvertedDatetime = RefDatetime + #duration(NumberOfDays, NumberOfRemainingHours, NumberOfRemainingMinutes, NumberOfRemainingSeconds)
             in ConvertedDatetime
         else error [
-            Reason = "ValueError",
-            Message = "Invalid ",
-            Detail = [#"Input Format" = format] 
+            Reason = "Value.Error",
+            Message = "Invalid format.",
+            Detail = [#"Input format" = format] 
         ],
     
     documentation = type function (
         unixTimestamp as (type number meta [
             Documentation.FieldCaption = "DateTime as Unix Timestamp",
-            Documentation.FieldDescription = "DateTime as Unix time (total number of seconds or milliseconds since midnight January 1st, 1970)."
+            Documentation.FieldDescription = "DateTime as Unix time (total number of seconds or milliseconds since midnight on January 1st, 1970)."
         ]),
         optional format as (type text meta [
             Documentation.FieldCaption = "Format of the informed Unix Timestamp",
-            Documentation.FieldDescription = "Format as seconds or milliseconds.",
+            Documentation.FieldDescription = "Format as seconds or milliseconds. Default is ""seconds"".",
             Documentation.AllowedValues = { "seconds", "milliseconds" }
         ])) as datetime meta [
             Documentation.Name = "DateTime.FromUnixTime",
-            Documentation.Description = "Converts a DateTime value to Unix time (the number of seconds since January 1, 1970).",
+            Documentation.Description = "Converts a DateTime value to Unix time (the number of seconds or milliseconds since January 1, 1970). The default format input is Unix in ""seconds"".",
             Documentation.LongDescription = "This function takes a integer value that represents the total number of seconds that have elapsed since the Unix epoch (January 1, 1970, at 00:00:00 UTC) and converts it to DateTime.",
             Documentation.Category = "DateTime",
             Documentation.Version = "1.0.0",
             Documentation.Author = "Rodrigo Celso de Lima Porto",
             Documentation.Examples = {[
-                Description = "Convert a specific DateTime to Unix time.",
+                Description = "Convert a specific DateTime to Unix time stamp.",
                 Code = "DateTime.FromUnixTime(1672531200)",
                 Result = "#datetime(2023, 1, 1, 0, 0, 0)"
             ], [
